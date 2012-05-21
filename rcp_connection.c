@@ -7,6 +7,11 @@
 #include "con_null_terminate.h"
 #include "con_json_cpp.h"
 
+#include "rcp_string.h"
+#include "rcp_type.h"
+#include "rcp_struct.h"
+#include "rcp_context.h"
+
 
 struct rcp_connection_core{
 	struct rcp_connection_class *klass;
@@ -200,14 +205,14 @@ rcp_connection_ref rcp_connection_plain_json_new(int epfd, int fd)
 
 	con_plain_set_fd(epfd, fd, con, l1_state);
 
-	struct con_plain* plain_state = l1_state;
-	plain_state->fd = fd;
+	//struct con_plain* plain_state = l1_state;
+	//plain_state->fd = fd;
 }
 
-struct rcp_epoll_action* rcp_listener_plain_json_new(int epfd)
+rcp_epoll_action_ref rcp_listener_plain_json_new(int epfd)
 {
 	struct rcp_epoll_action* unit = malloc(sizeof *unit);
-	unit->action= rcp_raw_json_listener_epoll_event;
+	unit->action= rcp_listener_plain_json_epoll_event;
 	unit->userdata.fd = -1;
 
 	struct sockaddr_in sockadd;
@@ -218,7 +223,7 @@ struct rcp_epoll_action* rcp_listener_plain_json_new(int epfd)
 
 	int fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (fd == -1){
-		rcp_raw_json_listener_release(unit);
+		rcp_listener_plain_json_release(unit);
 		return NULL;
 	}
 	unit->userdata.fd = fd;
@@ -227,13 +232,14 @@ struct rcp_epoll_action* rcp_listener_plain_json_new(int epfd)
 
 	err = bind(fd, (struct sockaddr*)&sockadd, sizeof sockadd);
 	if (err){
-		rcp_raw_json_listener_release(unit);
+		rcp_listener_plain_json_release(unit);
 		return NULL;
 	}
 
 	err = listen(fd, RCP_LISTEN_SOCKET_NUMBER);
 	if (err){
-		rcp_raw_json_listener_release(unit);
+		rcp_error("listen");
+		rcp_listener_plain_json_release(unit);
 		return NULL;
 	}
 
@@ -245,17 +251,17 @@ struct rcp_epoll_action* rcp_listener_plain_json_new(int epfd)
 	if (err){
 		rcp_error("errorrrr");
 	}
-	rcp_error("listen_done");
+	rcp_info("listen_done");
 	return unit;
 }
 
-void rcp_raw_json_listener_release(struct rcp_epoll_action *unit)
+void rcp_listener_plain_json_release(rcp_epoll_action_ref unit)
 {
 	close(unit->userdata.fd);
 	free(unit);
 }
 
-void rcp_raw_json_listener_epoll_event(
+void rcp_listener_plain_json_epoll_event(
 		int epfd, struct epoll_event *ev, epoll_data_t userdata)
 {
 	int listener_fd = userdata.fd;
@@ -267,7 +273,7 @@ void rcp_raw_json_listener_epoll_event(
 			(socklen_t*)&client_address_size);
 	
 	//printf("accept_done\n");
-	rcp_error("accept_done");
+	rcp_info("accept_done");
 	//set timeout
 
 	//log

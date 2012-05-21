@@ -8,7 +8,8 @@
 #include "rcp_epoll.h"
 #include "rcp_connection.h"
 
-void rcp_main();
+int test_json(void);
+int test_tree(void);
 
 int main (int argc, const char** argv){
 	//rcp_command
@@ -18,12 +19,8 @@ int main (int argc, const char** argv){
 			printf("ok\n");
 		else
 			printf("fail\n");
+		rcp_info("command done");
 	}
-
-
-	int epfd = epoll_create(10);
-	rcp_listener_plain_json_new(epfd);
-	rcp_epoll_run(epfd);
-
-
+	test_json();
+	test_tree();
 }

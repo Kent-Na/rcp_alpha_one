@@ -39,6 +39,12 @@ addParameter(command, "const char*", "client")
 commandList.append(command)
 
 commandList.append({
+	"name":"kill",
+	"shortDescription":"kill server process.",
+	"longDescription":"",
+	})
+
+commandList.append({
 	"name":"close",
 	"shortDescription":"",
 	"longDescription":"",
@@ -178,6 +184,8 @@ commandList.append({
 	})
 
 addParameter(command, "uint32_t", "recordID")
+addParameter(command, "any", "value")
+addParameter(command, "uint32_t", "recordID")
 
 commandList.append({
 	"name":"updateRecord",
@@ -227,6 +235,9 @@ commandList.append({
 	"shortDescription":"Send from server when fail to execute command.",
 	"longDescription":"",
 	})
+
+addParameter(command, "const char*", "cause")
+addParameter(command, "const char*", "reason")
 
 commandList.append({
 	"name":"caution",

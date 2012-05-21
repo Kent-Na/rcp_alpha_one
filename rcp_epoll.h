@@ -4,5 +4,6 @@ struct rcp_epoll_action{
 	epoll_data_t userdata;
 };
 
+typedef struct rcp_epoll_action* rcp_epoll_action_ref;
 void rcp_epoll_run(int epfd);
 

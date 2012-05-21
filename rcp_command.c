@@ -2,7 +2,9 @@
 #include "rcp_utility.h"
 #include "rcp_command_list.h"
 
-rcp_command_type_t rcp_command_from_str(const char* str){
+rcp_command_type_t rcp_command_from_str(const char* str)
+{
+	//binaly search
 	size_t min = 0;
 	size_t max = RCP_COMMAND_COUNT-1;
 	
@@ -20,3 +22,4 @@ rcp_command_type_t rcp_command_from_str(const char* str){
 
 	return RCP_COMMAND_INVALID;
 }
+

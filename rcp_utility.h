@@ -5,6 +5,8 @@
 #define rcp_extern
 #endif
 
+#define field_sizeof(t, f) (sizeof(((t*)0)->f))
+
 rcp_extern void rcp_info(const char* str);
 rcp_extern void rcp_caution(const char* str);
 rcp_extern void rcp_error(const char* str);

@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stddef.h>
 
 #include <errno.h>
 #include <sys/epoll.h>

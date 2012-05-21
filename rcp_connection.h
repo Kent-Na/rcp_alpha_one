@@ -59,12 +59,12 @@ struct rcp_connection_class{
 rcp_connection_ref rcp_connection_new(struct rcp_connection_class* klass);
 void rcp_connection_free(rcp_connection_ref con);
 void rcp_connection_on_receive(rcp_connection_ref con);
+
+//epoll
 void rcp_connection_epoll_action(int epfd, struct epoll_event *ev,
 		epoll_data_t data);
-
 rcp_connection_ref rcp_connection_plain_json_new(int epfd, int fd);
-
-struct rcp_epoll_action* rcp_listener_plain_json_new(int epfd);
-void rcp_raw_json_listener_release(struct rcp_epoll_action *unit);
-void rcp_raw_json_listener_epoll_event(
+rcp_epoll_action_ref rcp_listener_plain_json_new(int epfd);
+void rcp_listener_plain_json_release(rcp_epoll_action_ref unit);
+void rcp_listener_plain_json_epoll_event(
 		int epfd, struct epoll_event *ev, epoll_data_t userdata);
