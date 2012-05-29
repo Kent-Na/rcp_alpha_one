@@ -1,0 +1,44 @@
+#include "rcp_pch.h"
+#include "rcp_utility.h"
+#include "rcp_type.h"
+#include "rcp_type_number.h"
+#include "rcp_tree.h"
+#include "rcp_string.h"
+#include "rcp_map.h"
+
+#include <random>
+
+int test_map(void){
+
+	rcp_tree_ref tree = rcp_tree_new(rcp_uint32_type.compare);
+	std::mt19937 eng(time(NULL));
+	std::uniform_int_distribution<int> dist(0,500);
+	
+	rcp_map_ref map = rcp_map_new(&rcp_string_type, &rcp_uint32_type);
+
+	{
+		rcp_map_node_ref node = rcp_map_node_new(map);
+		rcp_string_ref *key = (rcp_string_ref*)rcp_map_node_key(map, node);
+		uint32_t *val = (uint32_t*)rcp_map_node_value(map, node);
+		*key = rcp_string_new("test");
+		*val = 100;
+
+		rcp_map_set(map, node);
+	}
+
+	{
+		rcp_string_ref key = rcp_string_new("test");
+		rcp_map_node_ref node = rcp_map_find(map, &key);
+		uint32_t *val = (uint32_t*)rcp_map_node_value(map, node);
+		if (!val)
+			rcp_error("lost?");
+		if (*val != 100)
+			rcp_error("isn't this");
+		rcp_string_ref *rkey = (rcp_string_ref*)rcp_map_node_key(map, node);
+		if (rcp_string_type.compare(rkey,&key) !=0)
+			rcp_error("key mismatch");
+	}
+	rcp_info("map done");
+
+	return 0;
+}

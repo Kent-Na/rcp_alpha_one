@@ -1,26 +1,13 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
 #include "rcp_utility.h"
-#include "rcp_tree.h"
 
+#define RCP_INTERNAL_STRUCTURE
+
+#include "rcp_tree.h"
 
 #define RCP_TREE_BRACK 0
 #define RCP_TREE_RED 1
-
-struct rcp_tree{
-	rcp_tree_node_ref root;
-	int (*compare)(void *l, void *r);
-};
-
-//forrowed by data
-struct rcp_tree_node_core{
-	// l < r
-	struct rcp_tree_node_core *l;
-	struct rcp_tree_node_core *r;
-	struct rcp_tree_node_core *p;
-	//0 black 1 red
-	uint8_t color;
-};
 
 rcp_extern rcp_tree_node_ref rcp_tree_node_new(size_t size)
 {
@@ -49,7 +36,7 @@ rcp_tree_node_ref rcp_tree_node_next(rcp_tree_node_ref node)
 	if (node->l)
 		return node->l;
 
-	rcp_tree_node_ref t;
+	rcp_tree_node_ref t = node;
 	while(1){
 		while (t->p && t->p->r == t){
 			t = t->p;
@@ -62,11 +49,32 @@ rcp_tree_node_ref rcp_tree_node_next(rcp_tree_node_ref node)
 	}
 }
 
+void rcp_tree_node_replace(rcp_tree_node_ref src, rcp_tree_node_ref dst){
+	dst->l = src->l;
+	dst->r = src->r;
+	dst->p = src->p;
+	if (dst->l)
+		dst->l->p = dst;
+	if (dst->r)
+		dst->r->p = dst;
+	if (dst->p){
+		if (dst->p->r == src)
+			dst->p->r = dst;
+		else
+			dst->p->l = dst;
+	}
+}
+
+rcp_extern void rcp_tree_init(
+		rcp_tree_ref tree, int(*compare)(void*,void*))
+{
+	tree->root = NULL;
+	tree->compare = compare;
+}
 rcp_extern rcp_tree_ref rcp_tree_new(int(*compare)(void*,void*))
 {
 	rcp_tree_ref tree = malloc(sizeof *tree);
-	tree->root = NULL;
-	tree->compare = compare;
+	rcp_tree_init(tree, compare);
 	return tree;
 }
 
@@ -80,8 +88,14 @@ void rcp_tree_delete_node(rcp_tree_node_ref node){
 
 rcp_extern void rcp_tree_delete(rcp_tree_ref tree)
 {
-	rcp_tree_delete_node(tree->root);
+	rcp_tree_free(tree);
 	free(tree);
+}
+
+rcp_extern void rcp_tree_free(rcp_tree_ref tree)
+{
+	if (tree->root)
+		rcp_tree_delete_node(tree->root);
 }
 
 rcp_extern rcp_tree_node_ref rcp_tree_root(rcp_tree_ref tree)
@@ -180,11 +194,11 @@ rcp_extern void rcp_tree_verify(rcp_tree_ref tree)
 	rcp_tree_node_verify(tree, cur, black_depth, 0);
 }
 
-
-rcp_extern int rcp_tree_add(rcp_tree_ref tree, rcp_tree_node_ref node)
+rcp_extern rcp_tree_node_ref rcp_tree_put(
+		rcp_tree_ref tree, rcp_tree_node_ref node, int replace)
 {
 	if (!tree){
-		return 0;
+		return node;
 	}
 	struct rcp_tree_node_core *cur = tree->root;
 	struct rcp_tree_node_core *new = node;
@@ -199,7 +213,7 @@ rcp_extern int rcp_tree_add(rcp_tree_ref tree, rcp_tree_node_ref node)
 	if (tree->root == NULL){
 		new->color = RCP_TREE_BRACK;
 		tree->root = new;
-		return 0;
+		return NULL;
 	}
 	new->color = RCP_TREE_RED;
 
@@ -225,8 +239,14 @@ rcp_extern int rcp_tree_add(rcp_tree_ref tree, rcp_tree_node_ref node)
 			cur = cur->r;
 		}
 		else{
-			rcp_error("tree:key");
-			return -1;
+			if (replace){
+				rcp_tree_node_replace(cur, node);
+				return cur;
+			}
+			else{
+				rcp_error("tree:key");
+				return node;
+			}
 		}
 	}
 
@@ -236,10 +256,10 @@ rcp_extern int rcp_tree_add(rcp_tree_ref tree, rcp_tree_node_ref node)
 		struct rcp_tree_node_core *p = t->p; 
 		if (p == NULL){
 			t->color = RCP_TREE_BRACK;
-			return 0;
+			return NULL;
 		}
 		if (p->color == RCP_TREE_BRACK){
-			return 0;
+			return NULL;
 		}
 		//p is red, g->l or g->r is red
 		struct rcp_tree_node_core *g = p->p; 
@@ -312,7 +332,7 @@ rcp_extern int rcp_tree_add(rcp_tree_ref tree, rcp_tree_node_ref node)
 			mp->l = m;
 		else 
 			mp->r = m;
-		return 0;
+		return NULL;
 	}
 }
 
@@ -404,17 +424,7 @@ rcp_extern int rcp_tree_remove(rcp_tree_ref tree, rcp_tree_node_ref node)
 	}
 
 	{
-		//replace
-		memcpy(rep, node, sizeof(struct rcp_tree_node_core));
-
-		if (rep->l)
-			rep->l->p = rep;
-		if (rep->r)
-			rep->r->p = rep;
-		if (rep->p->r = node)
-			rep->p->r = rep;
-		if (rep->p->l = node)
-			rep->p->l = rep;
+		rcp_tree_node_replace(node, rep);
 	}
 }
 

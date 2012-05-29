@@ -10,6 +10,7 @@
 
 int test_json(void);
 int test_tree(void);
+int test_map(void);
 
 int main (int argc, const char** argv){
 	//rcp_command
@@ -23,4 +24,5 @@ int main (int argc, const char** argv){
 	}
 	test_json();
 	test_tree();
+	test_map();
 }

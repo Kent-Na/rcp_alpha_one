@@ -11,6 +11,18 @@ void con_null_terminate_init(void *state)
 	struct con_null_terminate *st = state;
 	st->buffer_begin = st->buffer;
 	st->buffer_end = st->buffer;
+	st->null_terminater = 0;
+}
+
+void* con_null_terminate_generate_fotter(void *state)
+{
+	struct con_null_terminate *st = state;
+	return &(st->null_terminater);
+}
+
+size_t con_null_terminate_last_footer_size(const void *state)
+{
+	return 1;
 }
 
 size_t con_null_terminate_space_len(const void *state)

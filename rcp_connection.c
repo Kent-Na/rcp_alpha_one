@@ -1,15 +1,15 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
+#include "rcp_utility.h"
 #include "rcp_epoll.h"
 #include "rcp_connection.h"
 #include "rcp_utility.h"
 #include "con_plain.h"
 #include "con_null_terminate.h"
-#include "con_json_cpp.h"
+#include "con_json.h"
+//#include "con_json_cpp.h"
 
-#include "rcp_string.h"
 #include "rcp_type.h"
-#include "rcp_struct.h"
 #include "rcp_context.h"
 
 
@@ -76,6 +76,39 @@ void rcp_connection_free(rcp_connection_ref con)
 	free(con);
 }
 
+void rcp_connection_send(rcp_connection_ref con, void *data, size_t len)
+{
+
+	struct rcp_connection_core *core = (void*)con;
+	struct rcp_connection_class *klass = core->klass;
+
+	size_t l1_data_offset = sizeof (struct rcp_connection_core);
+	size_t l2_data_offset = l1_data_offset + klass->layer1_data_size;
+	size_t l3_data_offset = l2_data_offset + klass->layer2_data_size;
+	size_t total_size = l2_data_offset + klass->layer3_data_size;
+
+	void *l1_state = con + l1_data_offset;
+	void *l2_state = con + l2_data_offset;
+	void *l3_state = con + l3_data_offset;
+
+	void *buffer=NULL;
+	size_t s;
+
+	if (klass->l2.generate_header)
+		buffer = klass->l2.generate_header(l2_state, len);
+	if (buffer){
+		s = klass->l2.last_header_size(l2_state);
+		klass->l1.send(l1_state, buffer, s);
+	}
+
+	klass->l1.send(l1_state, data, len);
+
+	buffer = klass->l2.generate_footer(l2_state);
+	if (buffer){
+		s = klass->l2.last_footer_size(l2_state);
+		klass->l1.send(l1_state, buffer, s);
+	}
+}
 
 void rcp_connection_on_receive(rcp_connection_ref con)
 {
@@ -184,7 +217,7 @@ static struct rcp_connection_class
 	CON_NULL_TERMINAE_CLASS_PART,
 	//l3 json (no data)
 	0,
-	CON_JSON_CPP_CLASS_PART
+	CON_JSON_CLASS_PART
 };
 
 rcp_connection_ref rcp_connection_plain_json_new(int epfd, int fd)

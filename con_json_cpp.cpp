@@ -7,25 +7,33 @@
 #include "rcp_epoll.h"
 #include "rcp_connection.h"
 
+
 #include "rcp_tree.h"
-#include "rcp_string.h"
 #include "rcp_type.h"
+#include "rcp_type_number.h"
+#include "rcp_map.h"
+#include "rcp_string.h"
 #include "rcp_struct.h"
-#include "rcp_type_list.h"
 #include "rcp_context.h"
 #include "rcp_server.h"
 
-rcp_extern void con_json_cpp_send_error(
-		rcp_connection_ref con, const char *error)
+void con_json_cpp_send_error(
+		rcp_connection_ref con)
 {
-
+	const char *cmd = "{\"command\":\"error\"}";
+	rcp_connection_send(con,(void*)cmd,strlen(cmd));
 }
 
+void con_json_cpp_send_json(rcp_connection_ref con, Json::Value &value){
+	std::string str = Json::FastWriter().write(value);
+	const char* byte = str.c_str();
+	rcp_connection_send(con,(void*)byte,strlen(byte));
+}
 void con_json_cpp_convert_to_record(Json::Value &value, rcp_record_ref rec){
 	if (rec == NULL)
 		return;
 	rcp_type_ref type = rcp_record_type(rec);
-	if (type == &rcp_type_uint32){
+	if (type == &rcp_uint32_type){
 		if (not value.isUInt64()){
 			rcp_error("type error");
 			return;
@@ -33,7 +41,7 @@ void con_json_cpp_convert_to_record(Json::Value &value, rcp_record_ref rec){
 		uint32_t *val = (uint32_t*)rcp_record_data(rec);
 		*val = value.asUInt64();	
 	}
-	if (type == &rcp_type_string){
+	if (type == &rcp_string_type){
 		if (not value.isString()){
 			rcp_error("type error");
 			return;
@@ -41,6 +49,17 @@ void con_json_cpp_convert_to_record(Json::Value &value, rcp_record_ref rec){
 		rcp_string_ref *val = (rcp_string_ref*)rcp_record_data(rec);
 		*val = rcp_string_new(value.asCString());	
 	}
+}
+
+Json::Value con_json_cpp_convert_to_json(rcp_type_ref type, void *data){
+	if (type == &rcp_string_type){
+		rcp_info(rcp_string_c_str(*(rcp_string_ref*)data));
+		return Json::Value(rcp_string_c_str(*(rcp_string_ref*)data));
+	}
+	if (type == &rcp_uint32_type){
+		return Json::Value(*(uint32_t*)data);
+	}
+	return Json::Value();
 }
 
 rcp_extern void con_json_cpp_execute(
@@ -80,13 +99,29 @@ rcp_extern void con_json_cpp_execute(
 		if (not ctx)
 			rcp_error("missing context");
 		rcp_context_add_connection(ctx, con);
+		con_json_cpp_send_error(con);
+		
+		rcp_map_ref tlo = (rcp_map_ref)rcp_context_top_level_record(ctx);
+		rcp_map_node_ref node = rcp_map_root(tlo);
+		while (node){
+			Json::Value value;
+			value["command"] = RCP_COMMAND_STR_ADD_RECORD;
+			value["recordID"] = *(uint32_t*)rcp_map_node_key(tlo, node);
+			value["value"] = con_json_cpp_convert_to_json(
+					rcp_map_node_value_type(tlo, node),
+					rcp_map_node_value(tlo, node));
+
+			con_json_cpp_send_json(con, value);
+
+			node = rcp_map_node_next(node);
+		}
 	}
 	if (command_type == RCP_COMMAND_ADD_RECORD){
 		rcp_info("add?");
 		std::string type_str;
 		if (not command.getMemberAsString("type",type_str))
 			return;
-		rcp_type_ref type = &rcp_type_uint32;
+		rcp_type_ref type = &rcp_uint32_type;
 			//; = rcp_type_from_string(type_str.c_str());
 		if (not type)
 			return;
@@ -94,6 +129,17 @@ rcp_extern void con_json_cpp_execute(
 		Json::Value value = command["value"];
 		con_json_cpp_convert_to_record(value, rec);
 		rcp_context_ref ctx = rcp_context_get(0);
+
+		rcp_map_ref tlo = (rcp_map_ref)rcp_context_top_level_record(ctx);
+		rcp_map_node_ref node = rcp_map_node_new(
+				tlo, NULL, rcp_record_type(rec));
+		uint32_t recID;	
+		if (not command.getMemberAsUInt("recordID",recID))
+			return;
+		*(uint32_t*)rcp_map_node_key(tlo, node) = recID; 
+		rcp_record_type(rec)->copy(
+				rcp_record_data(rec), rcp_map_node_value(tlo, node));
+		rcp_map_set(tlo, node);
 		if (not ctx)
 			rcp_error("missing context");
 		//rcp_context_add_record(ctx, rec);

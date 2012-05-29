@@ -8,9 +8,7 @@
 #include "rcp_epoll.h"
 #include "rcp_connection.h"
 
-#include "rcp_string.h"
 #include "rcp_type.h"
-#include "rcp_struct.h"
 #include "rcp_context.h"
 #include "rcp_server.h"
 

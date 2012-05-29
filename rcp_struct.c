@@ -1,27 +1,9 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
-#include "rcp_string.h"
 #include "rcp_type.h"
+#include "rcp_string.h"
 #include "rcp_struct.h"
 
-rcp_record_ref rcp_record_new(rcp_type_ref type)
-{
-	rcp_record_ref rec = malloc(type->size + sizeof *rec);
-	void *dat = rec + 1;
-
-	if (type->init)
-		type->init(dat);
-}
-
-rcp_type_ref rcp_record_type(rcp_record_ref rec)
-{
-	return rec->type;
-}
-
-void* rcp_record_data(rcp_record_ref rec)
-{
-	return rec + 1;
-}
 /*
 rcp_record_ref rcp_structure_record_new(rcp_structure_ref st)
 {

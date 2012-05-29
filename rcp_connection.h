@@ -24,6 +24,12 @@ struct rcp_connection_layer1_class_part{
 struct rcp_connection_layer2_class_part{
 	void (*init)(void *state);
 	void (*release)(void* state);
+	//sending
+	void* (*generate_header)(void *state, size_t len);	
+	size_t (*last_header_size)(const void *state);
+	void* (*generate_footer)(void *state);	
+	size_t (*last_footer_size)(const void *state);
+	//receiving
 	size_t (*space_len)(const void *state);
 	void* (*space_ptr)(const void *state);
 	void (*data_added)(void *state, size_t len);
@@ -56,8 +62,13 @@ struct rcp_connection_class{
 
 //rcp_connections
 
+rcp_extern
 rcp_connection_ref rcp_connection_new(struct rcp_connection_class* klass);
+rcp_extern
 void rcp_connection_free(rcp_connection_ref con);
+rcp_extern
+void rcp_connection_send(rcp_connection_ref con, void *data, size_t len);
+rcp_extern
 void rcp_connection_on_receive(rcp_connection_ref con);
 
 //epoll

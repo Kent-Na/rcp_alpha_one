@@ -1,14 +1,3 @@
-typedef struct rcp_record_core *rcp_record_ref;
-
-struct rcp_record_core{
-	rcp_type_ref type;
-	//rcp_structure_ref structure;
-	//uint32_t record_id;
-};
-
-rcp_extern rcp_record_ref rcp_record_new(rcp_type_ref type);
-rcp_extern rcp_type_ref rcp_record_type(rcp_record_ref rec);
-rcp_extern void* rcp_record_data(rcp_record_ref rec);
 
 struct rcp_structure_core{
 	rcp_string_ref name;

@@ -1,16 +1,14 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
-#include "rcp_string.h"
 #include "rcp_type.h"
-#include "rcp_type_list.h"
-#include "rcp_struct.h"
+#include "rcp_type_number.h"
 #include "rcp_tree.h"
 
 #include <random>
 
 int test_tree(void){
 
-	rcp_tree_ref tree = rcp_tree_new(rcp_type_uint32.compare);
+	rcp_tree_ref tree = rcp_tree_new(rcp_uint32_type.compare);
 	std::mt19937 eng(time(NULL));
 	std::uniform_int_distribution<int> dist(0,500);
 
@@ -43,7 +41,7 @@ int test_tree(void){
 	rcp_tree_delete(tree);
 
 	//iterate
-	tree = rcp_tree_new(rcp_type_uint32.compare);
+	tree = rcp_tree_new(rcp_uint32_type.compare);
 	for (int i = 0; i<200; i++){
 		uint32_t dat = i;
 		rcp_tree_node_ref node = rcp_tree_node_new(sizeof (uint32_t));
@@ -92,6 +90,19 @@ int test_tree(void){
 		rcp_tree_verify(tree);
 		//rcp_info("ok");
 	}
+	rcp_tree_delete(tree);
+
+	//more itr
+	tree = rcp_tree_new(rcp_uint32_type.compare);
+	{
+		uint32_t dat = 1;
+		rcp_tree_node_ref node = rcp_tree_node_new(sizeof (uint32_t));
+		uint32_t *p = (uint32_t*)rcp_tree_node_data(node);
+		*p = dat;
+		rcp_tree_add(tree, node);
+	}
+	rcp_tree_node_next(rcp_tree_root(tree));
+
 	rcp_info("tree done");
 	return 0;
 }

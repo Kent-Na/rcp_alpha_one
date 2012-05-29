@@ -1,13 +1,11 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
-#include "rcp_string.h"
 #include "rcp_type.h"
-#include "rcp_struct.h"
 #include "rcp_json.h"
 
 
 int test_json(){
-
+	/*
 	{
 		struct rcp_json_number num;
 		const char *str = "012";
@@ -111,5 +109,6 @@ int test_json(){
 			rcp_error("test:err");
 		}
 	}
-	rcp_info("json done");
+	*/
+	rcp_info("json none");
 }

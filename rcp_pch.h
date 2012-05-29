@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <math.h>
 
 #include <errno.h>
 #include <sys/epoll.h>

@@ -17,18 +17,25 @@ mainFiles = [
 	'rcp_string.c',
 	'rcp_struct.c',
 	'rcp_context.c',
-	'rcp_type_list.c',
+	'rcp_type.c',
+	'rcp_type_number.c',
+	'rcp_type_etc.c',
+	'rcp_map.c',
+	'rcp_string_map.c',
+	'rcp_array.c',
+	'rcp_json.c',
 	'con_plain.c',
 	'con_null_terminate.c',
-	'con_json_cpp.cpp',
-	'json/jsoncpp.cpp',
+	'con_json.c',
 ]
 
 testFiles = [
 	'rcp_pch.h',
 	'rcp_json.c',
-	'rcp_type_list.c',
+	'rcp_type_number.c',
+	'rcp_type.c',
 	'rcp_tree.c',
+	'rcp_map.c',
 	'rcp_utility.c',
 	'rcp_string.c',
 	'rcp_command.c',
@@ -37,6 +44,8 @@ testFiles = [
 	'test_json.cpp',
 	'test_tree.cpp',
 	'test_main.cpp',
+	'test_map.cpp',
+	'rcp_array.c',
 ]
 
 env.Program(target = 'main', source = mainFiles)
