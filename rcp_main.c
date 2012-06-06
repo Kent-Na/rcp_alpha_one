@@ -16,6 +16,7 @@ void rcp_main();
 
 int main (int argc, const char** argv)
 {
+	SSL_library_init();
 
 	rcp_context_manager_init();
 	rcp_context_new(0);

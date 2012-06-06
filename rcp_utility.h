@@ -2,7 +2,7 @@
 #ifdef __cplusplus
 #define rcp_extern extern "C"
 #else
-#define rcp_extern
+#define rcp_extern extern
 #endif
 
 #define field_sizeof(t, f) (sizeof(((t*)0)->f))
@@ -10,5 +10,7 @@
 rcp_extern void rcp_info(const char* str);
 rcp_extern void rcp_caution(const char* str);
 rcp_extern void rcp_error(const char* str);
+
+char *rcp_encode_base64(const char *in, size_t len);
 
 typedef int rcp_err;

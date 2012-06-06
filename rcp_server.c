@@ -5,6 +5,7 @@
 #include "rcp_tree.h"
 #include "rcp_epoll.h"
 #include "rcp_connection.h"
+#include "rcp_connection_builder.h"
 #include "rcp_context.h"
 #include "rcp_server.h"
 
@@ -12,7 +13,7 @@ rcp_tree_ref contexts = NULL;
 
 void rcp_context_manager_init()
 {
-	contexts = rcp_tree_new(rcp_uint32_type.compare);
+	contexts = rcp_tree_new(rcp_uint32_type_compare, NULL);
 }
 
 rcp_context_ref rcp_context_get(rcp_context_id_t id)
@@ -40,12 +41,18 @@ rcp_context_ref rcp_context_new(uint32_t id)
 
 
 rcp_epoll_action_ref plain_json = NULL;
+rcp_epoll_action_ref plain_ws_json = NULL;
 void rcp_listen_start(int epfd)
 {
 	if (plain_json)
 		rcp_error("already listening");
 	else
 		plain_json = rcp_listener_plain_json_new(epfd);
+
+	if (plain_ws_json)
+		rcp_error("already listening");
+	else
+		plain_ws_json = rcp_listener_plain_ws_json_new(epfd);
 }
 
 void rcp_listen_end()
@@ -53,5 +60,10 @@ void rcp_listen_end()
 	if (!plain_json)
 		rcp_error("not yet listening");
 	else
-		rcp_listener_plain_json_release(plain_json);
+		rcp_listener_release(plain_json);
+
+	if (!plain_ws_json)
+		rcp_error("not yet listening");
+	else
+		rcp_listener_release(plain_ws_json);
 }

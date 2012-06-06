@@ -17,6 +17,14 @@ con = {
 	'value':'message',
 	'recordID':101}
 c.sendCommand(con)
-con = {'command':'kill'}
+con = {
+	'command':'addRecord',
+	'value':[0,1,2,3,4,5],
+	'recordID':101}
 c.sendCommand(con)
+con = {'command':'kill'}
+#c.sendCommand(con)
+c.receiveCommand()
+c.receiveCommand()
+c.receiveCommand()
 c.receiveCommand()

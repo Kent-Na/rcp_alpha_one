@@ -1,9 +1,9 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
+#include "rcp_defines.h"
 
 #include "rcp_type.h"
-#include "rcp_type_number.h"
-#include "rcp_type_etc.h"
+#include "rcp_type_list.h"
 #include "rcp_string.h"
 #include "rcp_tree.h"
 #include "rcp_map.h"
@@ -61,7 +61,7 @@ rcp_record_ref rcp_json_parse(
 		if (rcp_json_parse_literal(begin, end, "true") != 0){
 			return NULL;
 		}
-		rcp_record_ref rec = rcp_record_new(&rcp_type_bool8);
+		rcp_record_ref rec = rcp_record_new(rcp_bool8_type);
 		uint8_t *data = rcp_record_data(rec);
 		*data = 1;
 		return rec;
@@ -70,13 +70,13 @@ rcp_record_ref rcp_json_parse(
 		if (rcp_json_parse_literal(begin, end, "false") != 0){
 			return NULL;
 		}
-		return rcp_record_new(&rcp_type_bool8);
+		return rcp_record_new(rcp_bool8_type);
 	}
 	else if (ch == 'n'){
 		if (rcp_json_parse_literal(begin, end, "null") != 0){
 			return NULL;
 		}
-		return rcp_record_new(&rcp_type_null);
+		return rcp_record_new(rcp_null_type);
 	}
 	return NULL;
 }
@@ -93,13 +93,16 @@ rcp_record_ref rcp_json_parse_array(const char **begin, const char *end)
 
 	ptr ++;
 
-	rcp_array_ref array = rcp_array_new(&rcp_ref_type);
+	rcp_array_ref array = rcp_array_new(rcp_ref_type);
 	rcp_record_ref rec = NULL;
 
 	while (1){
-		rec = rcp_json_parse(begin, end);
-		if (!rec)
+		rcp_json_skip_space(&ptr, end);
+		rec = rcp_json_parse(&ptr, end);
+		if (!rec){
+			rcp_caution("json:array value");
 			break;
+		}
 
 		rcp_array_append(array, &rec);
 		rcp_record_delete(rec);
@@ -116,6 +119,7 @@ rcp_record_ref rcp_json_parse_array(const char **begin, const char *end)
 
 		if (ch == ']'){
 			//end of array
+			*begin = ptr;
 			return array;
 		}
 		break;
@@ -129,7 +133,6 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 	const char* ptr = *begin;
 	char ch = rcp_json_get_next_char(ptr, end);
 
-	rcp_map_ref map = rcp_map_new(&rcp_string_type, &rcp_ref_type);
 
 	if (ch != '{'){
 		rcp_error("json:not object");
@@ -138,6 +141,7 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 
 	ptr ++;
 
+	rcp_map_ref map = rcp_map_new(rcp_string_type, rcp_ref_type);
 	rcp_record_ref key = NULL;
 	rcp_record_ref value = NULL;
 
@@ -166,9 +170,9 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 		rcp_json_skip_space(&ptr, end);
 
 		rcp_map_node_ref node = rcp_map_node_new(map);
-		rcp_move(&rcp_string_type,
+		rcp_move(rcp_string_type,
 				rcp_record_data(key),rcp_map_node_key(map, node));
-		rcp_move(&rcp_ref_type,
+		rcp_move(rcp_ref_type,
 				&value,rcp_map_node_value(map, node));
 
 		rcp_map_set(map, node);
@@ -200,33 +204,6 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 	rcp_record_delete(map);
 	return NULL;
 }
-/*
-struct rcp_json_string{
-	char *begin;
-	size_t string_length;
-	size_t storage_size; 
-};
-
-void rcp_json_string_init(struct rcp_json_string *str){
-	size_t storage_size = 64;
-	str->begin = malloc(storage_size);
-	str->string_length= 0;
-	str->storage_size = storage_size;
-}
-
-void rcp_json_string_free(struct rcp_json_string *str){
-	free(str->begin);
-}
-inline void rcp_json_string_put(struct rcp_json_string *str, char ch)
-{
-	if (str->string_length == str->storage_size){
-		size_t storage_size = str->storage_size;
-		str->begin = realloc(str->begin, storage_size*2);
-	}
-	str->begin[str->string_length] = ch;
-	str->string_length ++;
-}
-*/
 
 rcp_record_ref rcp_json_parse_string(const char **begin, const char *end)
 {
@@ -408,17 +385,148 @@ rcp_extern rcp_record_ref rcp_json_parse_number(
 
 	if (exponential_part == 0){
 		//int64_t
-		rcp_record_ref rec = rcp_record_new(&rcp_int64_type);
+		rcp_record_ref rec = rcp_record_new(rcp_int64_type);
 		int64_t *dat = rcp_record_data(rec);
 		*dat = significand;
 		return rec;
 	}
 	else{
 		//double
-		rcp_record_ref rec = rcp_record_new(&rcp_double_type);
+		rcp_record_ref rec = rcp_record_new(rcp_double_type);
 		double *dat = rcp_record_data(rec);
 		*dat = ldexp((double)significand, exponential_part);
 		return rec;
 	}
 }
 
+void rcp_json_write(rcp_record_ref rec, rcp_string_ref out)
+{
+	rcp_type_ref type = rcp_record_type(rec);
+	if (type == rcp_string_type)
+		rcp_json_write_string(rec, out);
+	else if (type == rcp_map_type)
+		rcp_json_write_map(rec, out);
+	else if (type == rcp_array_type)
+		rcp_json_write_array(rec, out);
+	else if (type == rcp_null_type)
+		rcp_string_append_c_str(out,"null");
+	else if (type == rcp_bool8_type){
+		if (*(uint8_t*)rcp_record_data(rec))
+			rcp_string_append_c_str(out,"true");
+		else
+			rcp_string_append_c_str(out,"false");
+	}
+	else if (type == rcp_bool32_type){
+		if (*(uint32_t*)rcp_record_data(rec))
+			rcp_string_append_c_str(out,"true");
+		else
+			rcp_string_append_c_str(out,"false");
+	}
+	else 
+		rcp_string_append_c_str(out,"null");
+}
+
+void rcp_json_write_map(rcp_record_ref rec, rcp_string_ref out)
+{
+#ifdef RCP_SELF_TEST
+	if (rcp_record_type(rec) != rcp_map_type){
+		rcp_error("json:map type");
+		return;
+	}
+	if (rcp_map_key_type(rec) != rcp_string_type){
+		rcp_error("json:map key type");
+		return;
+	}
+	if (rcp_map_value_type(rec) != rcp_ref_type){
+		rcp_error("json:map value type");
+		return;
+	}
+
+#endif
+
+	rcp_map_node_ref node = rcp_map_root(rec);
+	rcp_string_put(out, '{');
+	while (node){
+		rcp_record_ref key = rcp_build_tmp(
+				rcp_string_type ,rcp_map_node_key(rec, node));
+		rcp_json_write_string(key, out);
+		rcp_release_tmp(key);
+
+		rcp_string_put(out, ':');
+
+		rcp_record_ref value = NULL;
+		rcp_copy(rcp_ref_type, rcp_map_node_value(rec, node), &value);
+		rcp_json_write(value, out);
+		rcp_record_release(value);
+		
+		node = rcp_map_node_next(node);
+		if (node)
+			rcp_string_put(out, ',');
+	}
+	rcp_string_put(out, '}');
+}
+
+void rcp_json_write_array(rcp_record_ref rec, rcp_string_ref out)
+{
+#ifdef RCP_SELF_TEST
+	if (rcp_record_type(rec) != rcp_array_type){
+		rcp_error("json:array type");
+		return;
+	}
+	if (rcp_array_data_type(rec) != rcp_ref_type){
+		rcp_error("json:array value type");
+		return;
+	}
+#endif
+
+	rcp_array_iterater_ref itr = rcp_array_begin(rec);
+	rcp_string_put(out, '[');
+	while (itr){
+
+		rcp_record_ref value = NULL;
+		rcp_copy(rcp_ref_type, rcp_array_iterater_data(rec, itr), &value);
+		rcp_json_write(value, out);
+		rcp_record_release(value);
+		
+		itr = rcp_array_iterater_next(rec, itr);
+		if (itr)
+			rcp_string_put(out, ',');
+	}
+	rcp_string_put(out, ']');
+}
+void rcp_json_write_string(rcp_record_ref rec, rcp_string_ref out)
+{
+#ifdef RCP_SELF_TEST
+	if (rcp_record_type(rec) != rcp_string_type){
+		rcp_error("json:type");
+		return;
+	}
+#endif
+	const char* str = rcp_string_c_str(rec);
+
+	rcp_string_put(out, '\"');
+	while (*str){
+		char ch = *str;
+		if (ch == '"')
+			rcp_string_append_c_str(out, "\\\"");
+		else if (ch == '\\')
+			rcp_string_append_c_str(out, "\\\\");
+		else if (ch == '/')
+			rcp_string_append_c_str(out, "\\/");
+		else if (ch == '\b')
+			rcp_string_append_c_str(out, "\\b");
+		else if (ch == '\f')
+			rcp_string_append_c_str(out, "\\f");
+		else if (ch == '\n')
+			rcp_string_append_c_str(out, "\\n");
+		else if (ch == '\r')
+			rcp_string_append_c_str(out, "\\r");
+		else if (ch == '\t')
+			rcp_string_append_c_str(out, "\\t");
+		else{
+			rcp_string_put(out, ch);
+		}
+		str++;
+	}
+	rcp_string_put(out, '\"');
+}

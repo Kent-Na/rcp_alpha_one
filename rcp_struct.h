@@ -1,53 +1,26 @@
+//rcp_structure_type memory_placement
 
-struct rcp_structure_core{
+//rcp_type_core
+//rcp_structure_core
+//rcp_structure_parameter (x parameter count);
+
+#ifdef RCP_INTERNAL_STRUCTURE
+struct rcp_struct_core{
 	rcp_string_ref name;
-	//bool contain ref
-	size_t size;
 	uint16_t parameter_count;
 };
 
-struct rcp_structure_parameter{
-	//rcp_string_ref name;
-	//type;
-	//size_t size;
+struct rcp_struct_parameter{
+	rcp_string_ref name;
 	rcp_type_ref type;
 	size_t offset;
 };
+#endif
 
-typedef void *rcp_structure_ref;
+typedef struct rcp_struct_parameter *rcp_struct_parameter_ref;
+typedef rcp_record_ref rcp_struct_ref;
 
-/*
-rcp_record_ref rcp_record_new(rcp_structure_ref st);
-
-rcp_record_ref rcp_record_clone(rcp_record_ref src_record);
-
-struct rcp_structure_parameter* rcp_parameter_from_str(
-		rcp_structure_ref st, const char* str);
-
-struct pm_task{
-	const char* name;
-	uint8_t progress;
-};
-
-struct {
-	struct rcp_structure_core core;
-	struct rcp_structure_parameter param[2];
-} pm_task_structure = {
-	{
-		"com.tuna-cat.pm.task",
-		2
-	},
-	{
-		{
-			"name",
-			sizeof (rcp_string_ref),
-			offsetof(struct pm_task, name)
-		},
-		{
-			"progress",
-			sizeof (uint8_t),
-			offsetof(struct pm_task, name)
-		}
-	}
-};
-*/
+void rcp_struct_type_init(rcp_type_ref type, rcp_data_ref data);
+void rcp_struct_type_deinit(rcp_type_ref type, rcp_data_ref data);
+void rcp_struct_type_copy(rcp_type_ref type, 
+		rcp_data_ref l, rcp_data_ref r);

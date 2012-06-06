@@ -1,5 +1,17 @@
 
 
+//type table
+//json		<->		rcp
+
+//object	<->		map(string, ref) 
+//array		<->		array(ref)
+//string	<->		string
+//number	<->		double or int64
+//bool		<->		bool8
+//null		<->		null
+
+//map		<--		struct
+
 rcp_extern rcp_record_ref rcp_json_parse(
 		const char **begin, const char *end);
 
@@ -20,3 +32,7 @@ rcp_extern rcp_record_ref rcp_json_parse_number(
 //rcp_extern int rcp_json_parse_number(const char** begin, const char* end,
 //		struct rcp_json_number *result);
 
+rcp_extern void rcp_json_write(rcp_record_ref rec, rcp_string_ref out);
+rcp_extern void rcp_json_write_map(rcp_record_ref rec, rcp_string_ref out);
+rcp_extern void rcp_json_write_string(
+		rcp_record_ref rec, rcp_string_ref out);

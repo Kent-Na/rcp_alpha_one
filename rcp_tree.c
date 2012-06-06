@@ -33,20 +33,20 @@ rcp_extern void *rcp_tree_node_data(rcp_tree_node_ref node)
 
 rcp_tree_node_ref rcp_tree_node_next(rcp_tree_node_ref node)
 {
-	if (node->l)
-		return node->l;
 
-	rcp_tree_node_ref t = node;
-	while(1){
-		while (t->p && t->p->r == t){
-			t = t->p;
-		}
-		if ( ! t->p)
-			return NULL;
-		if (t->p->r)
-			return t->p->r;
-		t = t->p;
+	if (node->r){
+		node = node->r;
+		while (node->l)
+			node = node->l;
+		return node;
 	}
+	else {
+		while (node->p && node->p->l != node)
+			node = node->p;
+		return node->p;
+	}
+
+	return NULL;
 }
 
 void rcp_tree_node_replace(rcp_tree_node_ref src, rcp_tree_node_ref dst){
@@ -66,15 +66,18 @@ void rcp_tree_node_replace(rcp_tree_node_ref src, rcp_tree_node_ref dst){
 }
 
 rcp_extern void rcp_tree_init(
-		rcp_tree_ref tree, int(*compare)(void*,void*))
+		rcp_tree_ref tree, 
+		int(*const compare)(void const*,void*,void*), void* extra_data)
 {
 	tree->root = NULL;
 	tree->compare = compare;
+	tree->extra_data = extra_data;
 }
-rcp_extern rcp_tree_ref rcp_tree_new(int(*compare)(void*,void*))
+rcp_extern rcp_tree_ref rcp_tree_new(
+		int(*compare)(const void*,void*,void*),void *extra_data)
 {
 	rcp_tree_ref tree = malloc(sizeof *tree);
-	rcp_tree_init(tree, compare);
+	rcp_tree_init(tree, compare, extra_data);
 	return tree;
 }
 
@@ -86,20 +89,24 @@ void rcp_tree_delete_node(rcp_tree_node_ref node){
 	rcp_tree_node_delete(node);
 }
 
-rcp_extern void rcp_tree_delete(rcp_tree_ref tree)
-{
-	rcp_tree_free(tree);
-	free(tree);
-}
-
-rcp_extern void rcp_tree_free(rcp_tree_ref tree)
+rcp_extern void rcp_tree_deinit(rcp_tree_ref tree)
 {
 	if (tree->root)
 		rcp_tree_delete_node(tree->root);
 }
 
-rcp_extern rcp_tree_node_ref rcp_tree_root(rcp_tree_ref tree)
+rcp_extern void rcp_tree_delete(rcp_tree_ref tree)
 {
+	rcp_tree_deinit(tree);
+	free(tree);
+}
+
+rcp_extern rcp_tree_node_ref rcp_tree_begin(rcp_tree_ref tree)
+{
+	rcp_tree_node_ref node = tree->root;
+	while (node && node->l)
+		node = node->l;
+	return node;
 	return tree->root;
 }
 
@@ -111,7 +118,8 @@ rcp_extern rcp_tree_node_ref rcp_tree_find(rcp_tree_ref tree, void *key)
 	while (1){
 		if (cur == NULL)
 			return NULL;
-		int cmp = tree->compare(key, rcp_tree_node_data(cur));
+		int cmp = tree->compare(tree->extra_data,
+				key, rcp_tree_node_data(cur));
 		if (cmp < 0){
 			cur = cur->l;
 		}
@@ -133,18 +141,19 @@ rcp_extern void rcp_tree_node_verify(rcp_tree_ref tree,
 		if (node->r && node->r->color == RCP_TREE_RED)
 			rcp_error("tree:red have red r");
 	}
+	void *ex = tree->extra_data;
 	void *dat = rcp_tree_node_data(node);
 	//	
 	void *ldat;
 	if (node->l)
 		ldat = rcp_tree_node_data(node->l);
-	if (node->l && ! (tree->compare(ldat,dat)<0))
+	if (node->l && ! (tree->compare(ex,ldat,dat)<0))
 		rcp_error("tree:comp l");
 
 	void *rdat;
 	if (node->r)
 		rdat = rcp_tree_node_data(node->r);
-	if (node->r && ! (tree->compare(dat,rdat)<0))
+	if (node->r && ! (tree->compare(ex,dat,rdat)<0))
 		rcp_error("tree:comp r");
 	//
 	if (node->l)
@@ -221,7 +230,8 @@ rcp_extern rcp_tree_node_ref rcp_tree_put(
 	void *key = rcp_tree_node_data(node);
 	while (1){
 		void *data = cur + 1;
-		int cmp = tree->compare(key, rcp_tree_node_data(cur));
+		int cmp = tree->compare(tree->extra_data,
+				key, rcp_tree_node_data(cur));
 		if (cmp < 0){
 			if (cur->l == NULL){
 				cur->l = new; 

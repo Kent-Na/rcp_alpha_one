@@ -6,10 +6,6 @@ void rcp_epoll_run(int epfd)
 	int err;
 	int i;
 
-	//epoll fd
-	//int epfd = epoll_create(16);
-
-	//main loop
 	while (1){
 		int maxEventsCount = 16;
 		struct epoll_event events[maxEventsCount];

@@ -4,10 +4,12 @@ struct con_plain{
 	struct rcp_epoll_action *unit;
 };
 
-void con_plain_init(void *state);
-void con_plain_release(void *state);
-ssize_t con_plain_send(void *state, void *data, size_t len);
-ssize_t con_plain_receive(void *state, void *data, size_t len);
+void con_plain_init(rcp_connection_ref con);
+void con_plain_release(rcp_connection_ref con);
+size_t con_plain_send(
+		rcp_connection_ref con, const void *data, size_t len);
+size_t con_plain_receive(
+		rcp_connection_ref con, const void *data, size_t len);
 
 #define CON_PLAIN_CLASS_PART \
 {\

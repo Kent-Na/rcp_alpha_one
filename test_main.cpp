@@ -11,8 +11,11 @@
 int test_json(void);
 int test_tree(void);
 int test_map(void);
+int test_array(void);
 
 int main (int argc, const char** argv){
+	SSL_library_init();
+
 	//rcp_command
 	{
 		if (rcp_command_from_str(RCP_COMMAND_STR_CAUTION) == 
@@ -25,4 +28,5 @@ int main (int argc, const char** argv){
 	test_json();
 	test_tree();
 	test_map();
+	test_array();
 }

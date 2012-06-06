@@ -11,30 +11,38 @@ typedef int rcp_err;
 
 typedef void *rcp_connection_ref;
 
+struct rcp_connection_core{
+	struct rcp_connection_class *klass;
+	uint32_t loginID;
+	uint32_t userID;
+};
+
 struct rcp_connection_layer1_class_part{
-	void (*init)(void *state);
-	void (*release)(void* state);
-	ssize_t (*send)(void* state, void *data, size_t len);
-	ssize_t (*receive)(void* state, void *data, size_t len);
+	void (*init)(
+			rcp_connection_ref con);
+	void (*release)(
+			rcp_connection_ref con);
+	ssize_t (*send)(
+			rcp_connection_ref con, const void *data, size_t len);
+	ssize_t (*receive)(
+			rcp_connection_ref con, const void *data, size_t len);
 };
 
 //layer 2 (command separation)
 //raw or web socket or null terminated
 
 struct rcp_connection_layer2_class_part{
-	void (*init)(void *state);
-	void (*release)(void* state);
+	void (*init)(rcp_connection_ref con);
+	void (*release)(rcp_connection_ref con);
+
 	//sending
-	void* (*generate_header)(void *state, size_t len);	
-	size_t (*last_header_size)(const void *state);
-	void* (*generate_footer)(void *state);	
-	size_t (*last_footer_size)(const void *state);
+	void (*send)(rcp_connection_ref con, void *data, size_t len);
+
 	//receiving
-	size_t (*space_len)(const void *state);
-	void* (*space_ptr)(const void *state);
-	void (*data_added)(void *state, size_t len);
-	rcp_err (*next_command)(void *state, void **cmd_begin, void **cmd_end);
-	void (*clean_space)(void *state);
+	void (*on_receive)(rcp_connection_ref con);
+	rcp_err (*next_command)(
+			rcp_connection_ref con, void **cmd_begin, void **cmd_end);
+	void (*clean_space)(rcp_connection_ref con);
 };
 
 //layer 3 ()
@@ -71,11 +79,9 @@ void rcp_connection_send(rcp_connection_ref con, void *data, size_t len);
 rcp_extern
 void rcp_connection_on_receive(rcp_connection_ref con);
 
-//epoll
-void rcp_connection_epoll_action(int epfd, struct epoll_event *ev,
-		epoll_data_t data);
-rcp_connection_ref rcp_connection_plain_json_new(int epfd, int fd);
-rcp_epoll_action_ref rcp_listener_plain_json_new(int epfd);
-void rcp_listener_plain_json_release(rcp_epoll_action_ref unit);
-void rcp_listener_plain_json_epoll_event(
-		int epfd, struct epoll_event *ev, epoll_data_t userdata);
+struct rcp_connection_class *rcp_connection_class(rcp_connection_ref con);
+
+void *rcp_connection_l1(rcp_connection_ref con);
+void *rcp_connection_l2(rcp_connection_ref con);
+void *rcp_connection_l3(rcp_connection_ref con);
+

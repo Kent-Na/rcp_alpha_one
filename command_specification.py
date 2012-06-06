@@ -176,6 +176,38 @@ commandList.append({
 	})
 
 #Record
+command = {
+	"name":"setValue",
+	"shortDescription":"set value to specified variable",
+	"longDescription":"",
+	}
+
+addParameter(command, "ref", "path")
+addParameter(command, "ref", "value")
+addParameter(command, "string", "type")
+commandList.append(command)
+
+
+command = {
+	"name":"unsetValue",
+	"shortDescription":"delete value from container like an array or a map",
+	"longDescription":"",
+#"parameters":["recordID","struct","values"],
+	}
+addParameter(command, "ref", "path")
+commandList.append(command)
+
+command = {
+	"name":"appendValue",
+	"shortDescription":"add value into container like an array or a map",
+	"longDescription":"",
+	}
+
+addParameter(command, "ref", "path")
+addParameter(command, "ref", "value")
+addParameter(command, "string", "type")
+commandList.append(command)
+
 commandList.append({
 	"name":"addRecord",
 	"shortDescription":"",
@@ -183,9 +215,9 @@ commandList.append({
 #"parameters":["recordID","struct","values"],
 	})
 
-addParameter(command, "uint32_t", "recordID")
-addParameter(command, "any", "value")
-addParameter(command, "uint32_t", "recordID")
+#addParameter(command, "uint32_t", "recordID")
+#addParameter(command, "any", "value")
+#addParameter(command, "uint32_t", "recordID")
 
 commandList.append({
 	"name":"updateRecord",
@@ -230,14 +262,15 @@ commandList.append({
 	})
 
 #Error
-commandList.append({
+command = {
 	"name":"error",
 	"shortDescription":"Send from server when fail to execute command.",
 	"longDescription":"",
-	})
+	}
 
 addParameter(command, "const char*", "cause")
 addParameter(command, "const char*", "reason")
+commandList.append(command)
 
 commandList.append({
 	"name":"caution",

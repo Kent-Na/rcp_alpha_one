@@ -1,7 +1,11 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
 #include "rcp_utility.h"
+
+#define RCP_INTERNAL_STRUCTURE
+
 #include "rcp_type.h"
+#include "rcp_type_list.h"
 #include "rcp_array.h"
 
 struct rcp_array_core{
@@ -12,7 +16,7 @@ struct rcp_array_core{
 };
 
 
-void rcp_type_array_init(void *data){
+void rcp_array_type_init(rcp_type_ref type, void *data){
 	rcp_array_core_ref core = data;
 	core->data = NULL;
 	core->size = 0;
@@ -20,12 +24,13 @@ void rcp_type_array_init(void *data){
 	core->type = NULL;
 }
 
-void rcp_type_array_free(void *data){
+void rcp_array_type_deinit(rcp_type_ref type, void *data){
 	int i;
 	rcp_array_core_ref core = data;
-	if (core->type->free){
+	if (core->type->deinit){
 		for (i = 0; i< core->count; i++){
-			core->type->free(core->data + core->type->size * i);
+			core->type->deinit(
+					core->type,core->data + core->type->size * i);
 		}
 	}
 
@@ -36,24 +41,32 @@ void rcp_type_array_free(void *data){
 	core->type = NULL;
 }
 
-rcp_extern struct rcp_type_core rcp_type_array = {
+struct rcp_type_core rcp_array_type_def = {
 	sizeof (struct rcp_array_core),//size
-	rcp_type_array_init,//init
-	rcp_type_array_free,//free
+	RCP_TYPE_ARRAY,
+	"array",
+	rcp_array_type_init,//init
+	rcp_array_type_deinit,//free
 	NULL,//copy
 	NULL,//comp
 };
 
 rcp_extern rcp_array_ref rcp_array_new(rcp_type_ref type)
 {
-	rcp_array_ref array = rcp_record_new(&rcp_type_array);
+	rcp_array_ref array = rcp_record_new(rcp_array_type);
 	rcp_array_core_ref core = rcp_record_data(array);
 	core->type = type;
+	return array;
 }
 
 rcp_extern size_t rcp_array_count(rcp_array_ref array){
 	rcp_array_core_ref core = rcp_record_data(array);
 	return core->count;
+}
+rcp_extern rcp_type_ref rcp_array_data_type(rcp_array_ref array)
+{
+	rcp_array_core_ref core = rcp_record_data(array);
+	return core->type;
 }
 rcp_extern void* rcp_array_data(rcp_array_ref array, size_t index){
 	rcp_array_core_ref core = rcp_record_data(array);
@@ -67,7 +80,7 @@ rcp_extern void* rcp_array_data(rcp_array_ref array, size_t index){
 		return NULL;
 	}
 	if (!core->type){
-		rcp_error("array:type");
+		rcp_error("array:no type");
 		return NULL;
 	}
 #endif
@@ -75,18 +88,43 @@ rcp_extern void* rcp_array_data(rcp_array_ref array, size_t index){
 }
 rcp_extern void rcp_array_append(rcp_array_ref array, void *data)
 {
-
 	rcp_array_core_ref core = rcp_record_data(array);
 #ifdef RCP_SELF_TEST
-	if (core->count > core->size){
-		rcp_error("array:size");
-		return;
+	if (!core->type){
+		rcp_error("array:no type");
+		return NULL;
 	}
 #endif
 	if (core->count==core->size){
-		core->data = realloc(core->data, core->type->size * core->size *2);
-		core->size *= 2;
+		size_t storage_size = core->size * 2;
+		if (!storage_size)
+			storage_size = 16;
+		core->data = realloc(core->data, core->type->size * storage_size);
+		core->size = storage_size;
 	}
-	core->type->copy(data, core->data + core->type->size * core->count);
+	core->type->copy(
+			core->type, data, core->data + core->type->size * core->count);
 	core->count ++;
+}
+
+rcp_extern rcp_array_iterater_ref rcp_array_begin(rcp_array_ref array)
+{
+	rcp_array_core_ref core = rcp_record_data(array);
+	if (core->count)
+		return core->data;
+	return NULL;
+}
+rcp_extern rcp_array_iterater_ref rcp_array_iterater_next(
+		rcp_array_ref array, rcp_array_iterater_ref itr)
+{
+	rcp_array_core_ref core = rcp_record_data(array);
+	void* ret = itr + core->type->size;
+	if (ret < core->data + core->type->size * core->count)
+		return ret;
+	return NULL;
+}
+rcp_extern rcp_data_ref rcp_array_iterater_data(
+		rcp_array_ref array, rcp_array_iterater_ref itr)
+{
+	return itr;
 }

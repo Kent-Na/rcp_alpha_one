@@ -1,10 +1,11 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 #include "rcp_defines.h"
-#include "rcp_type.h"
 
 #define RCP_INTERNAL_STRUCTURE
 
+#include "rcp_type.h"
+#include "rcp_type_list.h"
 #include "rcp_tree.h"
 #include "rcp_map.h"
 
@@ -15,16 +16,24 @@ struct rcp_map_core{
 	struct rcp_tree t_core;
 };
 
-void rcp_type_map_free(void *val)
+void rcp_map_type_init(rcp_type_ref type, rcp_data_ref data)
 {
-	rcp_map_core_ref core= val;
-	rcp_tree_free(&(core->t_core));
+	rcp_map_core_ref core= data;
+	core->t_core.root = NULL;
 }
 
-struct rcp_type_core rcp_type_map = {
+void rcp_map_type_deinit(rcp_type_ref type, rcp_data_ref data)
+{
+	rcp_map_core_ref core= data;
+	rcp_tree_deinit(&(core->t_core));
+}
+
+struct rcp_type_core rcp_map_type_def = {
 	sizeof(struct rcp_map_core),
-	NULL,//init
-	rcp_type_map_free,//free
+	RCP_TYPE_MAP,
+	"map",
+	rcp_map_type_init,//init
+	rcp_map_type_deinit,//free
 	NULL,//copy
 	NULL,//comp
 };
@@ -36,7 +45,7 @@ void rcp_map_init(rcp_map_core_ref core,
 rcp_record_ref rcp_map_new(
 		rcp_type_ref key_type, rcp_type_ref value_type)
 {
-	rcp_record_ref rec = rcp_record_new(&rcp_type_map);
+	rcp_record_ref rec = rcp_record_new(rcp_map_type);
 	rcp_map_core_ref core = rcp_record_data(rec);
 	rcp_map_init(core, key_type, value_type);
 	return rec;
@@ -55,7 +64,7 @@ void rcp_map_init(rcp_map_core_ref core,
 	core->key_type = key_type;
 	core->value_type = value_type;
 	if (key_type)
-		rcp_tree_init(&(core->t_core), key_type->compare);
+		rcp_tree_init(&(core->t_core), key_type->compare, key_type);
 	else
 		rcp_error("key of map must be string or int");
 }
@@ -75,9 +84,14 @@ void rcp_map_set(rcp_map_ref map, rcp_map_node_ref node)
 rcp_extern rcp_map_node_ref rcp_map_root(rcp_map_ref map)
 {
 	rcp_map_core_ref core = rcp_record_data(map);
-	rcp_tree_root(&(core->t_core));
+	rcp_tree_begin(&(core->t_core));
 }
 
+rcp_extern rcp_map_node_ref rcp_map_begin(rcp_map_ref map)
+{
+	rcp_map_core_ref core = rcp_record_data(map);
+	rcp_tree_begin(&(core->t_core));
+}
 rcp_extern rcp_type_ref rcp_map_key_type(rcp_map_ref map)
 {
 	rcp_map_core_ref core = rcp_record_data(map);
@@ -115,18 +129,18 @@ rcp_map_node_ref rcp_map_node_new(rcp_map_ref map)
 	rcp_map_node_ref node = rcp_tree_node_new(s);
 	
 	if (key_type->init)
-		key_type->init(rcp_map_node_key(map, node));
+		key_type->init(key_type, rcp_map_node_key(map, node));
 	if (value_type->init)
-		value_type->init(rcp_map_node_value(map, node));
+		value_type->init(value_type, rcp_map_node_value(map, node));
 
 	return node;
 }
 
-void *rcp_map_node_key(
+rcp_data_ref rcp_map_node_key(
 		rcp_map_ref map, rcp_map_node_ref node){
 	return rcp_tree_node_data(node);
 }
-void *rcp_map_node_value(
+rcp_data_ref rcp_map_node_value(
 		rcp_map_ref map, rcp_map_node_ref node){
 	rcp_type_ref key_type = rcp_map_key_type(map);
 	return rcp_map_node_key(map, node) + key_type->size;
