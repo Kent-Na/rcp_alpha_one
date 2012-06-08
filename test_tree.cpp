@@ -1,7 +1,7 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 #include "rcp_type.h"
-#include "rcp_type_number.h"
+#include "rcp_number.h"
 #include "rcp_tree.h"
 
 #include <random>

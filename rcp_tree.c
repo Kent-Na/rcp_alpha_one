@@ -229,7 +229,6 @@ rcp_extern rcp_tree_node_ref rcp_tree_put(
 	//add to tree
 	void *key = rcp_tree_node_data(node);
 	while (1){
-		void *data = cur + 1;
 		int cmp = tree->compare(tree->extra_data,
 				key, rcp_tree_node_data(cur));
 		if (cmp < 0){

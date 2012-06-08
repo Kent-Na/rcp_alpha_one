@@ -32,7 +32,9 @@ rcp_extern rcp_record_ref rcp_json_parse_number(
 //rcp_extern int rcp_json_parse_number(const char** begin, const char* end,
 //		struct rcp_json_number *result);
 
-rcp_extern void rcp_json_write(rcp_record_ref rec, rcp_string_ref out);
-rcp_extern void rcp_json_write_map(rcp_record_ref rec, rcp_string_ref out);
-rcp_extern void rcp_json_write_string(
+rcp_extern void rcp_json_write_record(
 		rcp_record_ref rec, rcp_string_ref out);
+rcp_extern void rcp_json_write_map(rcp_map_ref rec, rcp_string_ref out);
+rcp_extern void rcp_json_write_array(rcp_array_ref rec, rcp_string_ref out);
+rcp_extern void rcp_json_write_string(
+		rcp_string_ref rec, rcp_string_ref out);

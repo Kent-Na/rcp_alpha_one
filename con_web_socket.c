@@ -39,7 +39,8 @@ const char *ws_header_3 = "Sec-WebSocket-Accept: ";
 int con_web_socket_http_on_receive(rcp_connection_ref con);
 void con_web_socket_frame_on_receive(rcp_connection_ref con);
 void con_web_socket_perse_http_field(
-		rcp_connection_ref con, unsigned char *line);
+		rcp_connection_ref con, char *line);
+int con_web_socket_http_next_field(rcp_connection_ref con);
 void con_web_socket_send_http_header(
 		rcp_connection_ref con);
 
@@ -72,7 +73,6 @@ void con_web_socket_on_receive(rcp_connection_ref con)
 
 int con_web_socket_http_next_field(rcp_connection_ref con)
 {
-	struct rcp_connection_class *klass = rcp_connection_class(con);
 	struct con_web_socket *st = rcp_connection_l2(con);
 
 	unsigned char *d_begin = con_buffer_data(&st->buffer); 
@@ -85,7 +85,7 @@ int con_web_socket_http_next_field(rcp_connection_ref con)
 			break;
 
 	if (d < d_end-1){
-		unsigned char* field = malloc(d-d_begin);
+		char* field = malloc(d-d_begin);
 		memcpy(field, d_begin, d-d_begin);
 		field[d-d_begin] = '\0';
 		if (d_begin != d)
@@ -103,9 +103,8 @@ int con_web_socket_http_next_field(rcp_connection_ref con)
 }
 
 void con_web_socket_perse_http_field(
-		rcp_connection_ref con, unsigned char *line)
+		rcp_connection_ref con, char *line)
 {
-	struct rcp_connection_class *klass = rcp_connection_class(con);
 	struct con_web_socket *st = rcp_connection_l2(con);
 
 	//reprace first ';' to '\0'	
@@ -146,7 +145,7 @@ void con_web_socket_send_http_header(
 	struct rcp_connection_class *klass = rcp_connection_class(con);
 	struct con_web_socket *st = rcp_connection_l2(con);
 
-	unsigned char* crnl = "\r\n";
+	char* crnl = "\r\n";
 	klass->l1.send(con, ws_header_0, strlen(ws_header_0));
 	klass->l1.send(con, crnl, 2);
 	klass->l1.send(con, ws_header_1, strlen(ws_header_1));
@@ -156,12 +155,12 @@ void con_web_socket_send_http_header(
 	klass->l1.send(con, ws_header_3, strlen(ws_header_3));
 	{
 		const char *uuid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-		char buffer[24+36];
+		unsigned char buffer[24+36];
 		memcpy(buffer, st->ws_key, 24);
 		memcpy(buffer+24, uuid, 36);
-		unsigned char hash[20];
-		SHA1(buffer, 24+36, hash);
-		unsigned char *key = rcp_encode_base64(hash, 20);
+		char hash[20];
+		SHA1(buffer, 24+36, (unsigned char*)hash);
+		char *key = rcp_encode_base64(hash, 20);
 		klass->l1.send(con, key, strlen(key));
 		free(key);
 	}
@@ -173,7 +172,6 @@ void con_web_socket_send(
 		rcp_connection_ref con, void *data, size_t len)
 {
 	struct rcp_connection_class *klass = rcp_connection_class(con);
-	struct con_web_socket *st = rcp_connection_l2(con);
 
 	uint8_t ws_header1 = CON_WEB_SOCKET_FIN | CON_WEB_SOCKET_FRAME_TEXT;
 	klass->l1.send(con, &ws_header1, sizeof ws_header1);
@@ -206,7 +204,6 @@ void con_web_socket_send(
 rcp_err con_web_socket_next_command(
 		rcp_connection_ref con, void **command_begin, void **command_end)
 {
-	struct rcp_connection_class *klass = rcp_connection_class(con);
 	struct con_web_socket *st = rcp_connection_l2(con);
 
 	if (st->http_state == http_header_receiving){

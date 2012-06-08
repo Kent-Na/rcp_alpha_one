@@ -5,22 +5,35 @@
 //rcp_structure_parameter (x parameter count);
 
 #ifdef RCP_INTERNAL_STRUCTURE
-struct rcp_struct_core{
+struct rcp_type_struct_ext{
 	rcp_string_ref name;
-	uint16_t parameter_count;
+	uint16_t param_count;
 };
 
-struct rcp_struct_parameter{
+struct rcp_struct_param_core{
 	rcp_string_ref name;
 	rcp_type_ref type;
 	size_t offset;
 };
+typedef struct rcp_struct_param_core *rcp_struct_param_ref;
+#else
+typedef struct rcp_struct_param_opaque *rcp_struct_param_ref;
 #endif
 
-typedef struct rcp_struct_parameter *rcp_struct_parameter_ref;
-typedef rcp_record_ref rcp_struct_ref;
+typedef rcp_type_ref rcp_struct_type_ref;
+typedef rcp_data_ref rcp_struct_ref;
 
-void rcp_struct_type_init(rcp_type_ref type, rcp_data_ref data);
-void rcp_struct_type_deinit(rcp_type_ref type, rcp_data_ref data);
-void rcp_struct_type_copy(rcp_type_ref type, 
+rcp_extern void rcp_struct_init(rcp_type_ref type, rcp_data_ref data);
+rcp_extern void rcp_struct_deinit(rcp_type_ref type, rcp_data_ref data);
+rcp_extern void rcp_struct_copy(rcp_type_ref type, 
 		rcp_data_ref l, rcp_data_ref r);
+
+rcp_extern rcp_struct_type_ref rcp_struct_type_new(uint16_t param_count);
+
+rcp_data_ref rcp_struct_data(rcp_struct_ref st, rcp_struct_param_ref param);
+
+rcp_struct_param_ref rcp_struct_type_begin(rcp_struct_type_ref type);
+rcp_string_ref rcp_struct_param_name(rcp_struct_param_ref param);
+rcp_type_ref rcp_struct_param_type(rcp_struct_param_ref param);
+rcp_struct_param_ref rcp_struct_param_next(
+		rcp_struct_type_ref type, rcp_struct_param_ref param);

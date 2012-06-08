@@ -28,6 +28,8 @@ void con_plain_set_fd(int epfd, int fd, rcp_connection_ref con)
 	ev.events = EPOLLIN|EPOLLPRI|EPOLLRDHUP|EPOLLERR|EPOLLHUP;
 	ev.data.ptr = st->unit;
 	int err = epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
+	if (err)
+		rcp_error("epoll ctl");
 }
 
 void con_plain_release(rcp_connection_ref con)
@@ -67,7 +69,7 @@ size_t con_plain_receive(
 		rcp_error("No connection");
 
 	ssize_t r_len;
-	r_len = read(fd, data, len);
+	r_len = read(fd, (void*)data, len);
 
 	if (r_len <= 0){
 		rcp_info("Connection closed");

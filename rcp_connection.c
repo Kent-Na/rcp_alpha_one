@@ -17,12 +17,11 @@ struct rcp_connection_class *rcp_connection_class(rcp_connection_ref con)
 {
 	struct rcp_connection_core *core = (void*)con;
 	struct rcp_connection_class *klass = core->klass;
+	return klass;
 }
 
 void *rcp_connection_l1(rcp_connection_ref con)
 {
-	struct rcp_connection_core *core = (void*)con;
-	struct rcp_connection_class *klass = core->klass;
 	size_t l1_data_offset = sizeof (struct rcp_connection_core);
 	return con + l1_data_offset;
 }
@@ -53,9 +52,6 @@ rcp_connection_ref rcp_connection_new(struct rcp_connection_class* klass)
 	rcp_connection_ref con = malloc(total_size);
 
 	struct rcp_connection_core *core = (void*)con;
-	void *l1_state = con + l1_data_offset;
-	void *l2_state = con + l2_data_offset;
-	void *l3_state = con + l3_data_offset;
 
 	rcp_connection_core_init(core, klass);
 	if (klass ->l1.init)
@@ -72,15 +68,6 @@ void rcp_connection_free(rcp_connection_ref con)
 {
 	struct rcp_connection_core *core = (void*)con;
 	struct rcp_connection_class *klass = core->klass;
-
-	size_t l1_data_offset = sizeof (struct rcp_connection_core);
-	size_t l2_data_offset = l1_data_offset + klass->layer1_data_size;
-	size_t l3_data_offset = l2_data_offset + klass->layer2_data_size;
-	size_t total_size = l2_data_offset + klass->layer3_data_size;
-
-	void *l1_state = con + l1_data_offset;
-	void *l2_state = con + l2_data_offset;
-	void *l3_state = con + l3_data_offset;
 
 	if (klass ->l1.release)
 		klass->l1.release(con);

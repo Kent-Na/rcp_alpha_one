@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <math.h>
 
+#include <unistd.h>
 #include <errno.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>

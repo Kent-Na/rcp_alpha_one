@@ -4,53 +4,53 @@
 #define RCP_INTERNAL_STRUCTURE
 #include "rcp_type.h"
 
-rcp_extern const struct rcp_type_core rcp_null_type_def;
+extern const struct rcp_type_core rcp_null_type_def;
 const rcp_type_ref rcp_null_type = &rcp_null_type_def;
 
-rcp_extern const struct rcp_type_core rcp_ref_type_def;
+extern const struct rcp_type_core rcp_ref_type_def;
 const rcp_type_ref rcp_ref_type = &rcp_ref_type_def;
 
-rcp_extern const struct rcp_type_core rcp_map_type_def;
+extern const struct rcp_type_core rcp_map_type_def;
 const rcp_type_ref rcp_map_type = &rcp_map_type_def;
 
-rcp_extern const struct rcp_type_core rcp_array_type_def;
+extern const struct rcp_type_core rcp_array_type_def;
 const rcp_type_ref rcp_array_type = &rcp_array_type_def;
 
-rcp_extern const struct rcp_type_core rcp_string_type_def;
+extern const struct rcp_type_core rcp_string_type_def;
 const rcp_type_ref rcp_string_type = &rcp_string_type_def;
 
-rcp_extern const struct rcp_type_core rcp_bool8_type_def;
+extern const struct rcp_type_core rcp_bool8_type_def;
 const rcp_type_ref rcp_bool8_type = &rcp_bool8_type_def;
 
-rcp_extern const struct rcp_type_core rcp_bool32_type_def;
+extern const struct rcp_type_core rcp_bool32_type_def;
 const rcp_type_ref rcp_bool32_type = &rcp_bool32_type_def;
 
-rcp_extern const struct rcp_type_core rcp_uint8_type_def;
+extern const struct rcp_type_core rcp_uint8_type_def;
 const rcp_type_ref rcp_uint8_type = &rcp_uint8_type_def;
 
-rcp_extern const struct rcp_type_core rcp_uint16_type_def;
+extern const struct rcp_type_core rcp_uint16_type_def;
 const rcp_type_ref rcp_uint16_type = &rcp_uint16_type_def;
 
-rcp_extern const struct rcp_type_core rcp_uint32_type_def;
+extern const struct rcp_type_core rcp_uint32_type_def;
 const rcp_type_ref rcp_uint32_type = &rcp_uint32_type_def;
 
-rcp_extern const struct rcp_type_core rcp_uint64_type_def;
+extern const struct rcp_type_core rcp_uint64_type_def;
 const rcp_type_ref rcp_uint64_type = &rcp_uint64_type_def;
 
-rcp_extern const struct rcp_type_core rcp_int8_type_def;
+extern const struct rcp_type_core rcp_int8_type_def;
 const rcp_type_ref rcp_int8_type = &rcp_int8_type_def;
 
-rcp_extern const struct rcp_type_core rcp_int16_type_def;
+extern const struct rcp_type_core rcp_int16_type_def;
 const rcp_type_ref rcp_int16_type = &rcp_int16_type_def;
 
-rcp_extern const struct rcp_type_core rcp_int32_type_def;
+extern const struct rcp_type_core rcp_int32_type_def;
 const rcp_type_ref rcp_int32_type = &rcp_int32_type_def;
 
-rcp_extern const struct rcp_type_core rcp_int64_type_def;
+extern const struct rcp_type_core rcp_int64_type_def;
 const rcp_type_ref rcp_int64_type = &rcp_int64_type_def;
 
-rcp_extern const struct rcp_type_core rcp_float_type_def;
+extern const struct rcp_type_core rcp_float_type_def;
 const rcp_type_ref rcp_float_type = &rcp_float_type_def;
 
-rcp_extern const struct rcp_type_core rcp_double_type_def;
+extern const struct rcp_type_core rcp_double_type_def;
 const rcp_type_ref rcp_double_type = &rcp_double_type_def;

@@ -24,7 +24,6 @@ void con_null_terminate_send(
 		rcp_connection_ref con, void *data, size_t len)
 {
 	struct rcp_connection_class *klass = rcp_connection_class(con);
-	struct con_null_terminate *st = rcp_connection_l2(con);
 
 	unsigned char null_t = '\0';
 

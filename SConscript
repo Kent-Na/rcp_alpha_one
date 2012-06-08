@@ -1,7 +1,7 @@
 env = Environment()
 
-#env.Append(CCFLAGS = ['-O3'])
-env.Append(CCFLAGS = ['-g'])
+env.Append(CCFLAGS = ['-O3'])
+env.Append(CCFLAGS = ['-Wall','-g'])
 env.Append(CXXFLAGS = ['-std=gnu++0x'])
 env.Append(LIBS = ['ssl'])
 
@@ -19,7 +19,7 @@ mainFiles = [
 	'rcp_struct.c',
 	'rcp_context.c',
 	'rcp_type.c',
-	'rcp_type_number.c',
+	'rcp_number.c',
 	'rcp_type_etc.c',
 	'rcp_type_list.c',
 	'rcp_type_utility.c',
@@ -36,10 +36,11 @@ mainFiles = [
 testFiles = [
 	'rcp_pch.h',
 	'rcp_json.c',
-	'rcp_type_number.c',
+	'rcp_number.c',
 	'rcp_type.c',
 	'rcp_type_etc.c',
 	'rcp_type_list.c',
+	'rcp_type_utility.c',
 	'rcp_tree.c',
 	'rcp_map.c',
 	'rcp_utility.c',
@@ -52,6 +53,7 @@ testFiles = [
 	'test_main.cpp',
 	'test_map.cpp',
 	'test_array.cpp',
+	'test_pm.cpp',
 	'rcp_array.c',
 ]
 

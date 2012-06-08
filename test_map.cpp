@@ -17,8 +17,7 @@ int test_map(void){
 
 	{
 		rcp_map_node_ref node = rcp_map_node_new(map);
-		rcp_string_type_init_with_c_str(
-				rcp_string_type,
+		rcp_string_init_with_c_str(
 				rcp_map_node_key(map, node),"val");
 		uint32_t *val = (uint32_t*)rcp_map_node_value(map, node);
 		*val = 3200;
@@ -28,7 +27,8 @@ int test_map(void){
 
 	{
 		rcp_string_ref key = rcp_string_new("test");
-		rcp_map_node_ref node = rcp_map_find(map, rcp_record_data(key));
+		rcp_map_node_ref node = rcp_map_find(map, key);
+		rcp_delete(rcp_string_type, key);
 		if (node)
 			rcp_error("found sometihng strange");
 	}
@@ -37,8 +37,7 @@ int test_map(void){
 		rcp_map_node_ref node = rcp_map_node_new(map);
 		rcp_string_ref *key = (rcp_string_ref*)rcp_map_node_key(map, node);
 		uint32_t *val = (uint32_t*)rcp_map_node_value(map, node);
-		rcp_string_type_init_with_c_str(
-				rcp_string_type,
+		rcp_string_init_with_c_str(
 				rcp_map_node_key(map, node),"test");
 		*val = 100;
 		rcp_map_set(map, node);
@@ -46,7 +45,7 @@ int test_map(void){
 
 	{
 		rcp_string_ref key = rcp_string_new("test");
-		rcp_map_node_ref node = rcp_map_find(map, rcp_record_data(key));
+		rcp_map_node_ref node = rcp_map_find(map, key);
 		uint32_t *val = (uint32_t*)rcp_map_node_value(map, node);
 		if (!val)
 			rcp_error("lost?");

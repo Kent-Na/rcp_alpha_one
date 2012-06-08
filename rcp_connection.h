@@ -22,9 +22,9 @@ struct rcp_connection_layer1_class_part{
 			rcp_connection_ref con);
 	void (*release)(
 			rcp_connection_ref con);
-	ssize_t (*send)(
+	size_t (*send)(
 			rcp_connection_ref con, const void *data, size_t len);
-	ssize_t (*receive)(
+	size_t (*receive)(
 			rcp_connection_ref con, const void *data, size_t len);
 };
 

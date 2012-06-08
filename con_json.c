@@ -10,6 +10,7 @@
 #include "rcp_type.h"
 #include "rcp_type_list.h"
 #include "rcp_map.h"
+#include "rcp_array.h"
 #include "rcp_string.h"
 #include "rcp_struct.h"
 #include "rcp_type_utility.h"
@@ -28,9 +29,10 @@ void con_json_send_string(
 void con_json_send_record(rcp_connection_ref con, rcp_record_ref rec)
 {
 	rcp_string_ref cmd_str = rcp_string_new(NULL);
-	rcp_json_write(rec, cmd_str);
+	rcp_json_write_record(rec, cmd_str);
+	rcp_info(rcp_string_c_str(cmd_str));
 	con_json_send_string(con, cmd_str);
-	rcp_record_release(cmd_str);
+	rcp_delete(rcp_string_type, cmd_str);
 }
 
 void con_json_send_error(

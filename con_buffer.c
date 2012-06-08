@@ -1,4 +1,5 @@
 #include "rcp_pch.h"
+#include "rcp_utility.h"
 #include "rcp_defines.h"
 #include "con_buffer.h"
 
@@ -52,7 +53,7 @@ size_t con_buffer_space_size(struct con_buffer *buffer)
 	return  buffer->back - buffer->end;
 }
 
-void *con_buffer_supplied(struct con_buffer *buffer, size_t len)
+void con_buffer_supplied(struct con_buffer *buffer, size_t len)
 {
 	buffer->end += len;	
 	con_buffer_verify(buffer);
@@ -68,13 +69,13 @@ void *con_buffer_consume(struct con_buffer *buffer, size_t len)
 	con_buffer_verify(buffer);
 	return o;
 }
-void *con_buffer_consumed(struct con_buffer *buffer, size_t len)
+void con_buffer_consumed(struct con_buffer *buffer, size_t len)
 {
 	buffer->begin += len;
 	con_buffer_verify(buffer);
 }
 
-void *con_buffer_consumed_at(struct con_buffer *buffer, void* ptr)
+void con_buffer_consumed_at(struct con_buffer *buffer, void* ptr)
 {
 	buffer->begin = ptr;
 	con_buffer_verify(buffer);

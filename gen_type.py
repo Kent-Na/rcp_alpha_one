@@ -1,5 +1,5 @@
 
-numberCBaseFileName = 'rcp_type_number'
+numberCBaseFileName = 'rcp_number'
 outNumberCFile = open(numberCBaseFileName+'.c','w')
 outNumberCHeader = open(numberCBaseFileName+'.h','w')
 

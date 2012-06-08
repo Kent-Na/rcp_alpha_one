@@ -52,7 +52,6 @@ void rcp_ref_type_deinit(rcp_type_ref type, rcp_data_ref data)
 {
 	rcp_record_ref *rec = data;
 	rcp_record_release(*rec);
-	*rec = NULL;
 }
 
 void rcp_ref_type_copy(

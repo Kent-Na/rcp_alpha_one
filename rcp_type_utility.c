@@ -14,93 +14,112 @@ rcp_extern rcp_record_ref rcp_map_find_c_str(
 #ifdef RCP_SELF_TEST
 	if (rcp_map_key_type(map) != rcp_string_type){
 		rcp_error("map value type");
-		return;
+		return NULL;
 	}
 	if (rcp_map_value_type(map) != rcp_ref_type){
 		rcp_error("map value type");
-		return;
+		return NULL;
 	}
 #endif
 
 	rcp_string_ref str = rcp_string_new(key);
-	rcp_map_node_ref node = rcp_map_find(map, rcp_record_data(str));
-	rcp_record_delete(str);
+	rcp_map_node_ref node = rcp_map_find(map, str);
+	rcp_delete(rcp_string_type, str);
 	if (!node){
-		rcp_error("not found");
+		rcp_caution("not found");
 		return NULL;
 	}
 	rcp_record_ref rec = *(rcp_record_ref*)rcp_map_node_value(map, node);
-	if (type && rcp_record_type(rec) != type)
-		return NULL;
-	return rec;
-}
-/*
-rcp_extern rcp_struct_ref rcp_map_to_struct(
-		rcp_type_ref type, rcp_map_ref map){
-#ifdef RCP_SELF_TEST
-	if (rcp_map_key_type(map) != rcp_string_type){
-		rcp_error("map value type");
+	if (type && rcp_record_type(rec) != type){
+		rcp_caution("not this type");
 		return NULL;
 	}
-	if (rcp_map_value_type(map) != rcp_ref_type){
+	return rec;
+}
+
+rcp_extern void rcp_map_to_struct(rcp_map_ref in,
+		rcp_type_ref out_type, rcp_struct_ref out)
+{
+#ifdef RCP_SELF_TEST
+	if (rcp_map_key_type(in) != rcp_string_type){
 		rcp_error("map value type");
-		return NULL;
+		return;
+	}
+	if (rcp_map_value_type(in) != rcp_ref_type){
+		rcp_error("map value type");
+		return;
 	}
 #endif
 
-	rcp_map_node_ref node = rcp_map_begin(map);
-	rcp_struct_parameter_ref param;
-	rcp_struct_parameter_ref end_param;
+	rcp_map_node_ref node = rcp_map_begin(in);
+	rcp_struct_param_ref param = rcp_struct_type_begin(out_type);
 	while (1){
 		int comp = rcp_compair(rcp_string_type, 
-				rcp_map_node_key(map, node), 
-				rcp_struct_parameter_name(param));
+				rcp_map_node_key(in, node), 
+				rcp_struct_param_name(param));
 
 		if (comp < 0){
 			node = rcp_map_node_next(node);
-			if (node)
-				continue;
-			break;
+			if (!node)
+				break;
 		}
 		else if (comp > 0){
-			param = rcp_struct_parameter_next(param);
-			if (param != end_param)
-				continue;
-			break;
+			param = rcp_struct_param_next(out_type, param);
+			if (!param)
+				break;
 		}
 		else{
 			rcp_record_ref node_data = 
-				(rcp_record_ref)rcp_map_node_value(map, node);
-			rcp_type_ref type = rcp_record_type(node_data);
-			if (type  == rcp_struct_parameter_type(param)){
+				*(rcp_record_ref*)rcp_map_node_value(in, node);
+			rcp_type_ref rec_type = rcp_record_type(node_data);
+			rcp_type_ref param_type = rcp_struct_param_type(param);
+			if (param_type == rcp_ref_type){
+				rcp_data_ref dst = rcp_struct_data(out, param);
+				rcp_copy(rcp_ref_type, (rcp_data_ref)&node_data, dst);
+			}
+			else if (rec_type == param_type){
 				rcp_data_ref src = rcp_record_data(node_data);
-				rcp_data_ref dst = rcp_struct_data(param);
-				rcp_move(type, src, dst);
+				rcp_data_ref dst = rcp_struct_data(out, param);
+				rcp_copy(param_type, src, dst);
+			}
+			else{
+				rcp_caution("type missmatch");
 			}
 			node = rcp_map_node_next(node);
-			param = rcp_struct_parameter_next(param);
-			if (node && param != end_param)
-				continue;
-			break;
+			param = rcp_struct_param_next(out_type, param);
+			if (!node || !param)
+				break;
 		}
 	}
 }
 
-rcp_extern rcp_struct_ref rcp_struct_to_map(rcp_struct_ref st)
+void rcp_struct_to_map(rcp_type_ref in_type, 
+		rcp_struct_ref in, rcp_map_ref out)
 {
-	rcp_type_ref s_type = rcp_record_type(st);
-	rcp_map_ref map = rcp_map_new(rcp_string_type, rcp_ref_type);
-
-	rcp_struct_parameter_ref param;
+	rcp_struct_param_ref param = rcp_struct_type_begin(in_type);
 	while (param){
-		rcp_map_node_ref node = rcp_map_node_new(map);
-		rcp_data_ref p_name = rcp_struct_parameter_name(param);
-		rcp_copy(rcp_string_type, p_name, rcp_map_node_key(map, node));
-		rcp_copy(rcp_struct_parameter_type(param),
-				rcp_struct_parameter_data(st, param)
-				rcp_map_node_value(map, node));
-		rcp_map_set(node);
-		param = rcp_struct_parameter_next(s_type, param);
+		rcp_map_node_ref node = rcp_map_node_new(out);
+		//key
+		rcp_string_ref p_name = rcp_struct_param_name(param);
+		rcp_copy(rcp_string_type, p_name, rcp_map_node_key(out, node));
+		//value
+		rcp_type_ref type = rcp_struct_param_type(param);
+		if (type == rcp_ref_type){
+			rcp_copy(type,
+					rcp_struct_data(in, param),
+					rcp_map_node_value(out, node));
+		}
+		else{
+			rcp_record_ref rec = rcp_record_new(type);
+			rcp_copy(type,
+					rcp_struct_data(in, param),
+					rcp_record_data(rec));
+			rcp_copy(rcp_ref_type,
+					(rcp_data_ref)&rec,
+					rcp_map_node_value(out, node));
+			rcp_record_release(rec);
+		}
+		rcp_map_set(out, node);
+		param = rcp_struct_param_next(in_type, param);
 	}
 }
-*/
