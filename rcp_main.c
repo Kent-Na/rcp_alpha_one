@@ -12,12 +12,15 @@
 #include "rcp_context.h"
 #include "rcp_server.h"
 
+#include "cmd_types.h"
+
 void rcp_main();
 
 int main (int argc, const char** argv)
 {
 	SSL_library_init();
 
+	rcp_command_type_table_init();
 	rcp_context_manager_init();
 	rcp_context_new(0);
 
@@ -25,4 +28,5 @@ int main (int argc, const char** argv)
 	rcp_listen_start(epfd);
 	rcp_epoll_run(epfd);
 
+	return 0;
 }

@@ -1,14 +1,6 @@
 import re
 
 ###
-##generater constants
-##
-
-cBaseFileName = 'rcp_command_list'
-outPutCHeader = open(cBaseFileName+'.h','w')
-outPutCFile = open(cBaseFileName+'.c','w')
-
-###
 ##helper func
 ##
 def addParameter(command, cType, name, pType = "default"):
@@ -33,8 +25,8 @@ command = {
 	"shortDescription":"",
 	"longDescription":"",
 	}
-addParameter(command, "const char*", "version")
-addParameter(command, "const char*", "client")
+addParameter(command, "string", "version")
+addParameter(command, "string", "client")
 
 commandList.append(command)
 
@@ -69,8 +61,8 @@ command = {
 	"longDescription":"",
 	"returnParameters":["userID"],
 	}
-addParameter(command, "const char*", "username")
-addParameter(command, "const char*", "password")
+addParameter(command, "string", "username")
+addParameter(command, "string", "password")
 
 commandList.append(command)
 
@@ -80,21 +72,22 @@ command = {
 	"longDescription":"",
 	}
 
-addParameter(command, "const char*", "username")
-addParameter(command, "const char*", "password")
+addParameter(command, "string", "username")
+addParameter(command, "string", "password")
 
 commandList.append(command)
 	
-commandList.append({
+command = {
 	"name":"loginUser",
 	"shortDescription":"Login as specified username/password pair.",
 	"longDescription":"",
 	"possibleErrors":["Incorrect name or password"],
 	"returnParameters":["userID","loginID"],
-	})
+	}
 
-addParameter(command, "const char*", "username")
-addParameter(command, "const char*", "password")
+addParameter(command, "string", "username")
+addParameter(command, "string", "password")
+commandList.append(command)
 
 command = {
 	"name":"addUser",
@@ -102,7 +95,7 @@ command = {
 	"longDescription":"",
 	}
 
-addParameter(command, "const char*", "username")
+addParameter(command, "string", "username")
 commandList.append(command)
 
 #removeUser
@@ -112,7 +105,7 @@ command = {
 	"longDescription":"",
 	}
 
-addParameter(command, "const char*", "username")
+addParameter(command, "string", "username")
 commandList.append(command)
 
 #updateUserPermission
@@ -122,8 +115,8 @@ command = {
 	"parameters":[]
 	}
 
-addParameter(command, "const char*", "username")
-addParameter(command, "const char*", "mode")
+addParameter(command, "string", "username")
+addParameter(command, "string", "mode")
 
 commandList.append(command)
 
@@ -150,7 +143,7 @@ command = {
 	"possibleErrors":["Permission denied"],
 	}
 
-addParameter(command, "uint32_t", "contextID")
+addParameter(command, "uint32", "contextID")
 commandList.append(command)
 
 command = {
@@ -160,7 +153,7 @@ command = {
 	"possibleErrors":["Context not found","Permission denied"],
 	}
 
-addParameter(command, "uint32_t", "contextID")
+addParameter(command, "uint32", "contextID")
 commandList.append(command)
 
 commandList.append({
@@ -175,11 +168,11 @@ commandList.append({
 	"longDescription":"",
 	})
 
-#Record
+#Value
 command = {
 	"name":"setValue",
-	"shortDescription":"set value to specified variable",
-	"longDescription":"",
+	"shortDescription":"Set value to specified variable.",
+	"longDescription":"Old values will be replaced.",
 	}
 
 addParameter(command, "ref", "path")
@@ -192,7 +185,6 @@ command = {
 	"name":"unsetValue",
 	"shortDescription":"delete value from container like an array or a map",
 	"longDescription":"",
-#"parameters":["recordID","struct","values"],
 	}
 addParameter(command, "ref", "path")
 commandList.append(command)
@@ -268,8 +260,8 @@ command = {
 	"longDescription":"",
 	}
 
-addParameter(command, "const char*", "cause")
-addParameter(command, "const char*", "reason")
+addParameter(command, "string", "cause")
+addParameter(command, "string", "reason")
 commandList.append(command)
 
 commandList.append({
@@ -283,68 +275,3 @@ commandList.append({
 	"shortDescription":"",
 	"longDescription":"Send from server when someting important but not faital thing happened.",
 	})
-
-def printAsText(commandInfo):
-	baseText ="""\
-{name}
-	{shortDescription}\
-"""
-	print(baseText.format(**commandInfo))
-
-def printAsLongText(commandInfo):
-	params = ""
-	if 'parameters' in commandInfo:
-		pNames = map(lambda param : param['name'], commandInfo['parameters'])
-#params = ' '.join(commandInfo['parameters'])
-		params = ' '.join(pNames)
-	
-	baseText ="""\
-{name} [{params}]
-	{shortDescription}\
-"""
-	print(baseText.format(params=params,**commandInfo))
-
-sCommandList = sorted(commandList, key = lambda info : info['name'])
-for info in sCommandList:
-	printAsLongText(info);
-###
-#meta
-###
-def convertToMNames(info):
-	macroName = '_'.join(re.findall(r'[A-Z]*[a-z]+',info['name'])).upper()
-	return {
-		'cmdName':info['name'],
-		'defName':'RCP_COMMAND_'+macroName,
-		'defStrName':'RCP_COMMAND_STR_'+macroName,
-	}
-
-def printAsCMacro(info,idx):
-	tmp = convertToMNames(info)
-	tmp['defIdx']=idx
-	outPutCHeader.write("#define {defName}\t((rcp_command_type_t){defIdx})\n".format(** tmp))
-	outPutCHeader.write("#define {defStrName}\t(\"{cmdName}\")\n".format(** tmp))
-	
-def printAsCTable(info):
-	tmp = convertToMNames(info)
-	outPutCFile.write("\t{defStrName},\n".format(** tmp))
-
-#header
-outPutCHeader.write("//This file was generated by program.\n")
-outPutCHeader.write("typedef uint8_t rcp_command_type_t ;\n")
-outPutCHeader.write("extern const char* rcp_command_str_table[];\n")
-i = 0;
-for info in sCommandList:
-	printAsCMacro(info,i)
-	i=i+1
-
-outPutCHeader.write("#define RCP_COMMAND_INVALID {}\n".format(i))
-outPutCHeader.write("#define RCP_COMMAND_COUNT {}\n".format(i))
-
-#implement
-outPutCFile.write("//This file was generated by program.\n")
-outPutCFile.write('#include "rcp_pch.h"\n')
-outPutCFile.write('#include "{}"\n'.format(cBaseFileName+'.h'))
-outPutCFile.write("const char* rcp_command_str_table[]={\n")
-for info in sCommandList:
-	printAsCTable(info)
-outPutCFile.write("};\n")

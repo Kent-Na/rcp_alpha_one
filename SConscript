@@ -1,6 +1,6 @@
 env = Environment()
 
-env.Append(CCFLAGS = ['-O3'])
+#env.Append(CCFLAGS = ['-O3'])
 env.Append(CCFLAGS = ['-Wall','-g'])
 env.Append(CXXFLAGS = ['-std=gnu++0x'])
 env.Append(LIBS = ['ssl'])
@@ -31,6 +31,7 @@ mainFiles = [
 	'con_null_terminate.c',
 	'con_web_socket.c',
 	'con_json.c',
+	'cmd_types.c'
 ]
 
 testFiles = [

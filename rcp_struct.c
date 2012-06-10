@@ -23,7 +23,7 @@ void rcp_struct_init(rcp_type_ref type, rcp_data_ref data){
 		rcp_struct_param_ref param = params+i;
 		rcp_type_ref type = param->type;
 		if (type->init)
-			type->init(type, data);
+			type->init(type, data+param->offset);
 	}
 }
 
@@ -37,7 +37,7 @@ void rcp_struct_deinit(rcp_type_ref type, rcp_data_ref data){
 		rcp_struct_param_ref param = params+i;
 		rcp_type_ref type = param->type;
 		if (type->deinit)
-			type->deinit(type, data);
+			type->deinit(type, data+param->offset);
 	}
 }
 

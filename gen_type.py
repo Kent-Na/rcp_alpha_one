@@ -17,20 +17,20 @@ typeTable = [
 #	[id,	name,		c_type]
 #someting special
 	[0,		'null',		None],
-	[1,		'ref',		None],
+	[1,		'ref',		'rcp_record_ref'],
 #	[2,		'internal',	no info],
 
 #16-24 container
-	[16,	'map',		None],
+	[16,	'map',		'rcp_record_ref'],
 #	[17,	'set',		None],
-	[18,	'array',	None],
+	[18,	'array',	'rcp_record_ref'],
 #	[19,	'struct',	None],
 
-	[20,	'string',	None],
+	[20,	'string',	'rcp_record_ref'],
 #	[21,	'binaly',	None],
 #25-31 bool
-	[25,	'bool8',	None],
-	[26,	'bool32',	None],
+	[25,	'bool8',	'uint8_t'],
+	[26,	'bool32',	'uint32_t'],
 
 #32-63 number
 #32-39 uint
@@ -58,28 +58,30 @@ exTypeTable = [
 ]
 
 typeList = []
+typeDict = {}
 for typeInfo in typeTable:
 	typeInfoDict = {};
-	typeInfoDict['typeID'] = typeInfo[0];
-	typeInfoDict['typeName'] = typeInfo[1];
-	typeInfoDict['cTypeName'] = typeInfo[2];
-	typeList.append(typeInfoDict);
+	typeInfoDict['typeID'] = typeInfo[0]
+	typeInfoDict['typeName'] = typeInfo[1]
+	typeInfoDict['cTypeName'] = typeInfo[2]
+	typeList.append(typeInfoDict)
+	typeDict[typeInfo[1]] = typeInfoDict
 
 exTypeList = []
 for typeInfo in exTypeTable:
-	typeInfoDict = {};
-	typeInfoDict['typeID'] = typeInfo[0];
-	typeInfoDict['typeName'] = typeInfo[1];
-	typeInfoDict['cTypeName'] = typeInfo[2];
+	typeInfoDict = {}
+	typeInfoDict['typeID'] = typeInfo[0]
+	typeInfoDict['typeName'] = typeInfo[1]
+	typeInfoDict['cTypeName'] = typeInfo[2]
 	exTypeList.append(typeInfoDict);
 
 numberTypeList = [] 
 for typeInfo in typeList:
 	if typeInfo['typeID'] & 0x20:
-		numberTypeList.append(typeInfo);
+		numberTypeList.append(typeInfo)
 
 for typeInfo in exTypeList:
-	numberTypeList.append(typeInfo);
+	numberTypeList.append(typeInfo)
 
 #
 # generate program(number)

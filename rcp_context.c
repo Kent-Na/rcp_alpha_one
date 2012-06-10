@@ -10,6 +10,8 @@
 #include "rcp_command_list.h"
 #include "rcp_command.h"
 
+#include "cmd_types.h"
+
 struct rcp_context_core{
 	rcp_record_ref top_level_record;
 	rcp_tree_ref connections;
@@ -50,7 +52,19 @@ void rcp_context_remove_connection(rcp_context_ref ctx,
 rcp_record_ref rcp_command_error_new(
 		rcp_record_ref cause, const char* reason)
 {
-	return NULL;
+	struct cmd_error cmd;
+	rcp_type_ref cmd_type=rcp_command_type(RCP_COMMAND_ERROR);
+	cmd.command = rcp_string_new_rec(RCP_COMMAND_STR_ERROR); 
+	cmd.cause = cause; 
+	rcp_record_retain(cause);
+	cmd.reason = rcp_string_new_rec(reason);
+
+	rcp_record_ref map_rec = rcp_map_new_rec(
+			rcp_string_type, rcp_ref_type);
+	rcp_map_ref map = rcp_record_data(map_rec);
+	rcp_struct_to_map(cmd_type, (rcp_data_ref)&cmd, map);
+	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+	return map_rec;
 }
 
 rcp_extern void rcp_context_execute_command_rec(
@@ -88,6 +102,7 @@ rcp_extern void rcp_context_execute_command_rec(
 	if (command_type == RCP_COMMAND_LOGIN_CONTEXT || 
 			command_type == RCP_COMMAND_PROTOCOL){
 		rcp_info("login ctx");
+
 		rcp_context_ref ctx = rcp_context_get(0);
 		rcp_context_add_connection(ctx, con);
 		con_json_send_error(con);
@@ -99,6 +114,8 @@ rcp_extern void rcp_context_execute_command_rec(
 			rcp_record_ref r_cmd_rec = 
 				rcp_map_new_rec(rcp_string_type, rcp_ref_type);
 			rcp_map_ref r_cmd = rcp_record_data(r_cmd_rec);
+			struct cmd_set_value cmd;
+			cmd.command = rcp_string_new_rec("")
 			{
 				rcp_map_node_ref r_node = rcp_map_node_new(r_cmd);
 				rcp_string_init_with_c_str(
