@@ -54,3 +54,6 @@ const rcp_type_ref rcp_float_type = &rcp_float_type_def;
 
 extern const struct rcp_type_core rcp_double_type_def;
 const rcp_type_ref rcp_double_type = &rcp_double_type_def;
+
+extern const struct rcp_type_core rcp_pointer_type_def;
+const rcp_type_ref rcp_pointer_type = &rcp_pointer_type_def;

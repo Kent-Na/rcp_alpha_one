@@ -6,7 +6,7 @@ rcp_command_type_t rcp_command_from_str(const char* str)
 {
 	//binaly search
 	size_t min = 0;
-	size_t max = RCP_COMMAND_COUNT-1;
+	size_t max = CMD_COUNT-1;
 	
 	while (max >= min){
 		size_t mid = (min + max) >> 1;
@@ -20,6 +20,6 @@ rcp_command_type_t rcp_command_from_str(const char* str)
 			return (rcp_command_type_t)mid;
 	}
 
-	return RCP_COMMAND_INVALID;
+	return CMD_INVALID;
 }
 

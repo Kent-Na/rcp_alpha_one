@@ -61,4 +61,5 @@ int test_struct(void){
 		rcp_error("pgs");
 
 	rcp_info("struct done");
+	return 0;
 }

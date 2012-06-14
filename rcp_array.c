@@ -75,6 +75,10 @@ rcp_extern size_t rcp_array_count(rcp_array_ref array){
 	rcp_array_core_ref core = array;
 	return core->count;
 }
+rcp_extern size_t rcp_array_empty(rcp_array_ref array){
+	rcp_array_core_ref core = array;
+	return !core->count;
+}
 rcp_extern rcp_type_ref rcp_array_data_type(rcp_array_ref array)
 {
 	rcp_array_core_ref core = array;
@@ -117,6 +121,17 @@ rcp_extern void rcp_array_append(rcp_array_ref array, void *data)
 	core->type->copy(
 			core->type, data, core->data + core->type->size * core->count);
 	core->count ++;
+}
+
+rcp_extern void rcp_array_pop(rcp_array_ref array, void *data){
+	rcp_array_core_ref core = array;
+	if (! core->count)
+		return;
+	core->count --;
+	rcp_data_ref back = core->data + core->type->size * core->count;
+	core->type->copy(
+			core->type, back, data);
+	rcp_deinit(core->type, back);
 }
 
 rcp_extern rcp_array_iterater_ref rcp_array_begin(rcp_array_ref array)

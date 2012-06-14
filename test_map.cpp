@@ -35,7 +35,6 @@ int test_map(void){
 
 	{
 		rcp_map_node_ref node = rcp_map_node_new(map);
-		rcp_string_ref *key = (rcp_string_ref*)rcp_map_node_key(map, node);
 		uint32_t *val = (uint32_t*)rcp_map_node_value(map, node);
 		rcp_string_init_with_c_str(
 				rcp_map_node_key(map, node),"test");

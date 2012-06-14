@@ -129,6 +129,47 @@ int test_tree(void){
 				rcp_error("map:itr_r");
 		}
 	}
+
+	//rm node
+	for (int i = 0; i<50; i++){
+		tree = rcp_tree_new(rcp_uint32_type_compare,NULL);
+		for (int i = 0; i<200; i++){
+			uint32_t dat = 199-i;
+			rcp_tree_node_ref node = rcp_tree_node_new(sizeof (uint32_t));
+			uint32_t *p = (uint32_t*)rcp_tree_node_data(node);
+			*p = dat;
+			rcp_tree_add(tree, node);
+		}
+
+		for (int i = 0; i<50; i++){
+
+			int count_b = 0;
+			rcp_tree_node_ref itr = rcp_tree_begin(tree);
+			while (itr){
+				count_b++;
+				itr = rcp_tree_node_next(itr);
+			}
+
+			uint32_t dat = dist(eng);
+			rcp_tree_node_ref node = rcp_tree_find(tree, &dat);
+			if (!node)
+				continue;
+			rcp_tree_remove(tree, node);
+			rcp_tree_verify(tree);
+			int count_a = 0;
+			itr = rcp_tree_begin(tree);
+			while (itr){
+				count_a++;
+				itr = rcp_tree_node_next(itr);
+			}
+			node = rcp_tree_find(tree, &dat);
+			//printf("%i,\n",count_a-count_b);
+			if (node){
+				rcp_error("why are you there");
+				//printf("%i\n",dat);
+			}
+		}
+	}
 	rcp_info("tree done");
 	return 0;
 }

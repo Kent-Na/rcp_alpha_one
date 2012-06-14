@@ -37,6 +37,7 @@ void con_plain_release(rcp_connection_ref con)
 	struct con_plain *st = rcp_connection_l1(con);
 	int fd = st->fd;
 	close(fd);
+	st->fd = -1;
 	free(st->unit);
 }
 
@@ -54,8 +55,14 @@ size_t con_plain_send(rcp_connection_ref con, const void *data, size_t len)
 	r_len = write(fd, data, len);
 #endif
 
-	if (r_len <= 0)
+	if (r_len <= 0){
 		rcp_error("Connection closed");
+		close(fd);
+		st->fd = -1;
+		if (rcp_connection_alive(con))
+			rcp_error("zombe conn");
+		return 0;
+	}
 
 	return r_len;
 }
@@ -74,8 +81,19 @@ size_t con_plain_receive(
 	if (r_len <= 0){
 		rcp_info("Connection closed");
 		close(fd);
-		fd = -1;
+		st->fd = -1;
+		if (rcp_connection_alive(con))
+			rcp_error("zombe conn");
+		return 0;
 	}
 
 	return r_len;
+}
+
+int con_plain_alive(
+		rcp_connection_ref con)
+{
+	struct con_plain *st = rcp_connection_l1(con);
+	int fd = st->fd;
+	return fd != -1;	
 }

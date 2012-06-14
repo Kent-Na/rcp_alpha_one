@@ -26,6 +26,8 @@ struct rcp_connection_layer1_class_part{
 			rcp_connection_ref con, const void *data, size_t len);
 	size_t (*receive)(
 			rcp_connection_ref con, const void *data, size_t len);
+	int (*alive)(
+			rcp_connection_ref con);
 };
 
 //layer 2 (command separation)
@@ -78,6 +80,8 @@ rcp_extern
 void rcp_connection_send(rcp_connection_ref con, void *data, size_t len);
 rcp_extern
 void rcp_connection_on_receive(rcp_connection_ref con);
+rcp_extern
+int rcp_connection_alive(rcp_connection_ref con);
 
 struct rcp_connection_class *rcp_connection_class(rcp_connection_ref con);
 

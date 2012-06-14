@@ -74,10 +74,10 @@ rcp_map_node_ref rcp_map_find(rcp_map_ref map,void *key)
 	return rcp_tree_find(&(core->t_core), key);
 }
 
-void rcp_map_set(rcp_map_ref map, rcp_map_node_ref node)
+rcp_map_node_ref rcp_map_set(rcp_map_ref map, rcp_map_node_ref node)
 {
 	rcp_map_core_ref core = map;
-	rcp_tree_set(&(core->t_core),node);
+	return rcp_tree_set(&(core->t_core),node);
 }
 
 rcp_extern rcp_map_node_ref rcp_map_begin(rcp_map_ref map)
@@ -127,6 +127,28 @@ rcp_map_node_ref rcp_map_node_new(rcp_map_ref map)
 	return node;
 }
 
+rcp_extern void rcp_map_node_delete(rcp_map_ref map, rcp_map_node_ref node)
+{
+	if (!node)
+		return;
+
+	rcp_type_ref key_type = rcp_map_key_type(map);
+	rcp_type_ref value_type = rcp_map_value_type(map);
+
+	if (!(key_type)){
+		rcp_error("type of key of map");
+		return;
+	}
+	if (!(value_type)){
+		rcp_error("type of value of map");
+		return;
+	}
+
+	rcp_deinit(key_type, rcp_map_node_key(map, node));
+	rcp_deinit(value_type, rcp_map_node_value(map, node));
+
+	rcp_tree_node_delete(node);
+}
 rcp_data_ref rcp_map_node_key(
 		rcp_map_ref map, rcp_map_node_ref node){
 	return rcp_tree_node_data(node);

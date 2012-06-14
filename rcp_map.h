@@ -24,11 +24,15 @@ void rcp_map_init_with_type(rcp_map_ref core,
 rcp_extern rcp_type_ref rcp_map_key_type(rcp_map_ref map);
 rcp_extern rcp_type_ref rcp_map_value_type(rcp_map_ref map);
 rcp_extern rcp_map_node_ref rcp_map_find(rcp_map_ref map,void *key);
-rcp_extern void rcp_map_set(rcp_map_ref map, rcp_map_node_ref node);
+
+//return value: old value
+rcp_extern rcp_map_node_ref rcp_map_set(
+		rcp_map_ref map, rcp_map_node_ref node);
 rcp_extern void rcp_map_unset(rcp_map_ref map, rcp_map_node_ref node);
 rcp_extern rcp_map_node_ref rcp_map_begin(rcp_map_ref map);
 
 rcp_extern rcp_map_node_ref rcp_map_node_new(rcp_map_ref map);
+rcp_extern void rcp_map_node_delete(rcp_map_ref map, rcp_map_node_ref node);
 rcp_extern rcp_data_ref rcp_map_node_key(
 		rcp_map_ref map, rcp_map_node_ref node);
 rcp_extern rcp_data_ref rcp_map_node_value(

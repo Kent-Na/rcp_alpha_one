@@ -525,6 +525,44 @@ rcp_struct_type_ref cmd_update_user_list_type(){
 	return s_type;
 }
 
+rcp_struct_type_ref cmd_send_value_type(){
+	
+	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
+	t_core->size = sizeof (struct cmd_send_value);
+	t_core->type_id = 0x100;
+	t_core->type_name = "ttt";
+	t_core->init = rcp_struct_init;
+	t_core->deinit = rcp_struct_deinit;
+	t_core->copy = NULL;
+	t_core->compare = NULL;
+
+	struct rcp_type_struct_ext* s_core = 
+		(struct rcp_type_struct_ext*)(t_core+1);
+	s_core->name = rcp_string_new("ttt");
+	s_core->param_count = 3;
+
+	struct rcp_struct_param_core *param = 
+		(struct rcp_struct_param_core*)(s_core+1);
+
+	param->name = rcp_string_new("command");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_send_value, command);
+	param ++;
+
+	param->name = rcp_string_new("type");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_send_value, type);
+	param ++;
+
+	param->name = rcp_string_new("value");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_send_value, value);
+	param ++;
+
+	return s_type;
+}
+
 rcp_struct_type_ref cmd_set_value_type(){
 	
 	rcp_struct_type_ref s_type = rcp_struct_type_new(4);
@@ -639,90 +677,6 @@ rcp_struct_type_ref cmd_append_value_type(){
 	param->name = rcp_string_new("value");
 	param->type = rcp_ref_type;
 	param->offset = offsetof(struct cmd_append_value, value);
-	param ++;
-
-	return s_type;
-}
-
-rcp_struct_type_ref cmd_add_record_type(){
-	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
-	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_add_record);
-	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
-	t_core->init = rcp_struct_init;
-	t_core->deinit = rcp_struct_deinit;
-	t_core->copy = NULL;
-	t_core->compare = NULL;
-
-	struct rcp_type_struct_ext* s_core = 
-		(struct rcp_type_struct_ext*)(t_core+1);
-	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 1;
-
-	struct rcp_struct_param_core *param = 
-		(struct rcp_struct_param_core*)(s_core+1);
-
-	param->name = rcp_string_new("command");
-	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_add_record, command);
-	param ++;
-
-	return s_type;
-}
-
-rcp_struct_type_ref cmd_update_record_type(){
-	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
-	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_update_record);
-	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
-	t_core->init = rcp_struct_init;
-	t_core->deinit = rcp_struct_deinit;
-	t_core->copy = NULL;
-	t_core->compare = NULL;
-
-	struct rcp_type_struct_ext* s_core = 
-		(struct rcp_type_struct_ext*)(t_core+1);
-	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 1;
-
-	struct rcp_struct_param_core *param = 
-		(struct rcp_struct_param_core*)(s_core+1);
-
-	param->name = rcp_string_new("command");
-	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_update_record, command);
-	param ++;
-
-	return s_type;
-}
-
-rcp_struct_type_ref cmd_remove_record_type(){
-	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
-	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_remove_record);
-	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
-	t_core->init = rcp_struct_init;
-	t_core->deinit = rcp_struct_deinit;
-	t_core->copy = NULL;
-	t_core->compare = NULL;
-
-	struct rcp_type_struct_ext* s_core = 
-		(struct rcp_type_struct_ext*)(t_core+1);
-	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 1;
-
-	struct rcp_struct_param_core *param = 
-		(struct rcp_struct_param_core*)(s_core+1);
-
-	param->name = rcp_string_new("command");
-	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_remove_record, command);
 	param ++;
 
 	return s_type;
@@ -933,67 +887,63 @@ rcp_struct_type_ref cmd_note_type(){
 
 	return s_type;
 }
-rcp_type_ref rcp_command_type_table[29];
+rcp_type_ref rcp_command_type_table[27];
 
 void rcp_command_type_table_init(){
 
-	rcp_command_type_table[RCP_COMMAND_PROTOCOL] = 
+	rcp_command_type_table[CMD_PROTOCOL] = 
 		cmd_protocol_type();
-	rcp_command_type_table[RCP_COMMAND_KILL] = 
+	rcp_command_type_table[CMD_KILL] = 
 		cmd_kill_type();
-	rcp_command_type_table[RCP_COMMAND_CLOSE] = 
+	rcp_command_type_table[CMD_CLOSE] = 
 		cmd_close_type();
-	rcp_command_type_table[RCP_COMMAND_PING] = 
+	rcp_command_type_table[CMD_PING] = 
 		cmd_ping_type();
-	rcp_command_type_table[RCP_COMMAND_PONG] = 
+	rcp_command_type_table[CMD_PONG] = 
 		cmd_pong_type();
-	rcp_command_type_table[RCP_COMMAND_CREATE_USER] = 
+	rcp_command_type_table[CMD_CREATE_USER] = 
 		cmd_create_user_type();
-	rcp_command_type_table[RCP_COMMAND_DELETE_USER] = 
+	rcp_command_type_table[CMD_DELETE_USER] = 
 		cmd_delete_user_type();
-	rcp_command_type_table[RCP_COMMAND_LOGIN_USER] = 
+	rcp_command_type_table[CMD_LOGIN_USER] = 
 		cmd_login_user_type();
-	rcp_command_type_table[RCP_COMMAND_ADD_USER] = 
+	rcp_command_type_table[CMD_ADD_USER] = 
 		cmd_add_user_type();
-	rcp_command_type_table[RCP_COMMAND_REMOVE_USER] = 
+	rcp_command_type_table[CMD_REMOVE_USER] = 
 		cmd_remove_user_type();
-	rcp_command_type_table[RCP_COMMAND_UPDATE_USER_PERMISSION] = 
+	rcp_command_type_table[CMD_UPDATE_USER_PERMISSION] = 
 		cmd_update_user_permission_type();
-	rcp_command_type_table[RCP_COMMAND_CREATE_CONTEXT] = 
+	rcp_command_type_table[CMD_CREATE_CONTEXT] = 
 		cmd_create_context_type();
-	rcp_command_type_table[RCP_COMMAND_DELETE_CONTEXT] = 
+	rcp_command_type_table[CMD_DELETE_CONTEXT] = 
 		cmd_delete_context_type();
-	rcp_command_type_table[RCP_COMMAND_LOGIN_CONTEXT] = 
+	rcp_command_type_table[CMD_LOGIN_CONTEXT] = 
 		cmd_login_context_type();
-	rcp_command_type_table[RCP_COMMAND_UPDATE_NAME] = 
+	rcp_command_type_table[CMD_UPDATE_NAME] = 
 		cmd_update_name_type();
-	rcp_command_type_table[RCP_COMMAND_UPDATE_USER_LIST] = 
+	rcp_command_type_table[CMD_UPDATE_USER_LIST] = 
 		cmd_update_user_list_type();
-	rcp_command_type_table[RCP_COMMAND_SET_VALUE] = 
+	rcp_command_type_table[CMD_SEND_VALUE] = 
+		cmd_send_value_type();
+	rcp_command_type_table[CMD_SET_VALUE] = 
 		cmd_set_value_type();
-	rcp_command_type_table[RCP_COMMAND_UNSET_VALUE] = 
+	rcp_command_type_table[CMD_UNSET_VALUE] = 
 		cmd_unset_value_type();
-	rcp_command_type_table[RCP_COMMAND_APPEND_VALUE] = 
+	rcp_command_type_table[CMD_APPEND_VALUE] = 
 		cmd_append_value_type();
-	rcp_command_type_table[RCP_COMMAND_ADD_RECORD] = 
-		cmd_add_record_type();
-	rcp_command_type_table[RCP_COMMAND_UPDATE_RECORD] = 
-		cmd_update_record_type();
-	rcp_command_type_table[RCP_COMMAND_REMOVE_RECORD] = 
-		cmd_remove_record_type();
-	rcp_command_type_table[RCP_COMMAND_RESERVE_RECORD] = 
+	rcp_command_type_table[CMD_RESERVE_RECORD] = 
 		cmd_reserve_record_type();
-	rcp_command_type_table[RCP_COMMAND_RELEASE_RECORD] = 
+	rcp_command_type_table[CMD_RELEASE_RECORD] = 
 		cmd_release_record_type();
-	rcp_command_type_table[RCP_COMMAND_CREATE_STRUCT] = 
+	rcp_command_type_table[CMD_CREATE_STRUCT] = 
 		cmd_create_struct_type();
-	rcp_command_type_table[RCP_COMMAND_ADD_STRUCT] = 
+	rcp_command_type_table[CMD_ADD_STRUCT] = 
 		cmd_add_struct_type();
-	rcp_command_type_table[RCP_COMMAND_ERROR] = 
+	rcp_command_type_table[CMD_ERROR] = 
 		cmd_error_type();
-	rcp_command_type_table[RCP_COMMAND_CAUTION] = 
+	rcp_command_type_table[CMD_CAUTION] = 
 		cmd_caution_type();
-	rcp_command_type_table[RCP_COMMAND_NOTE] = 
+	rcp_command_type_table[CMD_NOTE] = 
 		cmd_note_type();
 }
 

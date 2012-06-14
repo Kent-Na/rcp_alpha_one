@@ -272,6 +272,7 @@ rcp_record_ref rcp_json_parse_string(const char **begin, const char *end)
 		}
 	}
 	rcp_record_release(out_rec);
+	return NULL;
 }
 
 int rcp_json_parse_literal(const char **begin, const char *end, 
@@ -279,7 +280,6 @@ int rcp_json_parse_literal(const char **begin, const char *end,
 {
 	const char *ptr_src = *begin + 1;
 	const char *ptr_dst = literal + 1;
-	int i;
 	while (ptr_dst){
 		if (ptr_src > end){
 			rcp_error("json:not enough char");
@@ -355,6 +355,7 @@ rcp_extern rcp_record_ref rcp_json_parse_number(
 			return NULL;
 		}
 	}
+	significand*=sign;
 
 	ch = rcp_json_get_next_char(ptr, end);
 
@@ -409,6 +410,10 @@ rcp_extern rcp_record_ref rcp_json_parse_number(
 
 void rcp_json_write_record(rcp_record_ref rec, rcp_string_ref out)
 {
+	if (!rec){
+		rcp_string_append_c_str(out,"null");
+		return;
+	}
 	rcp_type_ref type = rcp_record_type(rec);
 	rcp_data_ref data = rcp_record_data(rec);
 	if (type == rcp_string_type)

@@ -49,10 +49,14 @@ rcp_tree_node_ref rcp_tree_node_next(rcp_tree_node_ref node)
 	return NULL;
 }
 
-void rcp_tree_node_replace(rcp_tree_node_ref src, rcp_tree_node_ref dst){
+void rcp_tree_node_replace(rcp_tree_ref tree, 
+		rcp_tree_node_ref src, rcp_tree_node_ref dst){
+	if (src->p == NULL)
+		tree->root = dst;
 	dst->l = src->l;
 	dst->r = src->r;
 	dst->p = src->p;
+	dst->color = src->color;
 	if (dst->l)
 		dst->l->p = dst;
 	if (dst->r)
@@ -185,9 +189,17 @@ rcp_extern void rcp_tree_node_verify(rcp_tree_ref tree,
 
 rcp_extern void rcp_tree_verify(rcp_tree_ref tree)
 {
+	if (tree == NULL)
+		return;
+	if (tree->root == NULL)
+		return;
+
 	struct rcp_tree_node_core *cur = tree->root;
 	if (cur->color == RCP_TREE_RED)
 		rcp_error("tree:red root");
+
+	if (tree->root->p != NULL)
+		rcp_error("tree:root p");
 
 	struct rcp_tree_node_core *l= tree->root;
 	int black_depth = 1;//count root node
@@ -249,7 +261,7 @@ rcp_extern rcp_tree_node_ref rcp_tree_put(
 		}
 		else{
 			if (replace){
-				rcp_tree_node_replace(cur, node);
+				rcp_tree_node_replace(tree, cur, node);
 				return cur;
 			}
 			else{
@@ -345,96 +357,382 @@ rcp_extern rcp_tree_node_ref rcp_tree_put(
 	}
 }
 
-rcp_extern int rcp_tree_remove(rcp_tree_ref tree, rcp_tree_node_ref node)
+rcp_extern void rcp_tree_remove(
+		rcp_tree_ref tree, rcp_tree_node_ref node)
 {
 	if (node == NULL){
 		rcp_error("tree: no key");
-		return -1;
+		return;
 	}
 
-	//find replace target
-	struct rcp_tree_node_core *rep = node->l;
-	while (1)
-		if (rep->r)
-			rep = rep->r;
+	rcp_tree_node_ref t = node;
+	if (t->l)
+		t = t->l;
+	while (t->r)
+		t = t->r;
 
-	struct rcp_tree_node_core *t = node;
+	if (t != node){
+		struct rcp_tree_node_core tmp;
+		memcpy(&tmp, t, sizeof tmp);
+		memcpy(t, node, sizeof tmp);
+		memcpy(node, &tmp, sizeof tmp);
+
+		if (t->l == t){
+			t->l = node;
+			node->p = t;
+		}
+		if (t->r == t){
+			t->r = node;
+			node->p = t;
+		}
+
+		if (t->l)
+			t->l->p = t;
+		if (t->r)
+			t->r->p = t;
+		if (t->p){
+			if (t->p->l == node)
+				t->p->l = t;
+			else if (t->p->r == node)
+				t->p->r = t;
+		}
+		else{
+			tree->root = t;
+		}
+
+		if (node->l)
+			node->l->p = node;
+		if (node->r)
+			node->r->p = node;
+		if (node->p){
+			if (node->p->l == t)
+				node->p->l = node;
+			else if (node->p->r == t)
+				node->p->r = node;
+		}
+		else{
+			tree->root = node;
+		}
+
+		t = node;
+	}
 
 	if (t->color == RCP_TREE_RED){
-#ifdef RCP_SELF_TEST
-		if (t->l || t->r){
-			rcp_error("tree:rem");
-			return -1;
-		}
-#endif
-		if (t->p->l == t)
-			t->p->l = NULL;
 		if (t->p->r == t)
 			t->p->r = NULL;
+		else if (t->p->l == t)
+			t->p->l = NULL;
+		return;
 	}
-	else while (1){
-		//t is black
-		struct rcp_tree_node_core *p = t->p; 
-		if (p == NULL){
-			return 0;
-		}
-		struct rcp_tree_node_core *s = p->r; 
-		if (s == t)
-			s = p->l;
-		int slb = ! s->l || s->l->color == RCP_TREE_BRACK;
-		int srb = ! s->r || s->r->color == RCP_TREE_BRACK;
 
-		if (slb && srb){
-			if (p->color == RCP_TREE_BRACK){
+	while (1){
+		rcp_tree_node_ref p = t->p;
+		rcp_tree_node_ref s = p->l;
+		if (s == t)
+			s = p->r;
+		rcp_tree_node_ref sl = s->l;
+		rcp_tree_node_ref sr = s->r;
+
+		//black sib case
+		{
+			int cond = p->color == RCP_TREE_BRACK;
+			cond = cond && s->color == RCP_TREE_BRACK;
+			cond = cond && (! sl || sl->color == RCP_TREE_BRACK);
+			cond = cond && (! sr || sr->color == RCP_TREE_BRACK);
+			if (cond){
 				s->color = RCP_TREE_RED;
 				t = p;
+				if (!p->p)
+					break;
 				continue;
 			}
-			else{
-				p->color = RCP_TREE_BRACK;
+		}
+		{
+			int cond = p->color == RCP_TREE_RED;
+			cond = cond && s->color == RCP_TREE_BRACK;
+			cond = cond && (! sl || sl->color == RCP_TREE_BRACK);
+			cond = cond && (! sr || sr->color == RCP_TREE_BRACK);
+			if (cond){
 				s->color = RCP_TREE_RED;
+				p->color = RCP_TREE_BRACK;
 				break;
 			}
 		}
-
-		struct rcp_tree_node_core *g = p->p; 
-		if (p->color == RCP_TREE_BRACK){
-			if (s->color == RCP_TREE_RED){
-				p->color = RCP_TREE_RED;
-				s->color = RCP_TREE_BRACK;
-
-				if (p->r == t){
-					p->l = s->r;
-					p->l->p = p;
-
-					s->l = p;
-					s->l->p = s;
-
-				}
-				else{
-					p->r = s->l;
-					p->r->p = p;
-
-					s->r = p;
-					s->r->p = s;
-
-				}
-
+		if (t == p->l){
+			int cond = s->color == RCP_TREE_BRACK;
+			cond = cond && sr && sr->color == RCP_TREE_RED;
+			rcp_tree_node_ref g = p->p;
+			if (cond){
+				p->r = sl;
+				if (sl)
+					sl->p = p;
+				s->l = p;
+				p->p = s;
+				s->color = p->color;
+				if (sr)
+					sr->color = RCP_TREE_BRACK;
+				p->color = RCP_TREE_BRACK;
 				s->p = g;
-				if (g){
-					if (g->r = p)
-						g->r = s;
-					else
-						g->l = s;
-				}
+				if (g && g->l == p)
+					g->l = s;
+				if (g && g->r == p)
+					g->r = s;
+				if (g == NULL)
+					tree->root = s;
 				break;
 			}
 		}
+		else{
+			int cond = s->color == RCP_TREE_BRACK;
+			cond = cond && sl && sl->color == RCP_TREE_RED;
+			rcp_tree_node_ref g = p->p;
+			if (cond){
+				p->l = sr;
+				if (sr)
+					sr->p = p;
+				s->r = p;
+				p->p = s;
+				s->color = p->color;
+				if (sl)
+					sl->color = RCP_TREE_BRACK;
+				p->color = RCP_TREE_BRACK;
+				s->p = g;
+				if (g && g->l == p)
+					g->l = s;
+				if (g && g->r == p)
+					g->r = s;
+				if (g == NULL)
+					tree->root = s;
+				break;
+			}
+		}
+		if (t == p->l){
+			int cond = s->color == RCP_TREE_BRACK;
+			cond = cond && (!sr || sr->color == RCP_TREE_BRACK);
+			cond = cond && sl && sl->color == RCP_TREE_RED;
+			rcp_tree_node_ref g = p->p;
+			if (cond){
+				s->l = sl->r;
+				if (s->l)
+					s->l->p = s;
+				p->r = sl->l;
+				if (p->r)
+					p->r->p = p;
+				sl->r = s;
+				s->p = sl;
+				sl->l = p;
+				p->p = sl;
+				
+				sl->color = p->color;
+				p->color = RCP_TREE_BRACK;
+				sl->p = g;
+				if (g && g->l == p)
+					g->l = sl;
+				if (g && g->r == p)
+					g->r = sl;
+				if (g == NULL)
+					tree->root = sl;
+				break;
+			}
+		}
+		else{
+			int cond = s->color == RCP_TREE_BRACK;
+			cond = cond && (!sl || sl->color == RCP_TREE_BRACK);
+			cond = cond && sr && sr->color == RCP_TREE_RED;
+			rcp_tree_node_ref g = p->p;
+			if (cond){
+				s->r = sr->l;
+				if (s->r)
+					s->r->p = s;
+				p->l = sr->r;
+				if (p->l)
+					p->l->p = p;
+				sr->l = s;
+				s->p = sr;
+				sr->r = p;
+				p->p = sr;
+				
+				sr->color = p->color;
+				p->color = RCP_TREE_BRACK;
+				sr->p = g;
+				if (g && g->l == p)
+					g->l = sr;
+				if (g && g->r == p)
+					g->r = sr;
+				if (g == NULL)
+					tree->root = sr;
+				break;
+			}
+		}
+		//red sib case
+		if (t == p->l){
+			int cond = p->color == RCP_TREE_BRACK;
+			cond = cond && s->color == RCP_TREE_RED;
+			cond = cond && (! sl || sl->color == RCP_TREE_BRACK);
+			cond = cond && (! sr || sr->color == RCP_TREE_BRACK);
+			cond = cond && (!sl||!sl->l||sl->l->color == RCP_TREE_BRACK);
+			cond = cond && (!sl||!sl->r||sl->r->color == RCP_TREE_BRACK);
+			rcp_tree_node_ref g = p->p;
+			if (cond){
+				p->r = sl;
+				if (sl)
+					sl->p = p;
+				s->l = p;
+				p->p = s;
+				s->color = RCP_TREE_BRACK;
+				s->p = g;
+				if (g && g->l == p)
+					g->l = s;
+				if (g && g->r == p)
+					g->r = s;
+				if (sl)
+					sl->color = RCP_TREE_RED;
+				if (g == NULL)
+					tree->root = s;
+				break;
+			}
+		}
+		else{
+			int cond = p->color == RCP_TREE_BRACK;
+			cond = cond && s->color == RCP_TREE_RED;
+			cond = cond && (! sl || sl->color == RCP_TREE_BRACK);
+			cond = cond && (! sr || sr->color == RCP_TREE_BRACK);
+			cond = cond && (!sr||!sr->l||sr->l->color == RCP_TREE_BRACK);
+			cond = cond && (!sr||!sr->r||sr->r->color == RCP_TREE_BRACK);
+			rcp_tree_node_ref g = p->p;
+			if (cond){
+				p->l = sr;
+				if (sr)
+					sr->p = p;
+				s->r = p;
+				p->p = s;
+				s->color = RCP_TREE_BRACK;
+				s->p = g;
+				if (g && g->l == p)
+					g->l = s;
+				if (g && g->r == p)
+					g->r = s;
+				if (sr)
+					sr->color = RCP_TREE_RED;
+				if (g == NULL)
+					tree->root = s;
+				break;
+			}
+		}
+		if (t == p->l){
+			int cond = p->color == RCP_TREE_BRACK;
+			cond = cond && s->color == RCP_TREE_RED;
+			cond = cond && sl && sl->color == RCP_TREE_BRACK;
+			cond = cond && (! sr || sr->color == RCP_TREE_BRACK);
+			cond = cond && sl->r && sl->r->color == RCP_TREE_RED;
+			rcp_tree_node_ref g = p->p;
+			rcp_tree_node_ref slr = sl->r;
+			if (cond){
+				p->r = sl->l;
+				if (p->r)
+					p->r->p = p;
+				s->l = slr;
+				slr->p = s;
+
+				sl->l = p;
+				p->p = sl;
+				sl->r = s;
+				s->p = sl;
+
+				slr->color = RCP_TREE_BRACK;
+
+				sl->p = g;
+				if (g && g->l == p)
+					g->l = sl;
+				if (g && g->r == p)
+					g->r = sl;
+				if (g == NULL)
+					tree->root = sl;
+				break;
+			}
+		}
+		else{
+			int cond = p->color == RCP_TREE_BRACK;
+			cond = cond && s->color == RCP_TREE_RED;
+			cond = cond && sr && sr->color == RCP_TREE_BRACK;
+			cond = cond && (! sl || sl->color == RCP_TREE_BRACK);
+			cond = cond && sr->l && sr->l->color == RCP_TREE_RED;
+			rcp_tree_node_ref g = p->p;
+			rcp_tree_node_ref srl = sr->l;
+			if (cond){
+				p->l = sr->r;
+				if (p->l)
+					p->l->p = p;
+				s->r = srl;
+				srl->p = s;
+
+				sr->r = p;
+				p->p = sr;
+				sr->l = s;
+				s->p = sr;
+
+				srl->color = RCP_TREE_BRACK;
+
+				sr->p = g;
+				if (g && g->l == p)
+					g->l = sr;
+				if (g && g->r == p)
+					g->r = sr;
+				if (g == NULL)
+					tree->root = sr;
+				break;
+			}
+		}
+		if (t == p->l){
+			int cond = p->color == RCP_TREE_BRACK;
+			cond = cond && s->color == RCP_TREE_RED;
+			cond = cond && sl && sl->color == RCP_TREE_BRACK;
+			cond = cond && (! sr || sr->color == RCP_TREE_BRACK);
+			cond = cond && sl->l && sl->l->color == RCP_TREE_RED;
+			rcp_tree_node_ref sll = sl->l;
+			if (cond){
+				s->l = sll;
+				sll->p = s;
+				sl->l = sll->r;
+				if (sl->l)
+					sl->l->p = sl;
+				sll->r = sl;
+				sl->p = sll;
+				sl->color = RCP_TREE_RED;
+				sll->color = RCP_TREE_BRACK;
+				continue;
+			}
+		}
+		else{
+			int cond = p->color == RCP_TREE_BRACK;
+			cond = cond && s->color == RCP_TREE_RED;
+			cond = cond && sr && sr->color == RCP_TREE_BRACK;
+			cond = cond && (! sl || sl->color == RCP_TREE_BRACK);
+			cond = cond && sr->r && sr->r->color == RCP_TREE_RED;
+			rcp_tree_node_ref srr = sr->r;
+			if (cond){
+				s->r = srr;
+				srr->p = s;
+				sr->r = srr->l;
+				if (sr->r)
+					sr->r->p = sr;
+				srr->l = sr;
+				sr->p = srr;
+				sr->color = RCP_TREE_RED;
+				srr->color = RCP_TREE_BRACK;
+				continue;
+			}
+		}
+		rcp_caution("go to inf");
+		return;
 	}
 
-	{
-		rcp_tree_node_replace(node, rep);
-	}
+	if (node->p->r == node)
+		node->p->r = NULL;
+	else if (node->p->l == node)
+		node->p->l = NULL;
+	else
+		rcp_error("errrrrerrererrererer");
 }
 
 

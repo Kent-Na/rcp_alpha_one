@@ -134,7 +134,7 @@ void rcp_command_type_table_init(){{
 """
 
 template = """
-	rcp_command_type_table[RCP_COMMAND_{command_id}] = 
+	rcp_command_type_table[CMD_{command_id}] = 
 		cmd_{func_name}_type();\
 """
 

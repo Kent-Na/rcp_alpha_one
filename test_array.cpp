@@ -16,24 +16,24 @@ int test_array(void){
 	if (rcp_array_data_type(array) != rcp_uint32_type)
 		rcp_error("array type");
 
-	const int num = 1;
+	const uint32_t num = 1;
 
-	for (int i= 0; i<num; i++){
+	for (unsigned int i= 0; i<num; i++){
 		uint32_t val = i;
-		rcp_array_append(array, &i);
+		rcp_array_append(array, &val);
 	}
 
 	if (rcp_array_count(array) != num)
 		rcp_error("array count");
 
-	for (int i= 0; i<num; i++){
+	for (unsigned int i= 0; i<num; i++){
 		uint32_t *val = (uint32_t *)rcp_array_data(array, i);
 		if (i != *val)
 			rcp_error("array val");
 	}
 
 	rcp_array_iterater_ref itr = rcp_array_begin(array);
-	for (int i= 0; i<num; i++){
+	for (unsigned int i= 0; i<num; i++){
 		uint32_t *val = (uint32_t *)rcp_array_iterater_data(array, itr);
 		if (i != *val)
 			rcp_error("array itr val");

@@ -6,21 +6,19 @@ c.run()
 con = {'command':'loginContext'}
 c.sendCommand(con)
 con = {
-	'command':'addRecord',
+	'command':'sendValue',
 	'type':'uint32',
-	'value':100,
-	'recordID':100}
+	'value':100}
 c.sendCommand(con)
 con = {
-	'command':'addRecord',
+	'command':'sendValue',
 	'type':'string',
-	'value':'message',
-	'recordID':101}
+	'value':'message'}
 c.sendCommand(con)
 con = {
-	'command':'addRecord',
+	'command':'setValue',
 	'value':[0,1,2,3,4,5],
-	'recordID':101}
+	'path':102}
 c.sendCommand(con)
 con = {'command':'kill'}
 #c.sendCommand(con)

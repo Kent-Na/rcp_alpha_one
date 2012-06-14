@@ -1,0 +1,4 @@
+write test_json.cpp
+support json unicode escape
+json_write_number
+use random number as data mask of web_socket 

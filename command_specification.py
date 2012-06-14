@@ -170,6 +170,16 @@ commandList.append({
 
 #Value
 command = {
+	"name":"sendValue",
+	"shortDescription":"Send value to all users in the context.",
+	"longDescription":"",
+	}
+
+addParameter(command, "ref", "value")
+addParameter(command, "string", "type")
+commandList.append(command)
+
+command = {
 	"name":"setValue",
 	"shortDescription":"Set value to specified variable.",
 	"longDescription":"Old values will be replaced.",
@@ -183,7 +193,7 @@ commandList.append(command)
 
 command = {
 	"name":"unsetValue",
-	"shortDescription":"delete value from container like an array or a map",
+	"shortDescription":"Delete value from container like an array or a map",
 	"longDescription":"",
 	}
 addParameter(command, "ref", "path")
@@ -191,7 +201,7 @@ commandList.append(command)
 
 command = {
 	"name":"appendValue",
-	"shortDescription":"add value into container like an array or a map",
+	"shortDescription":"Add value into container like an array or a map",
 	"longDescription":"",
 	}
 
@@ -200,30 +210,6 @@ addParameter(command, "ref", "value")
 addParameter(command, "string", "type")
 commandList.append(command)
 
-commandList.append({
-	"name":"addRecord",
-	"shortDescription":"",
-	"longDescription":"",
-#"parameters":["recordID","struct","values"],
-	})
-
-#addParameter(command, "uint32_t", "recordID")
-#addParameter(command, "any", "value")
-#addParameter(command, "uint32_t", "recordID")
-
-commandList.append({
-	"name":"updateRecord",
-	"shortDescription":"",
-	"longDescription":"",
-#"parameters":["recordID","values"],
-	})
-
-commandList.append({
-	"name":"removeRecord",
-	"shortDescription":"",
-	"longDescription":"",
-#"parameters":["recordID"],
-	})
 
 #RecordID
 commandList.append({

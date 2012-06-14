@@ -19,7 +19,7 @@ void rcp_connection_epoll_action(int epfd, struct epoll_event *ev,
 		rcp_connection_on_receive((rcp_connection_ref)data.ptr);
 	}
 	if (ev->events & EPOLLRDHUP){
-		rcp_connection_free((rcp_connection_ref)data.ptr);
+		//rcp_connection_free((rcp_connection_ref)data.ptr);
 	}
 }
 
@@ -38,19 +38,19 @@ void rcp_connection_epoll_action(int epfd, struct epoll_event *ev,
 ///
 //con_plain
 
-static struct rcp_connection_layer1_class_part
-	con_plain_class_part = CON_PLAIN_CLASS_PART;
+//static struct rcp_connection_layer1_class_part
+//	con_plain_class_part = CON_PLAIN_CLASS_PART;
 
 ///
 //layer 2
 //	command separation
 //
 
-struct rcp_connection_layer2_class_part
-con_null_terminate_class_part = CON_NULL_TERMINAE_CLASS_PART;
+//struct rcp_connection_layer2_class_part
+//con_null_terminate_class_part = CON_NULL_TERMINAE_CLASS_PART;
 
-struct rcp_connection_layer2_class_part
-con_web_socket_class_part = CON_WEB_SOCKET_CLASS_PART;
+//struct rcp_connection_layer2_class_part
+//con_web_socket_class_part = CON_WEB_SOCKET_CLASS_PART;
 ///
 //layer 3
 //	command execution 
@@ -147,12 +147,15 @@ rcp_epoll_action_ref rcp_listener_plain_ws_json_new(int epfd)
 }
 
 
+void con_plain_set_fd(int epfd, int fd, rcp_connection_ref con);
+
 rcp_connection_ref rcp_listener_connection_new(
 		struct rcp_listener_class *klass, int epfd, int fd)
 {
 	rcp_connection_ref con = rcp_connection_new(
 			klass->connection_class);
 	con_plain_set_fd(epfd, fd, con);
+	return con;
 }
 
 void rcp_listener_release(rcp_epoll_action_ref unit)
@@ -232,6 +235,5 @@ void rcp_listener_plain_json_epoll_event(
 	//log
 
 	//make new connection
-	rcp_connection_ref con = rcp_listener_connection_new(
-			lis->klass, epfd, fd);
+	rcp_listener_connection_new(lis->klass, epfd, fd);
 }

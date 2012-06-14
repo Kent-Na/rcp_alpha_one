@@ -78,6 +78,12 @@ void rcp_connection_free(rcp_connection_ref con)
 	free(con);
 }
 
+int rcp_connection_alive(rcp_connection_ref con)
+{
+	struct rcp_connection_core *core = (void*)con;
+	struct rcp_connection_class *klass = core->klass;
+	return klass->l1.alive(con);
+}
 void rcp_connection_send(rcp_connection_ref con, void *data, size_t len)
 {
 	struct rcp_connection_core *core = (void*)con;

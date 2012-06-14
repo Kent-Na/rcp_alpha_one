@@ -4,7 +4,6 @@
 #define RCP_INTERNAL_STRUCTURE
 #include "rcp_type.h"
 #include "rcp_type_list.h"
-#define RCP_TYPE_POINTER (0)
 
 void rcp_uint8_type_copy(
 		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst){

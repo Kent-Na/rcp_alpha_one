@@ -77,6 +77,12 @@ struct cmd_update_user_list{
 	rcp_record_ref command;
 };
 
+struct cmd_send_value{
+	rcp_record_ref value;
+	rcp_record_ref type;
+	rcp_record_ref command;
+};
+
 struct cmd_set_value{
 	rcp_record_ref path;
 	rcp_record_ref value;
@@ -93,18 +99,6 @@ struct cmd_append_value{
 	rcp_record_ref path;
 	rcp_record_ref value;
 	rcp_record_ref type;
-	rcp_record_ref command;
-};
-
-struct cmd_add_record{
-	rcp_record_ref command;
-};
-
-struct cmd_update_record{
-	rcp_record_ref command;
-};
-
-struct cmd_remove_record{
 	rcp_record_ref command;
 };
 

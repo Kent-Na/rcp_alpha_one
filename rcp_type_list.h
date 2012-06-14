@@ -50,3 +50,6 @@ extern const rcp_type_ref rcp_float_type;
 
 #define RCP_TYPE_DOUBLE ((rcp_type_id_t)50)
 extern const rcp_type_ref rcp_double_type;
+
+#define RCP_TYPE_POINTER ((rcp_type_id_t)2)
+extern const rcp_type_ref rcp_pointer_type;

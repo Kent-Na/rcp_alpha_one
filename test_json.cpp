@@ -111,4 +111,5 @@ int test_json(){
 	}
 	*/
 	rcp_info("json none");
+	return 0;
 }

@@ -19,8 +19,8 @@ int main (int argc, const char** argv){
 
 	//rcp_command
 	{
-		if (rcp_command_from_str(RCP_COMMAND_STR_CAUTION) == 
-				RCP_COMMAND_CAUTION)
+		if (rcp_command_from_str(CMD_STR_CAUTION) == 
+				CMD_CAUTION)
 			printf("ok\n");
 		else
 			printf("fail\n");

@@ -3,7 +3,6 @@
 
 void rcp_epoll_run(int epfd)
 {
-	int err;
 	int i;
 
 	while (1){

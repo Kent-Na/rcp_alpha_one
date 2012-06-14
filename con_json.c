@@ -5,7 +5,6 @@
 #include "rcp_epoll.h"
 #include "rcp_connection.h"
 
-
 #include "rcp_tree.h"
 #include "rcp_type.h"
 #include "rcp_type_list.h"
