@@ -10,6 +10,7 @@
 rcp_extern void rcp_info(const char* str);
 rcp_extern void rcp_caution(const char* str);
 rcp_extern void rcp_error(const char* str);
+#define rcp_assert(cond, str) {if(!(cond)){rcp_error(str);return;}}
 
 char *rcp_encode_base64(const char *in, size_t len);
 

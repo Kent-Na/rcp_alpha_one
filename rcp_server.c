@@ -1,13 +1,21 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
+#include "rcp_defines.h"
 #include "rcp_type.h"
 #include "rcp_number.h"
 #include "rcp_tree.h"
 #include "rcp_epoll.h"
+#include "rcp_io.h"
+#include "rcp_sender.h"
+#include "rcp_receiver.h"
 #include "rcp_connection.h"
-#include "rcp_connection_builder.h"
+#include "rcp_listener.h"
 #include "rcp_context.h"
 #include "rcp_server.h"
+
+///
+//context
+//
 
 rcp_tree_ref contexts = NULL;
 
@@ -39,9 +47,12 @@ rcp_context_ref rcp_context_new(uint32_t id)
 	return ctx;
 }
 
-
+///
+//listener
+//
 rcp_epoll_action_ref plain_json = NULL;
 rcp_epoll_action_ref plain_ws_json = NULL;
+rcp_epoll_action_ref plain_wss_json = NULL;
 void rcp_listen_start(int epfd)
 {
 	if (plain_json)
@@ -52,7 +63,12 @@ void rcp_listen_start(int epfd)
 	if (plain_ws_json)
 		rcp_error("already listening");
 	else
-		plain_ws_json = rcp_listener_plain_ws_json_new(epfd);
+		plain_ws_json = rcp_listener_ws_json_new(epfd);
+
+	if (plain_wss_json)
+		rcp_error("already listening");
+	else
+		plain_wss_json = rcp_listener_wss_json_new(epfd);
 }
 
 void rcp_listen_end()
@@ -60,10 +76,57 @@ void rcp_listen_end()
 	if (!plain_json)
 		rcp_error("not yet listening");
 	else
-		rcp_listener_release(plain_json);
+		rcp_listener_delete(plain_json);
 
 	if (!plain_ws_json)
 		rcp_error("not yet listening");
 	else
-		rcp_listener_release(plain_ws_json);
+		rcp_listener_delete(plain_ws_json);
+
+	if (!plain_wss_json)
+		rcp_error("not yet listening");
+	else
+		rcp_listener_delete(plain_wss_json);
+}
+
+///
+//ssl
+//
+
+SSL_CTX *ctx=NULL;
+
+void rcp_ssl_ctx_init()
+{
+	const SSL_METHOD *method = SSLv3_server_method();
+	if (method == NULL){
+		rcp_error("e1\n");
+	}
+	ctx = SSL_CTX_new(method);
+	if (ctx== NULL){
+		rcp_error("e2\n");
+	}
+	SSL_CTX_use_certificate_file(ctx, 
+			RCP_SSL_CERTIFICATE_FILE_PATH, SSL_FILETYPE_PEM);
+	SSL_CTX_use_PrivateKey_file(ctx, 
+			RCP_SSL_PRIVATEKEY_FILE_PATH, SSL_FILETYPE_PEM);
+}
+
+SSL_CTX* rcp_ssl_ctx()
+{
+	return ctx;
+}
+
+///
+//shared sender
+//
+
+rcp_sender_cluster_ref cluster = NULL;
+
+void rcp_shared_sender_cluster_init()
+{
+	cluster = rcp_sender_cluster_new();
+}
+rcp_sender_cluster_ref rcp_shared_sender_cluster()
+{
+	return cluster;
 }

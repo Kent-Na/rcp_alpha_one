@@ -3,9 +3,13 @@
 #include "rcp_tree.h"
 #include "rcp_types.h"
 #include "rcp_epoll.h"
+#include "rcp_io.h"
+#include "rcp_sender.h"
+#include "rcp_receiver.h"
 #include "rcp_connection.h"
 #include "rcp_context.h"
 #include "rcp_server.h"
+#include "rcp_listener.h"
 
 #include "rcp_command_list.h"
 #include "rcp_command.h"
@@ -63,7 +67,7 @@ void rcp_context_add_connection(rcp_context_ref ctx,
 
 void rcp_context_remove_connection(rcp_context_ref ctx,
 		rcp_connection_ref con){
-	rcp_error("ctx:remove connection");
+	rcp_info("ctx:remove connection");
 	if (con)
 		rcp_array_append(ctx->dead, (rcp_data_ref)&con);
 	rcp_context_clean_dead(ctx);
@@ -107,16 +111,24 @@ void rcp_context_send_struct(rcp_context_ref ctx,
 void rcp_context_send_record(rcp_context_ref ctx, rcp_record_ref cmd)
 {
 	rcp_tree_node_ref node = rcp_tree_begin(ctx->connections);
+	if (!node)
+		return;
+
+	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
+	rcp_sender_cluster_set_rec(cls, cmd);
+
 	while (node){
 		rcp_connection_ref con = 
 			*(rcp_connection_ref*)rcp_tree_node_data(node);
-		con_json_send_record(con, cmd);
+		rcp_connection_send(con);
 		node = rcp_tree_node_next(node);
 		if (!rcp_connection_alive(con)){
 			rcp_info("dead");
-			rcp_context_remove_connection(ctx, con);
+			rcp_array_append(ctx->dead, (rcp_data_ref)&con);
 		}
 	}
+	rcp_sender_cluster_clean_up(cls);
+	rcp_context_clean_dead(ctx);
 }
 
 rcp_record_ref rcp_command_error_new(
@@ -197,8 +209,8 @@ rcp_extern void rcp_context_execute_command_rec(
 			rcp_map_ref map = rcp_record_data(map_rec);
 			rcp_struct_to_map(cmd_type, (rcp_data_ref)&cmd, map);
 			rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
-
-			con_json_send_record(con, map_rec);
+	
+			rcp_connection_send_rec(con, map_rec);
 			rcp_record_release(map_rec);
 
 			node = rcp_map_node_next(node);

@@ -5,9 +5,6 @@
 #include "rcp_command_list.h"
 #include "rcp_command.h"
 
-#include "rcp_epoll.h"
-#include "rcp_connection.h"
-
 int test_json(void);
 int test_tree(void);
 int test_map(void);

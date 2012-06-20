@@ -1,4 +1,9 @@
-write test_json.cpp
-support json unicode escape
-json_write_number
-use random number as data mask of web_socket 
+Write test_json.cpp.
+Support json unicode escape.
+Json_write_number.
+Use random number as data mask of web_socket .
+Return pong on recive ping frame at web_socket.
+Determin release timing of rcp_connection.
+Write con_web_socket_deinit.
+Set timeout to connection.
+connect ssl port with non ssl connection cause "epoll ctl"

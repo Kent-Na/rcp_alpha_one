@@ -5,10 +5,14 @@
 #include "rcp_command_list.h"
 #include "rcp_command.h"
 
+#include "rcp_type.h"
+
 #include "rcp_epoll.h"
+#include "rcp_io.h"
+#include "rcp_sender.h"
+#include "rcp_receiver.h"
 #include "rcp_connection.h"
 
-#include "rcp_type.h"
 #include "rcp_context.h"
 #include "rcp_server.h"
 
@@ -18,7 +22,12 @@ void rcp_main();
 
 int main (int argc, const char** argv)
 {
+	signal(SIGPIPE,SIG_IGN);
+
 	SSL_library_init();
+	rcp_ssl_ctx_init();
+
+	rcp_shared_sender_cluster_init();
 
 	rcp_command_type_table_init();
 	rcp_context_manager_init();

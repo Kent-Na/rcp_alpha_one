@@ -4,21 +4,17 @@ struct con_plain{
 	struct rcp_epoll_action *unit;
 };
 
-void con_plain_init(rcp_connection_ref con);
-void con_plain_release(rcp_connection_ref con);
+void con_plain_init(rcp_io_ref io);
+void con_plain_release(rcp_io_ref io);
 size_t con_plain_send(
-		rcp_connection_ref con, const void *data, size_t len);
+		rcp_io_ref io, const void *data, size_t len);
 size_t con_plain_receive(
-		rcp_connection_ref con, const void *data, size_t len);
-int con_plain_alive(
-		rcp_connection_ref con);
+		rcp_io_ref io, void *data, size_t len);
+int con_plain_alive(rcp_io_ref io);
+void con_plain_on_close(
+		rcp_io_ref io);
 
-#define CON_PLAIN_CLASS_PART \
-{\
-	con_plain_init,\
-	con_plain_release,\
-	con_plain_send,\
-	con_plain_receive,\
-	con_plain_alive\
-}
+void con_plain_set_fd(rcp_io_ref io, struct rcp_epoll_action *unit,
+		int epfd, int fd);
 
+extern struct rcp_io_class con_plain_class;

@@ -16,6 +16,7 @@ void rcp_error(const char* str)
 	printf("[e]%s\n",str);
 }
 
+
 char *rcp_encode_base64(const char *in, size_t len)
 {
 	BIO *mem = BIO_new(BIO_s_mem());

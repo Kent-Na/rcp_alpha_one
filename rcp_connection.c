@@ -1,113 +1,91 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
 #include "rcp_utility.h"
+#include "rcp_types.h"
+#include "rcp_io.h"
+#include "rcp_sender.h"
+#include "rcp_receiver.h"
 #include "rcp_connection.h"
+#include "rcp_epoll.h"
+#include "rcp_listener.h"
+#include "rcp_context.h"
+#include "rcp_server.h"
 
-
-void rcp_connection_core_init(
-		void *state, struct rcp_connection_class* klass)
+rcp_connection_ref rcp_connection_new()
 {
-	struct rcp_connection_core *st = state;
-	st->klass = klass;
-	st->loginID = 0;
-	st->userID = 0;
+	rcp_connection_ref con = malloc(sizeof *con);	
+	con->io = NULL;
+	con->sender = NULL;
+	con->receiver = NULL;
+	return con;
 }
-
-struct rcp_connection_class *rcp_connection_class(rcp_connection_ref con)
+void rcp_connection_delete(rcp_connection_ref con)
 {
-	struct rcp_connection_core *core = (void*)con;
-	struct rcp_connection_class *klass = core->klass;
-	return klass;
+	if (!con)
+		return;
+	rcp_io_delete(con->io);
+	rcp_receiver_delete(con->receiver);
 }
-
-void *rcp_connection_l1(rcp_connection_ref con)
+void rcp_connection_set_io(
+		rcp_connection_ref con, rcp_io_ref io)
 {
-	size_t l1_data_offset = sizeof (struct rcp_connection_core);
-	return con + l1_data_offset;
+#ifdef RCP_SELF_TEST
+	if (con->io){
+		rcp_error("connection have already io");
+		return;
+	}
+#endif
+	con->io = io;
 }
-void *rcp_connection_l2(rcp_connection_ref con)
+void rcp_connection_set_sender(
+		rcp_connection_ref con, rcp_sender_ref sender)
 {
-	struct rcp_connection_core *core = (void*)con;
-	struct rcp_connection_class *klass = core->klass;
-	size_t l1_data_offset = sizeof (struct rcp_connection_core);
-	size_t l2_data_offset = l1_data_offset + klass->layer1_data_size;
-	return con + l2_data_offset;
+#ifdef RCP_SELF_TEST
+	if (con->sender){
+		rcp_error("connection have already sender");
+		return;
+	}
+#endif
+	con->sender = sender;
 }
-void *rcp_connection_l3(rcp_connection_ref con)
+void rcp_connection_set_receiver(
+		rcp_connection_ref con, rcp_receiver_ref receiver)
 {
-	struct rcp_connection_core *core = (void*)con;
-	struct rcp_connection_class *klass = core->klass;
-	size_t l1_data_offset = sizeof (struct rcp_connection_core);
-	size_t l2_data_offset = l1_data_offset + klass->layer1_data_size;
-	size_t l3_data_offset = l2_data_offset + klass->layer2_data_size;
-	return con + l3_data_offset;
+#ifdef RCP_SELF_TEST
+	if (con->receiver){
+		rcp_error("connection have already receiver");
+		return;
+	}
+#endif
+	con->receiver = receiver;
 }
-rcp_connection_ref rcp_connection_new(struct rcp_connection_class* klass)
+void rcp_connection_send(rcp_connection_ref con)
 {
-	size_t l1_data_offset = sizeof (struct rcp_connection_core);
-	size_t l2_data_offset = l1_data_offset + klass->layer1_data_size;
-	size_t l3_data_offset = l2_data_offset + klass->layer2_data_size;
-	size_t total_size = l3_data_offset + klass->layer3_data_size;
-
-	rcp_connection_ref con = malloc(total_size);
-
-	struct rcp_connection_core *core = (void*)con;
-
-	rcp_connection_core_init(core, klass);
-	if (klass ->l1.init)
-		klass->l1.init(con);
-	if (klass ->l2.init)
-		klass->l2.init(con);
-	if (klass ->l3.init)
-		klass->l3.init(con);
-
-	return (rcp_connection_ref) con;
-};
-
-void rcp_connection_free(rcp_connection_ref con)
-{
-	struct rcp_connection_core *core = (void*)con;
-	struct rcp_connection_class *klass = core->klass;
-
-	if (klass ->l1.release)
-		klass->l1.release(con);
-	if (klass ->l2.release)
-		klass->l2.release(con);
-	if (klass ->l3.release)
-		klass->l3.release(con);
-	free(con);
+	const uint8_t *begin, *end;
+	rcp_sender_result(con->sender, &begin, &end);
+	rcp_io_send(con->io, begin, end-begin);
 }
-
-int rcp_connection_alive(rcp_connection_ref con)
+void rcp_connection_send_rec(rcp_connection_ref con, rcp_receiver_ref rec)
 {
-	struct rcp_connection_core *core = (void*)con;
-	struct rcp_connection_class *klass = core->klass;
-	return klass->l1.alive(con);
+	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
+	rcp_sender_cluster_set_rec(cls, rec);
+	rcp_connection_send(con);
+	rcp_sender_cluster_clean_up(cls);
 }
-void rcp_connection_send(rcp_connection_ref con, void *data, size_t len)
-{
-	struct rcp_connection_core *core = (void*)con;
-	struct rcp_connection_class *klass = core->klass;
-	klass->l2.send(con, data, len);
-}
-
 void rcp_connection_on_receive(rcp_connection_ref con)
 {
-	struct rcp_connection_core *core = (void*)con;
-	struct rcp_connection_class *klass = core->klass;
-
-	klass->l2.on_receive(con);
-
-	void *cmd_begin;
-	void *cmd_end;
-	rcp_err err;
-	while (1){
-		err = klass->l2.next_command(con, &cmd_begin, &cmd_end);
-		if (err)
-			break;
-		klass->l3.execute_command(con, cmd_begin, cmd_end);
+	rcp_receiver_on_receive(con->receiver, con->io);
+	rcp_record_ref rec = rcp_receiver_next_command(con->receiver);
+	while (rec){
+		rcp_context_execute_command_rec(con, rec);
+		rec = rcp_receiver_next_command(con->receiver);
 	}
-
-	klass->l2.clean_space(con);
 }
-
+int rcp_connection_alive(rcp_connection_ref con)
+{
+	return rcp_io_alive(con->io);
+}
+void rcp_connection_on_close(rcp_connection_ref con)
+{
+	rcp_io_on_close(con->io);
+}

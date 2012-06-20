@@ -94,9 +94,6 @@ void rcp_{typeName}_type_copy(
 }}
 int rcp_{typeName}_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){{
-	//this implement causes over flow
-	//return *({cTypeName}*)l - *({cTypeName}*)r;
-	//so use that.
 	if (*({cTypeName}*)l<*({cTypeName}*)r)
 		return -1;
 	if (*({cTypeName}*)l>*({cTypeName}*)r)

@@ -1,8 +1,12 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
 #include "rcp_utility.h"
-#include "rcp_connection.h"
-#include "con_buffer.h"
+#include "rcp_buffer.h"
+
+#include "rcp_type.h"
+#include "rcp_io.h"
+#include "rcp_receiver.h"
+#include "rcp_sender.h"
 #include "con_web_socket.h"
 
 const uint8_t http_header_receiving = 0;
@@ -36,47 +40,46 @@ const char *ws_header_2 = "connection: upgrade";
 const char *ws_header_3 = "Sec-WebSocket-Accept: ";
 //const char *ws_header_4 = "Sec-WebSocket-Protocol: rcp";
 
-int con_web_socket_http_on_receive(rcp_connection_ref con);
-void con_web_socket_frame_on_receive(rcp_connection_ref con);
+int con_web_socket_http_on_receive(rcp_receiver_ref con);
+void con_web_socket_frame_on_receive(rcp_receiver_ref con);
 void con_web_socket_perse_http_field(
-		rcp_connection_ref con, char *line);
-int con_web_socket_http_next_field(rcp_connection_ref con);
+		rcp_receiver_ref con, char *line);
+int con_web_socket_http_next_field(rcp_receiver_ref con, rcp_io_ref io);
 void con_web_socket_send_http_header(
-		rcp_connection_ref con);
+		rcp_receiver_ref con, rcp_io_ref io);
 
-void con_web_socket_init(rcp_connection_ref con){
-	struct con_web_socket *st = rcp_connection_l2(con);
-	con_buffer_init(&st->buffer, RCP_PROTOCOL_JSON_BUFFER_SIZE);
+void con_web_socket_init(rcp_receiver_ref con){
+	struct con_web_socket *st = rcp_receiver_l2(con);
+	rcp_buffer_init(&st->buffer, RCP_PROTOCOL_JSON_BUFFER_SIZE);
 	st->http_state = http_header_receiving;	
 }
-void con_web_socket_deinit(rcp_connection_ref con){
-	struct con_web_socket *st = rcp_connection_l2(con);
-	con_buffer_deinit(&st->buffer);
+void con_web_socket_deinit(rcp_receiver_ref con){
+	struct con_web_socket *st = rcp_receiver_l2(con);
+	rcp_buffer_deinit(&st->buffer);
 }
 
-void con_web_socket_on_receive(rcp_connection_ref con)
+void con_web_socket_on_receive(rcp_receiver_ref con, rcp_io_ref io)
 {
 	rcp_info("on_receive");
-	struct rcp_connection_class *klass = rcp_connection_class(con);
-	struct con_web_socket *st = rcp_connection_l2(con);
+	struct con_web_socket *st = rcp_receiver_l2(con);
 
-	void *space = con_buffer_space(&st->buffer);
-	size_t size = con_buffer_space_size(&st->buffer);
+	void *space = rcp_buffer_space(&st->buffer);
+	size_t size = rcp_buffer_space_size(&st->buffer);
 
-	size_t len = klass->l1.receive(con, space, size);
-	con_buffer_supplied(&st->buffer, len);
+	size_t len = rcp_io_receive(io, space, size);
+	rcp_buffer_supplied(&st->buffer, len);
 
 	if (st->http_state == http_header_receiving){
-		while (!con_web_socket_http_next_field(con)){}
+		while (!con_web_socket_http_next_field(con, io)){}
 	}
 }
 
-int con_web_socket_http_next_field(rcp_connection_ref con)
+int con_web_socket_http_next_field(rcp_receiver_ref con, rcp_io_ref io)
 {
-	struct con_web_socket *st = rcp_connection_l2(con);
+	struct con_web_socket *st = rcp_receiver_l2(con);
 
-	unsigned char *d_begin = con_buffer_data(&st->buffer); 
-	unsigned char *d_end = con_buffer_data_end(&st->buffer);
+	unsigned char *d_begin = rcp_buffer_data(&st->buffer); 
+	unsigned char *d_end = rcp_buffer_data_end(&st->buffer);
 
 	unsigned char *d;
 
@@ -91,10 +94,10 @@ int con_web_socket_http_next_field(rcp_connection_ref con)
 		if (d_begin != d)
 			con_web_socket_perse_http_field(con, field);
 		free(field);
-		con_buffer_consumed_at(&st->buffer, d+2);
+		rcp_buffer_consumed_at(&st->buffer, d+2);
 		if (d_begin == d){
 			st->http_state = http_upgraded;	
-			con_web_socket_send_http_header(con);
+			con_web_socket_send_http_header(con, io);
 		}
 		return 0;
 	}
@@ -103,9 +106,9 @@ int con_web_socket_http_next_field(rcp_connection_ref con)
 }
 
 void con_web_socket_perse_http_field(
-		rcp_connection_ref con, char *line)
+		rcp_receiver_ref con, char *line)
 {
-	struct con_web_socket *st = rcp_connection_l2(con);
+	struct con_web_socket *st = rcp_receiver_l2(con);
 
 	//reprace first ';' to '\0'	
 
@@ -140,19 +143,18 @@ void con_web_socket_perse_http_field(
 }
 
 void con_web_socket_send_http_header(
-		rcp_connection_ref con)
+		rcp_receiver_ref con, rcp_io_ref io)
 {
-	struct rcp_connection_class *klass = rcp_connection_class(con);
-	struct con_web_socket *st = rcp_connection_l2(con);
+	struct con_web_socket *st = rcp_receiver_l2(con);
 
 	char* crnl = "\r\n";
-	klass->l1.send(con, ws_header_0, strlen(ws_header_0));
-	klass->l1.send(con, crnl, 2);
-	klass->l1.send(con, ws_header_1, strlen(ws_header_1));
-	klass->l1.send(con, crnl, 2);
-	klass->l1.send(con, ws_header_2, strlen(ws_header_2));
-	klass->l1.send(con, crnl, 2);
-	klass->l1.send(con, ws_header_3, strlen(ws_header_3));
+	rcp_io_send(io, ws_header_0, strlen(ws_header_0));
+	rcp_io_send(io, crnl, 2);
+	rcp_io_send(io, ws_header_1, strlen(ws_header_1));
+	rcp_io_send(io, crnl, 2);
+	rcp_io_send(io, ws_header_2, strlen(ws_header_2));
+	rcp_io_send(io, crnl, 2);
+	rcp_io_send(io, ws_header_3, strlen(ws_header_3));
 	{
 		const char *uuid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 		unsigned char buffer[24+36];
@@ -161,57 +163,24 @@ void con_web_socket_send_http_header(
 		char hash[20];
 		SHA1(buffer, 24+36, (unsigned char*)hash);
 		char *key = rcp_encode_base64(hash, 20);
-		klass->l1.send(con, key, strlen(key));
+		rcp_io_send(io, key, strlen(key));
 		free(key);
 	}
-	klass->l1.send(con, crnl, 2);
-	klass->l1.send(con, crnl, 2);
-}
-
-void con_web_socket_send(
-		rcp_connection_ref con, void *data, size_t len)
-{
-	struct rcp_connection_class *klass = rcp_connection_class(con);
-
-	uint8_t ws_header1 = CON_WEB_SOCKET_FIN | CON_WEB_SOCKET_FRAME_TEXT;
-	klass->l1.send(con, &ws_header1, sizeof ws_header1);
-	//printf("%x\n",ws_header1);
-
-	uint8_t mask_enable = CON_WEB_SOCKET_MASK;
-
-	if (len<126) {
-		uint8_t ws_header2 = mask_enable | len;
-		klass->l1.send(con, &ws_header2, sizeof ws_header2);
-	}
-	else if (len< (1<<16)){
-		uint8_t ws_header2 = mask_enable | 126;
-		klass->l1.send(con, &ws_header2, sizeof ws_header2);
-		uint16_t ws_p = htobe16(len);
-		klass->l1.send(con, &ws_p, sizeof ws_p);
-	}
-	else{
-		uint8_t ws_header2 = mask_enable | 127;
-		klass->l1.send(con, &ws_header2, sizeof ws_header2);
-		uint64_t ws_p = htobe64(len);
-		klass->l1.send(con, &ws_p, sizeof ws_p);
-	}
-
-	uint8_t mask[4] = {0,0,0,0};
-	klass->l1.send(con, mask, 4);
-	klass->l1.send(con, data, len);
+	rcp_io_send(io, crnl, 2);
+	rcp_io_send(io, crnl, 2);
 }
 
 rcp_err con_web_socket_next_command(
-		rcp_connection_ref con, void **command_begin, void **command_end)
+		rcp_receiver_ref con, void **command_begin, void **command_end)
 {
-	struct con_web_socket *st = rcp_connection_l2(con);
+	struct con_web_socket *st = rcp_receiver_l2(con);
 
 	if (st->http_state == http_header_receiving){
 		return -1;
 	}
 
 	if (st->ws_state == ws_not_yet){
-		const uint8_t *buffer = con_buffer_consume(&st->buffer, 2);
+		const uint8_t *buffer = rcp_buffer_consume(&st->buffer, 2);
 		if (!buffer)
 			return -1;
 		st->ws_header1 = buffer[0];
@@ -225,14 +194,14 @@ rcp_err con_web_socket_next_command(
 			st->ws_state = ws_payload_len_received;
 		}
 		else if (st->ws_payload_len == 0x7e){
-			const uint8_t *buffer = con_buffer_consume(&st->buffer, 2);
+			const uint8_t *buffer = rcp_buffer_consume(&st->buffer, 2);
 			if (!buffer)
 				return -1;
 			st->ws_payload_len = be16toh(*(uint16_t*)buffer);
 			st->ws_state = ws_payload_len_received;
 		}
 		else{
-			const uint8_t *buffer = con_buffer_consume(&st->buffer, 8);
+			const uint8_t *buffer = rcp_buffer_consume(&st->buffer, 8);
 			if (!buffer)
 				return -1;
 			st->ws_payload_len = be64toh(*(uint64_t*)buffer);
@@ -244,14 +213,14 @@ rcp_err con_web_socket_next_command(
 			rcp_error("web socket spec err");
 			return -1;
 		}
-		const uint8_t *buffer = con_buffer_consume(&st->buffer, 4);
+		const uint8_t *buffer = rcp_buffer_consume(&st->buffer, 4);
 		if (!buffer)
 			return -1;
 		memcpy(st->ws_masking_key ,buffer, 4);
 		st->ws_state = ws_masking_key_received;
 	}
 	if (st->ws_state == ws_masking_key_received){
-		uint8_t *buffer = con_buffer_consume(
+		uint8_t *buffer = rcp_buffer_consume(
 				&st->buffer, st->ws_payload_len);
 
 		if (!buffer)
@@ -261,12 +230,6 @@ rcp_err con_web_socket_next_command(
 			buffer[i] ^= st->ws_masking_key[i%4];
 		}
 
-		/*
-		uint8_t cpy[st->ws_payload_len + 1];
-		memcpy(cpy, buffer, st->ws_payload_len);
-		cpy[st->ws_payload_len] = '\0';
-		rcp_info(cpy);
-*/
 		*command_begin = buffer;
 		*command_end = buffer + st->ws_payload_len; 
 
@@ -277,8 +240,107 @@ rcp_err con_web_socket_next_command(
 
 	return -1;
 }
-void con_web_socket_clean_space(rcp_connection_ref con)
+void con_web_socket_clean_space(rcp_receiver_ref con)
 {
-	struct con_web_socket *st = rcp_connection_l2(con);
-	con_buffer_cleanup(&st->buffer);
+	struct con_web_socket *st = rcp_receiver_l2(con);
+	rcp_buffer_cleanup(&st->buffer);
+}
+
+struct cmp_web_socket{
+	struct rcp_buffer buffer;
+};
+
+void cmp_web_socket_init(void* userdata);
+void cmp_web_socket_deinit(void* userdata);
+void cmp_web_socket_build(void* userdata, 
+		const uint8_t *begin, const uint8_t *end);
+void cmp_web_socket_result(void* userdata, 
+		const uint8_t **begin, const uint8_t **end);
+void cmp_web_socket_twist(void* userdata);
+void cmp_web_socket_clean_up(void* userdata);
+
+struct rcp_sender_l1_class cmp_web_socket_class = {
+	sizeof (struct cmp_web_socket),
+	cmp_web_socket_init,
+	cmp_web_socket_deinit,
+	cmp_web_socket_build,
+	cmp_web_socket_result,
+	cmp_web_socket_twist,
+	cmp_web_socket_clean_up
+};
+
+void cmp_web_socket_init(void* userdata)
+{
+	struct cmp_web_socket *st = userdata;
+	rcp_buffer_init(&st->buffer, RCP_PROTOCOL_JSON_BUFFER_SIZE);
+}
+void cmp_web_socket_deinit(void* userdata)
+{
+	struct cmp_web_socket *st = userdata;
+	rcp_buffer_deinit(&st->buffer);
+}
+void cmp_web_socket_build(void* userdata, 
+		const uint8_t *begin, const uint8_t *end)
+{
+	struct cmp_web_socket *st = userdata;
+	//to enable this, set CON_WEB_SOCKET_MASK.
+	uint8_t mask_enable = 0;
+	size_t len = end-begin;
+
+	size_t total_size = len ;
+	total_size += 2;
+	if (mask_enable)
+		total_size += 4;
+	if (len < 126)
+		total_size += 0;
+	else if (len < 0x10000)
+		total_size += 2;
+	else
+		total_size += 8;
+	if (rcp_buffer_space_size(&st->buffer)<total_size){
+		rcp_error("cmp nt not enough space");
+		return;
+	}
+
+	uint8_t ws_header1 = CON_WEB_SOCKET_FIN | CON_WEB_SOCKET_FRAME_TEXT;
+	rcp_buffer_supply(&st->buffer, &ws_header1, sizeof ws_header1);
+
+
+	if (len<126) {
+		uint8_t ws_header2 = mask_enable | len;
+		rcp_buffer_supply(&st->buffer, &ws_header2, sizeof ws_header2);
+	}
+	else if (len< 0x10000){
+		uint8_t ws_header2 = mask_enable | 126;
+		rcp_buffer_supply(&st->buffer, &ws_header2, sizeof ws_header2);
+		uint16_t ws_p = htobe16(len);
+		rcp_buffer_supply(&st->buffer, &ws_p, sizeof ws_p);
+	}
+	else{
+		uint8_t ws_header2 = mask_enable | 127;
+		rcp_buffer_supply(&st->buffer, &ws_header2, sizeof ws_header2);
+		uint64_t ws_p = htobe64(len);
+		rcp_buffer_supply(&st->buffer, &ws_p, sizeof ws_p);
+	}
+
+	//uint8_t mask[4] = {0,0,0,0};
+	//rcp_buffer_supply(, mask, 4);
+	rcp_buffer_supply(&st->buffer, begin, len);
+}
+void cmp_web_socket_result(void* userdata, 
+		const uint8_t **begin, const uint8_t **end)
+{
+	struct cmp_web_socket *st = userdata;
+	*begin = rcp_buffer_data(&st->buffer);
+	*end = rcp_buffer_data_end(&st->buffer);
+}
+void cmp_web_socket_twist(void* userdata)
+{
+	return;
+}
+void cmp_web_socket_clean_up(void* userdata)
+{
+	struct cmp_web_socket *st = userdata;
+	rcp_buffer_consumed_all(&st->buffer);
+	rcp_buffer_cleanup(&st->buffer);
 }

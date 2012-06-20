@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include <unistd.h>
+#include <signal.h>
 #include <errno.h>
 #include <sys/epoll.h>
 #include <sys/socket.h>

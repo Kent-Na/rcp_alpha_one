@@ -1,7 +1,12 @@
+from colorizer import colorizer
 env = Environment()
+
+col = colorizer()
+col.colorize(env)
 
 #env.Append(CCFLAGS = ['-O3'])
 env.Append(CCFLAGS = ['-Wall','-g'])
+env.Append(CFLAGS = ['-Wno-pointer-sign'])
 env.Append(CXXFLAGS = ['-std=gnu++0x'])
 env.Append(LIBS = ['ssl'])
 
@@ -10,8 +15,11 @@ mainFiles = [
 	'rcp_command.c',
 	'rcp_command_list.c',
 	'rcp_epoll.c',
+	'rcp_io.c',
+	'rcp_sender.c',
+	'rcp_receiver.c',
 	'rcp_connection.c',
-	'rcp_connection_builder.c',
+	'rcp_listener.c',
 	'rcp_utility.c',
 	'rcp_tree.c',
 	'rcp_server.c',
@@ -26,10 +34,11 @@ mainFiles = [
 	'rcp_map.c',
 	'rcp_array.c',
 	'rcp_json.c',
-	'con_buffer.c',
+	'rcp_buffer.c',
 	'con_plain.c',
 	'con_null_terminate.c',
 	'con_web_socket.c',
+	'con_ssl.c',
 	'con_json.c',
 	'cmd_types.c'
 ]

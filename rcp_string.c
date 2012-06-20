@@ -8,18 +8,23 @@
 #include "rcp_string.h"
 
 struct rcp_string_core{
-	char * str;
+	char *str;
 	size_t size;//allocated memory size
 	size_t count;
 };
 
 typedef struct rcp_string_core *rcp_string_core_ref;
 
-rcp_data_ref rcp_string_new(const char* c_str)
+rcp_data_ref rcp_string_new(const char *c_str)
 {
 	rcp_data_ref str = rcp_alloc(rcp_string_type);
 	rcp_string_init_with_c_str(str, c_str);
 	return str;
+}
+rcp_extern void rcp_string_delete(rcp_string_ref str)
+{
+	rcp_deinit(rcp_string_type, str);
+	rcp_dealloc(str);
 }
 //string type
 void rcp_string_init(rcp_type_ref type, rcp_data_ref data)
