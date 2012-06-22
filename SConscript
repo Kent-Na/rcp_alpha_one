@@ -8,16 +8,17 @@ col.colorize(env)
 env.Append(CCFLAGS = ['-Wall','-g'])
 env.Append(CFLAGS = ['-Wno-pointer-sign'])
 env.Append(CXXFLAGS = ['-std=gnu++0x'])
-env.Append(LIBS = ['ssl'])
+env.Append(LIBS = ['ssl','m'])
 
 mainFiles = [
 	'rcp_main.c',
 	'rcp_command.c',
 	'rcp_command_list.c',
 	'rcp_epoll.c',
-	'rcp_io.c',
 	'rcp_sender.c',
 	'rcp_receiver.c',
+	'rcp_sender_classes.c',
+	'rcp_receiver_classes.c',
 	'rcp_connection.c',
 	'rcp_listener.c',
 	'rcp_utility.c',
@@ -36,9 +37,10 @@ mainFiles = [
 	'rcp_json.c',
 	'rcp_buffer.c',
 	'con_plain.c',
+	'con_ssl.c',
+	'con_file.c',
 	'con_null_terminate.c',
 	'con_web_socket.c',
-	'con_ssl.c',
 	'con_json.c',
 	'cmd_types.c'
 ]

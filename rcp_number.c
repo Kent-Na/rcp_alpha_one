@@ -11,9 +11,6 @@ void rcp_uint8_type_copy(
 }
 int rcp_uint8_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(uint8_t*)l - *(uint8_t*)r;
-	//so use that.
 	if (*(uint8_t*)l<*(uint8_t*)r)
 		return -1;
 	if (*(uint8_t*)l>*(uint8_t*)r)
@@ -36,9 +33,6 @@ void rcp_uint16_type_copy(
 }
 int rcp_uint16_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(uint16_t*)l - *(uint16_t*)r;
-	//so use that.
 	if (*(uint16_t*)l<*(uint16_t*)r)
 		return -1;
 	if (*(uint16_t*)l>*(uint16_t*)r)
@@ -61,9 +55,6 @@ void rcp_uint32_type_copy(
 }
 int rcp_uint32_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(uint32_t*)l - *(uint32_t*)r;
-	//so use that.
 	if (*(uint32_t*)l<*(uint32_t*)r)
 		return -1;
 	if (*(uint32_t*)l>*(uint32_t*)r)
@@ -86,9 +77,6 @@ void rcp_uint64_type_copy(
 }
 int rcp_uint64_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(uint64_t*)l - *(uint64_t*)r;
-	//so use that.
 	if (*(uint64_t*)l<*(uint64_t*)r)
 		return -1;
 	if (*(uint64_t*)l>*(uint64_t*)r)
@@ -111,9 +99,6 @@ void rcp_int8_type_copy(
 }
 int rcp_int8_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(int8_t*)l - *(int8_t*)r;
-	//so use that.
 	if (*(int8_t*)l<*(int8_t*)r)
 		return -1;
 	if (*(int8_t*)l>*(int8_t*)r)
@@ -136,9 +121,6 @@ void rcp_int16_type_copy(
 }
 int rcp_int16_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(int16_t*)l - *(int16_t*)r;
-	//so use that.
 	if (*(int16_t*)l<*(int16_t*)r)
 		return -1;
 	if (*(int16_t*)l>*(int16_t*)r)
@@ -161,9 +143,6 @@ void rcp_int32_type_copy(
 }
 int rcp_int32_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(int32_t*)l - *(int32_t*)r;
-	//so use that.
 	if (*(int32_t*)l<*(int32_t*)r)
 		return -1;
 	if (*(int32_t*)l>*(int32_t*)r)
@@ -186,9 +165,6 @@ void rcp_int64_type_copy(
 }
 int rcp_int64_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(int64_t*)l - *(int64_t*)r;
-	//so use that.
 	if (*(int64_t*)l<*(int64_t*)r)
 		return -1;
 	if (*(int64_t*)l>*(int64_t*)r)
@@ -211,9 +187,6 @@ void rcp_float_type_copy(
 }
 int rcp_float_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(float*)l - *(float*)r;
-	//so use that.
 	if (*(float*)l<*(float*)r)
 		return -1;
 	if (*(float*)l>*(float*)r)
@@ -236,9 +209,6 @@ void rcp_double_type_copy(
 }
 int rcp_double_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(double*)l - *(double*)r;
-	//so use that.
 	if (*(double*)l<*(double*)r)
 		return -1;
 	if (*(double*)l>*(double*)r)
@@ -261,9 +231,6 @@ void rcp_pointer_type_copy(
 }
 int rcp_pointer_type_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){
-	//this implement causes over flow
-	//return *(void**)l - *(void**)r;
-	//so use that.
 	if (*(void**)l<*(void**)r)
 		return -1;
 	if (*(void**)l>*(void**)r)

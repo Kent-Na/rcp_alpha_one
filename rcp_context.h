@@ -18,6 +18,7 @@ rcp_extern rcp_record_ref rcp_context_top_level_record(rcp_context_ref ctx);
 rcp_extern void rcp_context_execute_command_rec(
 		rcp_connection_ref con, rcp_record_ref cmd);
 
+void rcp_context_page_in(rcp_context_ref ctx);
 //rcp_extern void rcp_context_command_set(rcp_context_ref ctx, )
 
 //rcp_extern void rcp_context_execute_command(rcp_context_ref ctx,

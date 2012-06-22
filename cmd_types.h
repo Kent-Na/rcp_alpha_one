@@ -1,11 +1,15 @@
 
-struct cmd_protocol{
+struct cmd_open{
 	rcp_record_ref version;
 	rcp_record_ref client;
 	rcp_record_ref command;
 };
 
 struct cmd_kill{
+	rcp_record_ref command;
+};
+
+struct cmd_dump{
 	rcp_record_ref command;
 };
 
@@ -49,7 +53,13 @@ struct cmd_remove_user{
 	rcp_record_ref command;
 };
 
-struct cmd_update_user_permission{
+struct cmd_add_permission{
+	rcp_record_ref username;
+	rcp_record_ref mode;
+	rcp_record_ref command;
+};
+
+struct cmd_remove_permission{
 	rcp_record_ref username;
 	rcp_record_ref mode;
 	rcp_record_ref command;
@@ -102,14 +112,6 @@ struct cmd_append_value{
 	rcp_record_ref command;
 };
 
-struct cmd_reserve_record{
-	rcp_record_ref command;
-};
-
-struct cmd_release_record{
-	rcp_record_ref command;
-};
-
 struct cmd_create_struct{
 	rcp_record_ref command;
 };
@@ -128,7 +130,7 @@ struct cmd_caution{
 	rcp_record_ref command;
 };
 
-struct cmd_note{
+struct cmd_info{
 	rcp_record_ref command;
 };
 

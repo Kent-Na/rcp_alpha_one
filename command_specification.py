@@ -21,7 +21,7 @@ commandList = []
 #Connection
 
 command = {
-	"name":"protocol",
+	"name":"open",
 	"shortDescription":"",
 	"longDescription":"",
 	}
@@ -32,6 +32,12 @@ commandList.append(command)
 
 commandList.append({
 	"name":"kill",
+	"shortDescription":"kill server process.",
+	"longDescription":"",
+	})
+
+commandList.append({
+	"name":"dump",
 	"shortDescription":"kill server process.",
 	"longDescription":"",
 	})
@@ -108,9 +114,20 @@ command = {
 addParameter(command, "string", "username")
 commandList.append(command)
 
-#updateUserPermission
+#Permission
 command = {
-	"name":"updateUserPermission",
+	"name":"addPermission",
+	"shortDescription":"",
+	"parameters":[]
+	}
+
+addParameter(command, "string", "username")
+addParameter(command, "string", "mode")
+
+commandList.append(command)
+
+command = {
+	"name":"removePermission",
 	"shortDescription":"",
 	"parameters":[]
 	}
@@ -133,7 +150,6 @@ command = {
 	"returnParameters":["contextID"],
 	}
 
-#addParameter(command, "uint32_t", "contextID")
 commandList.append(command)
 
 command = {
@@ -190,7 +206,6 @@ addParameter(command, "ref", "value")
 addParameter(command, "string", "type")
 commandList.append(command)
 
-
 command = {
 	"name":"unsetValue",
 	"shortDescription":"Delete value from container like an array or a map",
@@ -209,22 +224,6 @@ addParameter(command, "ref", "path")
 addParameter(command, "ref", "value")
 addParameter(command, "string", "type")
 commandList.append(command)
-
-
-#RecordID
-commandList.append({
-	"name":"reserveRecordID",
-	"shortDescription":"Reserve record id for furser use.",
-	"longDescription":"",
-#"parameters":["recordIDs"],
-	})
-
-commandList.append({
-	"name":"releaseRecordID",
-	"shortDescription":"",
-	"longDescription":"",
-#"parameters":["recordIDs"],
-	})
 
 #Struct
 commandList.append({
@@ -257,7 +256,7 @@ commandList.append({
 	})
 
 commandList.append({
-	"name":"note",
+	"name":"info",
 	"shortDescription":"",
 	"longDescription":"Send from server when someting important but not faital thing happened.",
 	})

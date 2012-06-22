@@ -54,6 +54,8 @@ rcp_receiver_ref rcp_receiver_new(struct rcp_receiver_class* klass)
 
 void rcp_receiver_delete(rcp_receiver_ref con)
 {
+	if (!con)
+		return;
 	struct rcp_receiver_core *core = (void*)con;
 	struct rcp_receiver_class *klass = core->klass;
 

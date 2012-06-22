@@ -44,6 +44,7 @@ rcp_context_ref rcp_context_new(uint32_t id)
 	rcp_context_ref ctx = (void*)(key + 1);
 	rcp_context_init(ctx);
 	rcp_tree_add(contexts, node);
+	rcp_context_page_in(ctx);
 	return ctx;
 }
 

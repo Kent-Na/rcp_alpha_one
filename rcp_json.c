@@ -280,12 +280,12 @@ int rcp_json_parse_literal(const char **begin, const char *end,
 {
 	const char *ptr_src = *begin + 1;
 	const char *ptr_dst = literal + 1;
-	while (ptr_dst){
+	while (*ptr_dst){
 		if (ptr_src > end){
 			rcp_error("json:not enough char");
 			return -1;
 		}
-		if (ptr_src != ptr_dst){
+		if (*ptr_src != *ptr_dst){
 			rcp_error("json:undefined literal");
 			return -1;
 		}
@@ -403,7 +403,7 @@ rcp_extern rcp_record_ref rcp_json_parse_number(
 		//double
 		rcp_record_ref rec = rcp_record_new(rcp_double_type);
 		double *dat = (double*)rcp_record_data(rec);
-		*dat = ldexp((double)significand, exponential_part);
+		*dat = significand * pow(10.0 , exponential_part);
 		return rec;
 	}
 }
@@ -418,12 +418,14 @@ void rcp_json_write_record(rcp_record_ref rec, rcp_string_ref out)
 	rcp_data_ref data = rcp_record_data(rec);
 	if (type == rcp_string_type)
 		rcp_json_write_string(data, out);
+	else if (type == rcp_int64_type)
+		rcp_json_write_int64(data, out);
+	else if (type == rcp_double_type)
+		rcp_json_write_double(data, out);
 	else if (type == rcp_map_type)
 		rcp_json_write_map(data, out);
 	else if (type == rcp_array_type)
 		rcp_json_write_array(data, out);
-	else if (type == rcp_null_type)
-		rcp_string_append_c_str(out,"null");
 	else if (type == rcp_bool8_type){
 		if (*(uint8_t*)rcp_record_data(rec))
 			rcp_string_append_c_str(out,"true");
@@ -436,10 +438,80 @@ void rcp_json_write_record(rcp_record_ref rec, rcp_string_ref out)
 		else
 			rcp_string_append_c_str(out,"false");
 	}
+	else if (type == rcp_null_type)
+		rcp_string_append_c_str(out,"null");
 	else 
 		rcp_string_append_c_str(out,"null");
 }
 
+void rcp_json_write_number(uint64_t value, rcp_string_ref out)
+{
+	uint64_t num = value;
+	if (num == 0){
+		rcp_string_put(out, '0');
+		return;
+	}
+
+	char d_stack[32];
+	char *p = d_stack;
+	while (num != 0){
+		*p = num % 10;
+		p ++;
+		num /= 10;
+	}
+
+	while (p != d_stack){
+		p --;
+		rcp_string_put(out, '0' + *p);
+	}
+}
+void rcp_json_write_int64(void *value, rcp_string_ref out){
+	int64_t num = *(int64_t*)value;
+	if (num < 0){
+		rcp_string_put(out, '-');
+		num *= -1;
+	}
+	rcp_json_write_number(num, out);
+}
+void rcp_json_write_double(void *value, rcp_string_ref out){
+	double num = *(double*)value;
+
+	if (num == 0.0){
+		rcp_string_put(out, '0');
+		return;
+	}
+
+	int exp = floor(log10(num));
+	double x = num*pow(10.0,-exp);
+
+	if (x < 0)
+		rcp_string_put(out, '-');
+	x = fabs(x);
+
+	uint64_t frac = x * 10000000000LL;
+
+	char d_stack[32];
+	char *p = d_stack;
+	while (frac!= 0){
+		*p = frac % 10;
+		p ++;
+		frac /= 10;
+	}
+
+	if (p != d_stack){
+		p --;
+		rcp_string_put(out, '0' + *p);
+		rcp_string_put(out, '.');
+	}
+
+	while (p != d_stack){
+		p --;
+		rcp_string_put(out, '0' + *p);
+	}
+
+	rcp_string_put(out, 'e');
+	rcp_json_write_int64(&exp, out);
+}
 void rcp_json_write_map(rcp_map_ref map, rcp_string_ref out)
 {
 

@@ -7,11 +7,11 @@
 #include "rcp_types.h"
 #include "cmd_types.h"
 
-rcp_struct_type_ref cmd_protocol_type(){
+rcp_struct_type_ref cmd_open_type(){
 	
 	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_protocol);
+	t_core->size = sizeof (struct cmd_open);
 	t_core->type_id = 0x100;
 	t_core->type_name = "ttt";
 	t_core->init = rcp_struct_init;
@@ -29,17 +29,17 @@ rcp_struct_type_ref cmd_protocol_type(){
 
 	param->name = rcp_string_new("client");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_protocol, client);
+	param->offset = offsetof(struct cmd_open, client);
 	param ++;
 
 	param->name = rcp_string_new("command");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_protocol, command);
+	param->offset = offsetof(struct cmd_open, command);
 	param ++;
 
 	param->name = rcp_string_new("version");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_protocol, version);
+	param->offset = offsetof(struct cmd_open, version);
 	param ++;
 
 	return s_type;
@@ -68,6 +68,34 @@ rcp_struct_type_ref cmd_kill_type(){
 	param->name = rcp_string_new("command");
 	param->type = rcp_ref_type;
 	param->offset = offsetof(struct cmd_kill, command);
+	param ++;
+
+	return s_type;
+}
+
+rcp_struct_type_ref cmd_dump_type(){
+	
+	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
+	t_core->size = sizeof (struct cmd_dump);
+	t_core->type_id = 0x100;
+	t_core->type_name = "ttt";
+	t_core->init = rcp_struct_init;
+	t_core->deinit = rcp_struct_deinit;
+	t_core->copy = NULL;
+	t_core->compare = NULL;
+
+	struct rcp_type_struct_ext* s_core = 
+		(struct rcp_type_struct_ext*)(t_core+1);
+	s_core->name = rcp_string_new("ttt");
+	s_core->param_count = 1;
+
+	struct rcp_struct_param_core *param = 
+		(struct rcp_struct_param_core*)(s_core+1);
+
+	param->name = rcp_string_new("command");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_dump, command);
 	param ++;
 
 	return s_type;
@@ -337,11 +365,11 @@ rcp_struct_type_ref cmd_remove_user_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_update_user_permission_type(){
+rcp_struct_type_ref cmd_add_permission_type(){
 	
 	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_update_user_permission);
+	t_core->size = sizeof (struct cmd_add_permission);
 	t_core->type_id = 0x100;
 	t_core->type_name = "ttt";
 	t_core->init = rcp_struct_init;
@@ -359,17 +387,55 @@ rcp_struct_type_ref cmd_update_user_permission_type(){
 
 	param->name = rcp_string_new("command");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_update_user_permission, command);
+	param->offset = offsetof(struct cmd_add_permission, command);
 	param ++;
 
 	param->name = rcp_string_new("mode");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_update_user_permission, mode);
+	param->offset = offsetof(struct cmd_add_permission, mode);
 	param ++;
 
 	param->name = rcp_string_new("username");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_update_user_permission, username);
+	param->offset = offsetof(struct cmd_add_permission, username);
+	param ++;
+
+	return s_type;
+}
+
+rcp_struct_type_ref cmd_remove_permission_type(){
+	
+	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
+	t_core->size = sizeof (struct cmd_remove_permission);
+	t_core->type_id = 0x100;
+	t_core->type_name = "ttt";
+	t_core->init = rcp_struct_init;
+	t_core->deinit = rcp_struct_deinit;
+	t_core->copy = NULL;
+	t_core->compare = NULL;
+
+	struct rcp_type_struct_ext* s_core = 
+		(struct rcp_type_struct_ext*)(t_core+1);
+	s_core->name = rcp_string_new("ttt");
+	s_core->param_count = 3;
+
+	struct rcp_struct_param_core *param = 
+		(struct rcp_struct_param_core*)(s_core+1);
+
+	param->name = rcp_string_new("command");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_remove_permission, command);
+	param ++;
+
+	param->name = rcp_string_new("mode");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_remove_permission, mode);
+	param ++;
+
+	param->name = rcp_string_new("username");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_remove_permission, username);
 	param ++;
 
 	return s_type;
@@ -682,62 +748,6 @@ rcp_struct_type_ref cmd_append_value_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_reserve_record_type(){
-	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
-	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_reserve_record);
-	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
-	t_core->init = rcp_struct_init;
-	t_core->deinit = rcp_struct_deinit;
-	t_core->copy = NULL;
-	t_core->compare = NULL;
-
-	struct rcp_type_struct_ext* s_core = 
-		(struct rcp_type_struct_ext*)(t_core+1);
-	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 1;
-
-	struct rcp_struct_param_core *param = 
-		(struct rcp_struct_param_core*)(s_core+1);
-
-	param->name = rcp_string_new("command");
-	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_reserve_record, command);
-	param ++;
-
-	return s_type;
-}
-
-rcp_struct_type_ref cmd_release_record_type(){
-	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
-	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_release_record);
-	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
-	t_core->init = rcp_struct_init;
-	t_core->deinit = rcp_struct_deinit;
-	t_core->copy = NULL;
-	t_core->compare = NULL;
-
-	struct rcp_type_struct_ext* s_core = 
-		(struct rcp_type_struct_ext*)(t_core+1);
-	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 1;
-
-	struct rcp_struct_param_core *param = 
-		(struct rcp_struct_param_core*)(s_core+1);
-
-	param->name = rcp_string_new("command");
-	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_release_record, command);
-	param ++;
-
-	return s_type;
-}
-
 rcp_struct_type_ref cmd_create_struct_type(){
 	
 	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
@@ -860,11 +870,11 @@ rcp_struct_type_ref cmd_caution_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_note_type(){
+rcp_struct_type_ref cmd_info_type(){
 	
 	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_note);
+	t_core->size = sizeof (struct cmd_info);
 	t_core->type_id = 0x100;
 	t_core->type_name = "ttt";
 	t_core->init = rcp_struct_init;
@@ -882,7 +892,7 @@ rcp_struct_type_ref cmd_note_type(){
 
 	param->name = rcp_string_new("command");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_note, command);
+	param->offset = offsetof(struct cmd_info, command);
 	param ++;
 
 	return s_type;
@@ -891,10 +901,12 @@ rcp_type_ref rcp_command_type_table[27];
 
 void rcp_command_type_table_init(){
 
-	rcp_command_type_table[CMD_PROTOCOL] = 
-		cmd_protocol_type();
+	rcp_command_type_table[CMD_OPEN] = 
+		cmd_open_type();
 	rcp_command_type_table[CMD_KILL] = 
 		cmd_kill_type();
+	rcp_command_type_table[CMD_DUMP] = 
+		cmd_dump_type();
 	rcp_command_type_table[CMD_CLOSE] = 
 		cmd_close_type();
 	rcp_command_type_table[CMD_PING] = 
@@ -911,8 +923,10 @@ void rcp_command_type_table_init(){
 		cmd_add_user_type();
 	rcp_command_type_table[CMD_REMOVE_USER] = 
 		cmd_remove_user_type();
-	rcp_command_type_table[CMD_UPDATE_USER_PERMISSION] = 
-		cmd_update_user_permission_type();
+	rcp_command_type_table[CMD_ADD_PERMISSION] = 
+		cmd_add_permission_type();
+	rcp_command_type_table[CMD_REMOVE_PERMISSION] = 
+		cmd_remove_permission_type();
 	rcp_command_type_table[CMD_CREATE_CONTEXT] = 
 		cmd_create_context_type();
 	rcp_command_type_table[CMD_DELETE_CONTEXT] = 
@@ -931,10 +945,6 @@ void rcp_command_type_table_init(){
 		cmd_unset_value_type();
 	rcp_command_type_table[CMD_APPEND_VALUE] = 
 		cmd_append_value_type();
-	rcp_command_type_table[CMD_RESERVE_RECORD] = 
-		cmd_reserve_record_type();
-	rcp_command_type_table[CMD_RELEASE_RECORD] = 
-		cmd_release_record_type();
 	rcp_command_type_table[CMD_CREATE_STRUCT] = 
 		cmd_create_struct_type();
 	rcp_command_type_table[CMD_ADD_STRUCT] = 
@@ -943,8 +953,8 @@ void rcp_command_type_table_init(){
 		cmd_error_type();
 	rcp_command_type_table[CMD_CAUTION] = 
 		cmd_caution_type();
-	rcp_command_type_table[CMD_NOTE] = 
-		cmd_note_type();
+	rcp_command_type_table[CMD_INFO] = 
+		cmd_info_type();
 }
 
 rcp_type_ref rcp_command_type(rcp_command_type_t command_id){

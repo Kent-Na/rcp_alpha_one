@@ -38,3 +38,5 @@ rcp_extern void rcp_json_write_map(rcp_map_ref rec, rcp_string_ref out);
 rcp_extern void rcp_json_write_array(rcp_array_ref rec, rcp_string_ref out);
 rcp_extern void rcp_json_write_string(
 		rcp_string_ref rec, rcp_string_ref out);
+void rcp_json_write_int64(void *value, rcp_string_ref out);
+void rcp_json_write_double(void *value, rcp_string_ref out);
