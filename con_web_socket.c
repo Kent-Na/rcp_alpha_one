@@ -88,13 +88,11 @@ int con_web_socket_http_next_field(rcp_receiver_ref con, rcp_io_ref io)
 			break;
 
 	if (d < d_end-1){
-		char* field = malloc(d-d_begin);
-		printf("+%p\n",field);
+		char* field = malloc(d-d_begin+1);
 		memcpy(field, d_begin, d-d_begin);
 		field[d-d_begin] = '\0';
 		if (d_begin != d)
 			con_web_socket_perse_http_field(con, field);
-		printf("-%p\n",field);
 		free(field);
 		rcp_buffer_consumed_at(&st->buffer, d+2);
 		if (d_begin == d){
