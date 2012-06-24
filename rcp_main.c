@@ -14,6 +14,7 @@
 #include "rcp_connection.h"
 
 #include "rcp_context.h"
+#include "rcp_sender_classes.h"
 #include "rcp_server.h"
 
 #include "cmd_types.h"

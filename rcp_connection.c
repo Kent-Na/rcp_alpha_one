@@ -9,6 +9,7 @@
 #include "rcp_epoll.h"
 #include "rcp_listener.h"
 #include "rcp_context.h"
+#include "rcp_sender_classes.h"
 #include "rcp_server.h"
 
 rcp_connection_ref rcp_connection_new()

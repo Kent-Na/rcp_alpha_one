@@ -11,6 +11,7 @@
 #include "rcp_receiver.h"
 #include "rcp_connection.h"
 #include "rcp_context.h"
+#include "rcp_sender_classes.h"
 #include "rcp_server.h"
 
 struct rcp_io_class con_ssl_class = {

@@ -314,7 +314,4 @@ rcp_extern void rcp_context_execute_command_rec(
 		rcp_context_send_struct(ctx, cmd_type, (rcp_data_ref)&cmd_st);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
 	}
-	if (command_type == CMD_INVALID){
-		rcp_caution("invalid command");
-	}
 }

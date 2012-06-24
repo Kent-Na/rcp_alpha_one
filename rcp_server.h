@@ -26,6 +26,5 @@ SSL_CTX* rcp_ssl_ctx();
 //should be thread local resources
 //
 
-typedef struct rcp_sender_cluster *rcp_sender_cluster_ref;
 void rcp_shared_sender_cluster_init();
 rcp_sender_cluster_ref rcp_shared_sender_cluster();

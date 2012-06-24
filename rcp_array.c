@@ -44,6 +44,7 @@ void rcp_array_deinit(rcp_type_ref type, void *data){
 	free(core->data);
 }
 
+
 struct rcp_type_core rcp_array_type_def = {
 	sizeof (struct rcp_array_core),//size
 	RCP_TYPE_ARRAY,

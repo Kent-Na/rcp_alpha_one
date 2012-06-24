@@ -46,7 +46,7 @@ rcp_sender_ref rcp_sender_cluster_json_nt(rcp_sender_cluster_ref cluster)
 
 rcp_sender_ref rcp_sender_cluster_json_ws(rcp_sender_cluster_ref cluster)
 {
-	return cluster->json_nt;
+	return cluster->json_ws;
 }
 void rcp_sender_cluster_set_rec(rcp_sender_cluster_ref cluster,
 		rcp_record_ref rec)

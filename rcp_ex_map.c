@@ -96,6 +96,12 @@ rcp_extern rcp_type_ref rcp_map_value_type(rcp_map_ref map)
 	return core->value_type;
 }
 
+rcp_type_ref rcp_map_key_type(rcp_type_ref type, rcp_map_ref map)
+{
+	rcp_assert(type == rcp_map_type, "type err");
+	return rcp_map_key_type(map);
+}
+
 void rcp_map_at(rcp_type_ref type, rcp_map_ref map, 
 		rcp_data_ref *io_data)
 {
@@ -105,10 +111,12 @@ void rcp_map_at(rcp_type_ref type, rcp_map_ref map,
 
 	rcp_map_node_ref out = rcp_map_find(map, in_data);
 	if (!out){
+		*io_type = NULL;
 		*io_data = NULL;
 		return;
 	}
 
+	*io_type = rcp_map_value_type(map);
 	*io_data = rcp_map_node_value(map, out);
 	return;
 }

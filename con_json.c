@@ -12,6 +12,7 @@
 
 #include "rcp_json.h"
 #include "rcp_context.h"
+#include "rcp_sender_classes.h"
 #include "rcp_server.h"
 
 rcp_extern rcp_record_ref con_json_execute(
