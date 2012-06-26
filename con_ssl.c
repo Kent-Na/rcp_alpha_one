@@ -5,14 +5,7 @@
 #include "rcp_epoll.h"
 
 #include "con_ssl.h"
-
-#include "rcp_type.h"
-#include "rcp_sender.h"
-#include "rcp_receiver.h"
-#include "rcp_connection.h"
-#include "rcp_context.h"
-#include "rcp_sender_classes.h"
-#include "rcp_server.h"
+#include "rcp_ssl.h"
 
 struct rcp_io_class con_ssl_class = {
 	sizeof (struct con_ssl),

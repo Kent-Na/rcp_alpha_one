@@ -10,6 +10,7 @@
 #include "rcp_sender_classes.h"
 #include "rcp_receiver_classes.h"
 #include "rcp_context.h"
+#include "rcp_user.h"
 #include "rcp_server.h"
 #include "rcp_listener.h"
 
@@ -19,6 +20,7 @@
 #include "cmd_types.h"
 
 #include "con_file.h"
+
 
 struct rcp_context_core{
 	rcp_record_ref top_level_record;
@@ -44,6 +46,16 @@ void rcp_context_send_record_to(rcp_connection_ref con, rcp_record_ref cmd);
 
 void rcp_context_page_in(rcp_context_ref ctx);
 
+///
+//connection ext
+
+void rcp_connection_set_context(
+		rcp_connection_ref con, rcp_context_ref ctx);
+rcp_record_ref rcp_connection_username(
+		rcp_connection_ref con);
+void rcp_connection_set_username(
+		rcp_connection_ref con, rcp_record_ref username);
+
 void rcp_context_init(rcp_context_ref ctx){
 	ctx->top_level_record = 
 		rcp_map_new_rec(rcp_int64_type, rcp_ref_type);
@@ -62,15 +74,20 @@ rcp_record_ref rcp_context_top_level_record(rcp_context_ref ctx){
 void rcp_context_add_connection(rcp_context_ref ctx, 
 		rcp_connection_ref con)
 {
+	rcp_connection_set_context(con, ctx);
+
+	//add connection to context
 	rcp_tree_node_ref node= rcp_tree_node_new(sizeof con);
 	*(rcp_connection_ref*)rcp_tree_node_data(node) = con;
 	rcp_tree_add(ctx->connections, node);
 
+	//send add user command to context
 	struct cmd_add_user cmd;
 	rcp_type_ref type_cmd= rcp_command_type(CMD_ADD_USER);
 	rcp_init(type_cmd, (rcp_data_ref)&cmd);
-	cmd.username = rcp_string_new_rec("anyone");
 	cmd.command = rcp_string_new_rec(CMD_STR_ADD_USER);
+	cmd.username = rcp_connection_username(con);
+	rcp_record_retain(cmd.username);
 	rcp_context_send_struct(ctx,
 			type_cmd, (rcp_data_ref)&cmd);
 	rcp_deinit(type_cmd, (rcp_data_ref)&cmd);
@@ -98,16 +115,18 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 		rcp_tree_remove(ctx->connections, node);
 		rcp_tree_node_delete(node);
 
-		//rcp_connection_free(con);
 		
 		struct cmd_remove_user cmd;
 		rcp_type_ref type_cmd = rcp_command_type(CMD_REMOVE_USER);
 		rcp_init(type_cmd, (rcp_data_ref)&cmd);
-		cmd.username = rcp_string_new_rec("anyone");
+		cmd.username = rcp_connection_username(con);
+		rcp_record_retain(cmd.username);
 		cmd.command = rcp_string_new_rec(CMD_STR_REMOVE_USER);
 
 		rcp_context_send_struct(ctx,
 				type_cmd, (rcp_data_ref)&cmd);
+
+		//rcp_connection_free(con);
 	}
 }
 
@@ -140,6 +159,27 @@ void rcp_context_page_in(rcp_context_ref ctx)
 	rcp_connection_delete(con);
 }
 
+void rcp_context_send_all_con(rcp_context_ref ctx, rcp_connection_ref con)
+{
+	rcp_tree_node_ref node = rcp_tree_begin(ctx->connections);
+	while (node){
+		rcp_connection_ref con_t = 
+			*(rcp_connection_ref*)rcp_tree_node_data(node);
+
+		struct cmd_add_user cmd;
+		rcp_type_ref cmd_type=rcp_command_type(CMD_ADD_USER);
+		rcp_init(cmd_type, (rcp_data_ref)&cmd);
+
+		cmd.command = rcp_string_new_rec(CMD_STR_ADD_USER);
+		cmd.username = rcp_connection_username(con_t);
+		rcp_record_retain(cmd.username);
+
+		rcp_context_send_struct_to(con, cmd_type, (rcp_data_ref)&cmd);
+		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+
+		node = rcp_tree_node_next(node);
+	}
+}
 void rcp_context_send_all_data(rcp_context_ref ctx, rcp_connection_ref con)
 {
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
@@ -166,6 +206,20 @@ void rcp_context_send_all_data(rcp_context_ref ctx, rcp_connection_ref con)
 	}
 }
 
+void rcp_context_send_caution(rcp_connection_ref con, 
+		rcp_record_ref cause, const char* reason)
+{
+	struct cmd_caution cmd;
+	rcp_type_ref cmd_type=rcp_command_type(CMD_CAUTION);
+	rcp_init(cmd_type, (rcp_data_ref)&cmd);
+	cmd.command = rcp_string_new_rec(CMD_STR_CAUTION);
+
+	cmd.cause = rcp_record_retain(cause);
+	cmd.reason = rcp_string_new_rec(reason);
+
+	rcp_context_send_struct_to(con, cmd_type, (rcp_data_ref)&cmd);
+	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+}
 void rcp_context_send_struct(rcp_context_ref ctx, 
 		rcp_struct_type_ref type, rcp_data_ref cmd)
 {
@@ -237,14 +291,9 @@ rcp_record_ref rcp_command_error_new(
 }
 
 rcp_extern void rcp_context_execute_command_rec(
+		rcp_context_ref ctx,
 		rcp_connection_ref con, rcp_record_ref cmd_rec)
 {
-	rcp_context_ref ctx = rcp_context_get(0);
-	if (! ctx){
-		rcp_error("missing context");
-		return;	
-	}
-
 	if (!cmd_rec || rcp_record_type(cmd_rec) != rcp_map_type){
 		rcp_error("json parse err");
 		return;	
@@ -274,15 +323,53 @@ rcp_extern void rcp_context_execute_command_rec(
 	if (command_type == CMD_DUMP){
 		rcp_context_page_out(ctx);
 	}
-	if (command_type == CMD_LOGIN_USER){
-		rcp_info("login?");
-	}
 	if (command_type == CMD_LOGIN_CONTEXT){
 		rcp_info("login ctx");
-
-		rcp_context_add_connection(ctx, con);
+		rcp_context_ref ctx = rcp_context_get(0);
+		
+		rcp_context_send_all_con(ctx, con);
 		rcp_context_send_all_data(ctx, con);	
+		rcp_context_add_connection(ctx, con);
 	}
+
+	if (command_type == CMD_LOGIN_USER){
+		struct cmd_login_user cmd_recv;
+		rcp_type_ref cmd_type = rcp_command_type(CMD_LOGIN_USER);
+		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
+		rcp_map_to_struct(cmd, cmd_type, (rcp_data_ref)&cmd_recv);
+
+		if (rcp_record_type(cmd_recv.username) != rcp_string_type){
+			rcp_context_send_caution(con, cmd_rec, 
+					"type:username must be string");
+			return;
+		}
+
+		if (rcp_record_type(cmd_recv.password) != rcp_string_type){
+			rcp_context_send_caution(con, cmd_rec, 
+					"type:username must be string");
+			return;
+		}
+
+		rcp_string_ref username = rcp_record_data(cmd_recv.username);
+		rcp_string_ref password = rcp_record_data(cmd_recv.password);
+
+		int result = rcp_user_autenticate(
+				rcp_string_c_str(username),
+				rcp_string_c_str(password));
+		if (result > 0){
+			rcp_connection_set_username(con, cmd_recv.username);
+		}
+		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_recv);
+	}
+
+	////////////////////////////////
+	// wall of context login
+	if (! ctx){
+		rcp_caution("missing context");
+		return;	
+	}
+	////////////////////////////////
+
 	if (command_type == CMD_SEND_VALUE){
 		struct cmd_set_value cmd_st;
 		rcp_type_ref cmd_type = rcp_command_type(CMD_SEND_VALUE);

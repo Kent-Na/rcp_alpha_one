@@ -1,16 +1,6 @@
 
 typedef struct rcp_connection_core *rcp_connection_ref;
 
-struct rcp_connection_core{
-	rcp_io_ref io;
-	rcp_sender_ref sender;
-	rcp_receiver_ref receiver;
-
-	//user data
-	uint32_t loginID;
-	uint32_t userID;
-};
-
 //rcp_connections
 
 rcp_extern
@@ -38,3 +28,4 @@ rcp_extern
 int rcp_connection_alive(rcp_connection_ref con);
 rcp_extern
 void rcp_connection_on_close(rcp_connection_ref con);
+

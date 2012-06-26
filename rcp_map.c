@@ -35,6 +35,14 @@ void rcp_map_init(rcp_type_ref type, rcp_data_ref data)
 void rcp_map_deinit(rcp_type_ref type, rcp_data_ref data)
 {
 	rcp_map_core_ref core = data;
+	rcp_map_node_ref node = rcp_map_begin(data);
+	while (node){
+		rcp_type_ref key_type = rcp_map_key_type(core);
+		rcp_type_ref value_type = rcp_map_value_type(core);
+		rcp_deinit(key_type, rcp_map_node_key(core, node));
+		rcp_deinit(value_type, rcp_map_node_value(core, node));
+		node = rcp_map_node_next(node);
+	}
 	rcp_tree_deinit(&(core->t_core));
 }
 

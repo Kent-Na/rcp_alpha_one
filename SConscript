@@ -22,6 +22,7 @@ mainFiles = [
 	'rcp_connection.c',
 	'rcp_listener.c',
 	'rcp_utility.c',
+	'rcp_ssl.c',
 	'rcp_tree.c',
 	'rcp_server.c',
 	'rcp_string.c',
@@ -43,7 +44,8 @@ mainFiles = [
 	'con_null_terminate.c',
 	'con_web_socket.c',
 	'con_json.c',
-	'cmd_types.c'
+	'cmd_types.c',
+	'rcp_user.c',
 ]
 
 testFiles = [

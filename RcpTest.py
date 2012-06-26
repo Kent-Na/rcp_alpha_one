@@ -3,6 +3,12 @@ from RcpConnection import *
 c = RcpConnection()
 c.connectToDefaultServer()
 c.run()
+con = {
+	'command':'loginUser',
+	'username':'black',
+	'password':'bbbox'
+	}
+c.sendCommand(con)
 con = {'command':'loginContext'}
 c.sendCommand(con)
 con = {

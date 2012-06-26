@@ -127,6 +127,8 @@ struct cmd_error{
 };
 
 struct cmd_caution{
+	rcp_record_ref cause;
+	rcp_record_ref reason;
 	rcp_record_ref command;
 };
 

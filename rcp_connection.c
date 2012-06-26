@@ -12,12 +12,27 @@
 #include "rcp_sender_classes.h"
 #include "rcp_server.h"
 
+struct rcp_connection_core{
+	rcp_io_ref io;
+	rcp_sender_ref sender;
+	rcp_receiver_ref receiver;
+
+	//statuses
+	rcp_record_ref username;
+	uint32_t login_id;
+	rcp_context_ref ctx;
+};
+
 rcp_connection_ref rcp_connection_new()
 {
 	rcp_connection_ref con = malloc(sizeof *con);	
 	con->io = NULL;
 	con->sender = NULL;
 	con->receiver = NULL;
+
+	con->username = NULL;
+	con->login_id = 0;
+	con->ctx = NULL;
 	return con;
 }
 void rcp_connection_delete(rcp_connection_ref con)
@@ -26,6 +41,8 @@ void rcp_connection_delete(rcp_connection_ref con)
 		return;
 	rcp_io_delete(con->io);
 	rcp_receiver_delete(con->receiver);
+
+	rcp_record_release(con->username);
 }
 void rcp_connection_set_io(
 		rcp_connection_ref con, rcp_io_ref io)
@@ -78,7 +95,7 @@ void rcp_connection_on_receive(rcp_connection_ref con)
 	rcp_receiver_on_receive(con->receiver, con->io);
 	rcp_record_ref rec = rcp_receiver_next_command(con->receiver);
 	while (rec){
-		rcp_context_execute_command_rec(con, rec);
+		rcp_context_execute_command_rec(con->ctx, con, rec);
 		rec = rcp_receiver_next_command(con->receiver);
 	}
 }
@@ -89,4 +106,27 @@ int rcp_connection_alive(rcp_connection_ref con)
 void rcp_connection_on_close(rcp_connection_ref con)
 {
 	rcp_io_on_close(con->io);
+}
+
+rcp_extern
+void rcp_connection_set_context(
+		rcp_connection_ref con, rcp_context_ref ctx)
+{
+	rcp_assert(con->ctx == NULL,"double ctx login");
+	con->ctx = ctx;
+}
+
+rcp_extern
+void rcp_connection_set_username(
+		rcp_connection_ref con, rcp_record_ref username)
+{
+	rcp_assert(con->username == NULL,"double login");
+	con->username = username;
+	rcp_record_retain(username);
+}
+rcp_extern
+rcp_record_ref rcp_connection_username(
+		rcp_connection_ref con)
+{
+	return con->username;
 }

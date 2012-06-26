@@ -45,7 +45,7 @@ typedef struct rcp_data_opaqe *rcp_data_ref;
 
 //Allocate memory block and init it.
 rcp_extern rcp_record_ref rcp_record_new(rcp_type_ref type);
-rcp_extern void rcp_record_retain(rcp_record_ref rec);
+rcp_extern rcp_record_ref rcp_record_retain(rcp_record_ref rec);
 rcp_extern void rcp_record_release(rcp_record_ref rec);
 rcp_extern void rcp_record_init(rcp_record_ref type);
 rcp_extern void rcp_record_deinit(rcp_record_ref type);

@@ -8,12 +8,8 @@
 #include "rcp_types.h"
 #include "rcp_sender.h"
 #include "rcp_receiver.h"
-#include "rcp_connection.h"
 
 #include "rcp_json.h"
-#include "rcp_context.h"
-#include "rcp_sender_classes.h"
-#include "rcp_server.h"
 
 rcp_extern rcp_record_ref con_json_execute(
 		rcp_receiver_ref con, const char *begin, const char *end)

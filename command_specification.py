@@ -249,11 +249,14 @@ addParameter(command, "string", "cause")
 addParameter(command, "string", "reason")
 commandList.append(command)
 
-commandList.append({
+command = {
 	"name":"caution",
 	"shortDescription":"",
 	"longDescription":"",
-	})
+	}
+addParameter(command, "string", "cause")
+addParameter(command, "string", "reason")
+commandList.append(command)
 
 commandList.append({
 	"name":"info",

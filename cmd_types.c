@@ -844,7 +844,7 @@ rcp_struct_type_ref cmd_error_type(){
 
 rcp_struct_type_ref cmd_caution_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_caution);
 	t_core->type_id = 0x100;
@@ -857,14 +857,24 @@ rcp_struct_type_ref cmd_caution_type(){
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
 	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 1;
+	s_core->param_count = 3;
 
 	struct rcp_struct_param_core *param = 
 		(struct rcp_struct_param_core*)(s_core+1);
 
+	param->name = rcp_string_new("cause");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_caution, cause);
+	param ++;
+
 	param->name = rcp_string_new("command");
 	param->type = rcp_ref_type;
 	param->offset = offsetof(struct cmd_caution, command);
+	param ++;
+
+	param->name = rcp_string_new("reason");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_caution, reason);
 	param ++;
 
 	return s_type;

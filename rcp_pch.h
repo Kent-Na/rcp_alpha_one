@@ -8,9 +8,12 @@
 #include <unistd.h>
 #include <signal.h>
 #include <errno.h>
-#include <sys/epoll.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#ifdef __linux__
+#include <sys/epoll.h>
+#endif
 
 #include <openssl/ssl.h>

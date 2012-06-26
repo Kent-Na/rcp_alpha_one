@@ -18,11 +18,12 @@ rcp_record_ref rcp_record_new(rcp_type_ref type)
 	return rec;
 }
 
-void rcp_record_retain(rcp_record_ref rec)
+rcp_record_ref rcp_record_retain(rcp_record_ref rec)
 {
 	if (!rec)
-		return;
+		return NULL;
 	rec->ref_count ++;
+	return rec;
 }
 
 void rcp_record_release(rcp_record_ref rec)
