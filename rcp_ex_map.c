@@ -7,192 +7,197 @@
 #include "rcp_type.h"
 #include "rcp_type_list.h"
 #include "rcp_tree.h"
-#include "rcp_map.h"
+#include "rcp_dict.h"
 
-typedef struct rcp_map_core *rcp_map_core_ref;
-struct rcp_map_core{
+typedef rcp_data_ref rcp_dict_ref;
+
+#ifdef RCP_INTERNAL_STRUCTURE
+typedef rcp_tree_node_ref rcp_dict_node_ref;
+#else
+typedef void *rcp_dict_node_ref;
+#endif
+
+///
+//type map
+//
+struct rcp_type_map_ext{
 	rcp_type_ref key_type;
-	rcp_type_ref value_type;
-	struct rcp_tree t_core;
+	rcp_type_ref data_type;
 };
 
-rcp_map_ref rcp_map_new(
-		rcp_type_ref key_type, rcp_type_ref value_type)
-{
-	rcp_data_ref map = rcp_alloc(rcp_map_type);
-	rcp_map_init_with_type(map, key_type, value_type);
-	return map;
-}
-
-void rcp_map_init(rcp_type_ref type, rcp_data_ref data)
-{
-	rcp_map_core_ref core = data;
-	core->key_type = NULL;
-	core->value_type = NULL;
-	core->t_core.root = NULL;
-}
-
-void rcp_map_deinit(rcp_type_ref type, rcp_data_ref data)
-{
-	rcp_map_core_ref core = data;
-	rcp_tree_deinit(&(core->t_core));
-}
-
-struct rcp_type_core rcp_map_type_def = {
-	sizeof(struct rcp_map_core),
+struct rcp_type_core rcp_dict_type_def = {
+	sizeof(struct rcp_tree),
 	RCP_TYPE_MAP,
 	"map",
-	rcp_map_init,//init
-	rcp_map_deinit,//free
+	rcp_dict_init,//init
+	rcp_dict_deinit,//free
 	NULL,//copy
 	NULL,//comp
 };
 
-
-void rcp_map_init_with_type(rcp_map_ref map, 
-		rcp_type_ref key_type, rcp_type_ref value_type)
+rcp_dict_type_ref rcp_dict_type_new(
+		rcp_type_ref key_type, rcp_type_ref data_type)
 {
-	rcp_map_core_ref core = map;
-#ifdef RCP_SELF_TEST
-	if ( ! key_type)
-		rcp_error("map:key type");
-	if ( ! value_type)
-		rcp_error("map:value type");
-#endif
-	core->key_type = key_type;
-	core->value_type = value_type;
-	if (key_type)
-		rcp_tree_init(&(core->t_core), 
-				(void*)key_type->compare, (void*)key_type);
-	else
-		rcp_error("key of map must be string or int");
+	rcp_type_ref type = malloc(sizeof *type +
+			(struct rcp_type_map_ext))	
+	struct rcp_type_map_ext* ext = 
+		(struct rcp_type_map_ext*)(type + 1);
+	memcpy(type, rcp_dict_type_def, sizeof *type);
+	ext->key_type = key_type;
+	ext->data_type = data_type;
 }
 
-rcp_map_node_ref rcp_map_find(rcp_map_ref map,void *key)
+rcp_dict_type_ref rcp_dict_type_delete(
+		rcp_dict_type_ref type)
 {
-	rcp_map_core_ref core = map;
-	return rcp_tree_find(&(core->t_core), key);
+	free(type);
 }
 
-rcp_map_node_ref rcp_map_set(rcp_map_ref map, rcp_map_node_ref node)
+rcp_type_ref rcp_dict_type_key_type(rcp_dict_type_ref type)
 {
-	rcp_map_core_ref core = map;
-	return rcp_tree_set(&(core->t_core),node);
+	struct rcp_type_map_ext* ext = 
+		(struct rcp_type_map_ext*)(type + 1);
+	return ext->key_type;
+}
+rcp_type_ref rcp_dict_type_value_type(rcp_dict_type_ref type)
+{
+	struct rcp_type_map_ext* ext = 
+		(struct rcp_type_map_ext*)(type + 1);
+	return ext->data_type;
 }
 
-rcp_extern rcp_map_node_ref rcp_map_begin(rcp_map_ref map)
-{
-	rcp_map_core_ref core = map;
-	return rcp_tree_begin(&(core->t_core));
-}
-rcp_extern rcp_type_ref rcp_map_key_type(rcp_map_ref map)
-{
-	rcp_map_core_ref core = map;
-	return core->key_type;
-}
-rcp_extern rcp_type_ref rcp_map_value_type(rcp_map_ref map)
-{
-	rcp_map_core_ref core = map;
-	return core->value_type;
-}
+///
+//map itself
+//
 
-rcp_type_ref rcp_map_key_type(rcp_type_ref type, rcp_map_ref map)
+void rcp_dict_init(rcp_type_ref type, rcp_data_ref data)
 {
-	rcp_assert(type == rcp_map_type, "type err");
-	return rcp_map_key_type(map);
+	rcp_tree_init(data, type->compare, 
+			rcp_dict_type_key_type(type));
 }
-
-void rcp_map_at(rcp_type_ref type, rcp_map_ref map, 
-		rcp_data_ref *io_data)
+void rcp_dict_deinit(rcp_type_ref type, rcp_data_ref data)
 {
-	rcp_assert(type == rcp_map_type, "type err");
-
-	rcp_data_ref in_data = *io_data;
-
-	rcp_map_node_ref out = rcp_map_find(map, in_data);
-	if (!out){
-		*io_type = NULL;
-		*io_data = NULL;
-		return;
+	rcp_dict_node_ref node = rcp_dict_begin(data);
+	while(node){
+		rcp_dict_node_deinit(type, node);
+		node = rcp_dict_node_next(node);
 	}
-
-	*io_type = rcp_map_value_type(map);
-	*io_data = rcp_map_node_value(map, out);
-	return;
+	rcp_tree_deinit(data);
 }
-//void rcp_map_unset(rcp_map_ref map, rcp_map_node_ref node)
-//{
-//	rcp_tree_delete(&(map->t_core),node);
-//}
 
-
-rcp_map_node_ref rcp_map_node_new(rcp_map_ref map)
+rcp_data_ref rcp_dict_at(rcp_dict_type_ref type, rcp_data_ref data,
+		rcp_data_ref key)
 {
-	rcp_type_ref key_type = rcp_map_key_type(map);
-	rcp_type_ref value_type = rcp_map_value_type(map);
+	rcp_dict_node_ref node = rcp_dict_find(data, key);
+	return rcp_dict_node_data(type, node);
+}
 
-	if (!(key_type)){
-		rcp_error("type of key of map");
-		return NULL;
-	}
-	if (!(value_type)){
-		rcp_error("type of value of map");
-		return NULL;
-	}
+rcp_data_ref rcp_dict_set(rcp_dict_type_ref type, rcp_data_ref data,
+		rcp_record_ref rec);
+rcp_data_ref rcp_dict_unset(rcp_dict_type_ref type, rcp_data_ref data,
+		rcp_record_ref rec);
 
-	size_t s = 0;
-	s += key_type->size;
-	s += value_type->size;
+rcp_extern 
+rcp_dict_node_ref rcp_dict_find(
+		rcp_dict_ref map, rcp_data_ref key)
+{
+	return rcp_tree_find(map, key);
+}
 
-	rcp_map_node_ref node = rcp_tree_node_new(s);
+rcp_extern 
+rcp_dict_node_ref rcp_dict_set_node(
+		rcp_dict_ref map, rcp_dict_node_ref node)
+{
+	return rcp_tree_set(map, node);
+}
 
-	rcp_init(key_type, rcp_map_node_key(map, node));
-	rcp_init(value_type, rcp_map_node_value(map, node));
+rcp_extern 
+void rcp_dict_unset_node(rcp_dict_ref map, rcp_dict_node_ref node)
+{
+	return rcp_tree_remove(map, node);
+}
 
+///
+//map node
+//
+
+rcp_dict_node_ref rcp_dict_node_alloc(rcp_dict_type_ref type)
+{
+	rcp_type_ref key_type = rcp_dict_type_key_type(type);
+	rcp_type_ref data_type = rcp_dict_type_data_type(type);
+	return rcp_tree_node_new(key_type->size + data_type->size);
+}
+
+void rcp_dict_node_dealloc(rcp_dict_nede_ref node)
+{
+	rcp_tree_node_delete(node);
+}
+
+rcp_extern 
+void rcp_dict_node_init(rcp_dict_type_ref type, rcp_dict_node_ref node)
+{
+	rcp_type_ref key_type = rcp_dict_type_key_type(type);
+	rcp_type_ref data_type = rcp_dict_type_data_type(type);
+	rcp_data_ref key_data = rcp_dict_node_key(type, node);
+	rcp_data_ref data_data = rcp_dict_node_data(type, node);
+
+	rcp_init(key_type, key_data);
+	rcp_init(data_type, data_data);
+}
+
+rcp_extern 
+void rcp_dict_node_deinit(rcp_dict_type_ref type, rcp_dict_node_ref node)
+{
+	rcp_type_ref key_type = rcp_dict_type_key_type(type);
+	rcp_type_ref data_type = rcp_dict_type_data_type(type);
+	rcp_data_ref key_data = rcp_dict_node_key(type, node);
+	rcp_data_ref data_data = rcp_dict_node_data(type, node);
+
+	rcp_deinit(key_type, key_data);
+	rcp_deinit(data_type, data_data);
+}
+
+rcp_extern 
+rcp_dict_node_ref rcp_dict_node_new(rcp_dict_type_ref type)
+{
+	rcp_dict_node_ref node = rcp_dict_node_alloc(type);
+	rcp_dict_node_init(type, node);
 	return node;
 }
 
-rcp_extern void rcp_map_node_delete(rcp_map_ref map, rcp_map_node_ref node)
+rcp_extern 
+void rcp_dict_node_delete(rcp_dict_type_ref type, rcp_dict_node_ref node)
 {
-	if (!node)
-		return;
-
-	rcp_type_ref key_type = rcp_map_key_type(map);
-	rcp_type_ref value_type = rcp_map_value_type(map);
-
-	if (!(key_type)){
-		rcp_error("type of key of map");
-		return;
-	}
-	if (!(value_type)){
-		rcp_error("type of value of map");
-		return;
-	}
-
-	rcp_deinit(key_type, rcp_map_node_key(map, node));
-	rcp_deinit(value_type, rcp_map_node_value(map, node));
-
-	rcp_tree_node_delete(node);
+	rcp_dict_node_deinit(type, node);
+	rcp_dict_node_dealloc(node);
 }
-rcp_data_ref rcp_map_node_key(
-		rcp_map_ref map, rcp_map_node_ref node){
+
+rcp_extern 
+rcp_data_ref rcp_dict_node_key(
+		rcp_dict_type_ref type, rcp_dict_node_ref node)
+{
 	return rcp_tree_node_data(node);
 }
-rcp_data_ref rcp_map_node_value(
-		rcp_map_ref map, rcp_map_node_ref node){
-	rcp_type_ref key_type = rcp_map_key_type(map);
-	return rcp_map_node_key(map, node) + key_type->size;
+
+rcp_extern 
+rcp_data_ref rcp_dict_node_value(
+		rcp_dict_type_ref type, rcp_dict_node_ref node)
+{
+	rcp_type_ref key_type = rcp_dict_type_key_type(type);
+	return rcp_tree_node_data(node) + type->size; 
 }
-rcp_extern rcp_map_node_ref rcp_map_node_next(rcp_map_node_ref node){
+
+///
+//iterate
+rcp_extern 
+rcp_dict_node_ref rcp_dict_begin(rcp_dict_ref map)
+{
+	return rcp_tree_begin(map);
+}
+
+rcp_extern 
+rcp_dict_node_ref rcp_dict_node_next(rcp_dict_node_ref node)
+{
 	return rcp_tree_node_next(node);
 }
 
-rcp_record_ref rcp_map_new_rec(
-		rcp_type_ref key_type, rcp_type_ref value_type)
-{
-	rcp_record_ref rec = rcp_record_new(rcp_map_type);
-	rcp_map_core_ref core = rcp_record_data(rec);
-	rcp_map_deinit(rcp_map_type, core);
-	rcp_map_init_with_type(core, key_type, value_type);
-	return rec;
-}
