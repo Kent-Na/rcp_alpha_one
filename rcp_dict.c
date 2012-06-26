@@ -39,18 +39,19 @@ rcp_dict_type_ref rcp_dict_type_new(
 		rcp_type_ref key_type, rcp_type_ref data_type)
 {
 	rcp_type_ref type = malloc(sizeof *type +
-			(struct rcp_type_map_ext))	
+			sizeof (struct rcp_type_map_ext));
 	struct rcp_type_map_ext* ext = 
 		(struct rcp_type_map_ext*)(type + 1);
-	memcpy(type, rcp_dict_type_def, sizeof *type);
+	memcpy((void*)type, &rcp_dict_type_def, sizeof *type);
 	ext->key_type = key_type;
 	ext->data_type = data_type;
+	return type;
 }
 
-rcp_dict_type_ref rcp_dict_type_delete(
+void rcp_dict_type_delete(
 		rcp_dict_type_ref type)
 {
-	free(type);
+	free((void*)type);
 }
 
 rcp_type_ref rcp_dict_type_key_type(rcp_dict_type_ref type)
@@ -59,7 +60,7 @@ rcp_type_ref rcp_dict_type_key_type(rcp_dict_type_ref type)
 		(struct rcp_type_map_ext*)(type + 1);
 	return ext->key_type;
 }
-rcp_type_ref rcp_dict_type_value_type(rcp_dict_type_ref type)
+rcp_type_ref rcp_dict_type_data_type(rcp_dict_type_ref type)
 {
 	struct rcp_type_map_ext* ext = 
 		(struct rcp_type_map_ext*)(type + 1);
@@ -72,8 +73,9 @@ rcp_type_ref rcp_dict_type_value_type(rcp_dict_type_ref type)
 
 void rcp_dict_init(rcp_type_ref type, rcp_data_ref data)
 {
-	rcp_tree_init(data, type->compare, 
-			rcp_dict_type_key_type(type));
+	rcp_type_ref key_type = rcp_dict_type_key_type(type);
+	rcp_tree_init(data, (void*)key_type->compare, 
+			(void*)key_type);
 }
 void rcp_dict_deinit(rcp_type_ref type, rcp_data_ref data)
 {
@@ -128,7 +130,7 @@ rcp_dict_node_ref rcp_dict_node_alloc(rcp_dict_type_ref type)
 	return rcp_tree_node_new(key_type->size + data_type->size);
 }
 
-void rcp_dict_node_dealloc(rcp_dict_nede_ref node)
+void rcp_dict_node_dealloc(rcp_dict_node_ref node)
 {
 	rcp_tree_node_delete(node);
 }
@@ -180,11 +182,11 @@ rcp_data_ref rcp_dict_node_key(
 }
 
 rcp_extern 
-rcp_data_ref rcp_dict_node_value(
+rcp_data_ref rcp_dict_node_data(
 		rcp_dict_type_ref type, rcp_dict_node_ref node)
 {
 	rcp_type_ref key_type = rcp_dict_type_key_type(type);
-	return rcp_tree_node_data(node) + type->size; 
+	return rcp_tree_node_data(node) + key_type->size; 
 }
 
 ///

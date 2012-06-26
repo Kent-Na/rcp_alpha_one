@@ -33,6 +33,7 @@ mainFiles = [
 	'rcp_type_list.c',
 	'rcp_type_utility.c',
 	'rcp_map.c',
+	'rcp_dict.c',
 	'rcp_array.c',
 	'rcp_json.c',
 	'rcp_buffer.c',
