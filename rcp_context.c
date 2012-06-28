@@ -413,6 +413,11 @@ rcp_extern void rcp_context_execute_command_rec(
 		rcp_context_send_struct(ctx, cmd_type, (rcp_data_ref)&cmd_st);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
 	}
+	if (command_type == CMD_UNSET_VALUE){
+		rcp_record_release(ctx->top_level_record);
+		ctx->top_level_record = 
+			rcp_array_new_rec(rcp_ref_type);
+	}
 	if (command_type == CMD_SET_VALUE){
 		struct cmd_set_value cmd_st;
 		rcp_type_ref cmd_type = rcp_command_type(CMD_SET_VALUE);
