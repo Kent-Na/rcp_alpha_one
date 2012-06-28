@@ -57,8 +57,10 @@ void rcp_connection_set_username(
 		rcp_connection_ref con, rcp_record_ref username);
 
 void rcp_context_init(rcp_context_ref ctx){
+	//ctx->top_level_record = 
+	//	rcp_map_new_rec(rcp_int64_type, rcp_ref_type);
 	ctx->top_level_record = 
-		rcp_map_new_rec(rcp_int64_type, rcp_ref_type);
+		rcp_array_new_rec(rcp_ref_type);
 	ctx->connections = rcp_tree_new(rcp_pointer_type_compare,NULL);
 	ctx->dead = rcp_array_new(rcp_pointer_type);
 }
@@ -180,7 +182,30 @@ void rcp_context_send_all_con(rcp_context_ref ctx, rcp_connection_ref con)
 		node = rcp_tree_node_next(node);
 	}
 }
-void rcp_context_send_all_data(rcp_context_ref ctx, rcp_connection_ref con)
+void rcp_context_send_all_array_data(
+		rcp_context_ref ctx, rcp_connection_ref con)
+{
+	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
+	rcp_array_ref tlo = rcp_record_data(tlo_rec);
+	rcp_array_iterater_ref node = rcp_array_begin(tlo);
+
+	struct cmd_append_value cmd;
+	rcp_type_ref cmd_type=rcp_command_type(CMD_APPEND_VALUE);
+	rcp_init(cmd_type, (rcp_data_ref)&cmd);
+	cmd.command = rcp_string_new_rec(CMD_STR_APPEND_VALUE);
+
+	while (node){
+		cmd.value = *(rcp_record_ref*)rcp_array_iterater_data(tlo, node);
+
+		rcp_context_send_struct_to(con, cmd_type, (rcp_data_ref)&cmd);
+		node = rcp_array_iterater_next(tlo, node);
+	}
+
+	cmd.value = NULL;
+	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+}
+void rcp_context_send_all_map_data(
+		rcp_context_ref ctx, rcp_connection_ref con)
 {
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
 	rcp_map_ref tlo = rcp_record_data(tlo_rec);
@@ -205,7 +230,15 @@ void rcp_context_send_all_data(rcp_context_ref ctx, rcp_connection_ref con)
 		node = rcp_map_node_next(node);
 	}
 }
-
+void rcp_context_send_all_data(rcp_context_ref ctx, rcp_connection_ref con)
+{
+	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
+	rcp_type_ref type = rcp_record_type(tlo_rec);
+	if (type == rcp_map_type)
+		rcp_context_send_all_map_data(ctx, con);
+	if (type == rcp_array_type)
+		rcp_context_send_all_array_data(ctx, con);
+}
 void rcp_context_send_caution(rcp_connection_ref con, 
 		rcp_record_ref cause, const char* reason)
 {
@@ -304,7 +337,8 @@ rcp_extern void rcp_context_execute_command_rec(
 	rcp_record_ref cmd_name_rec = rcp_map_find_c_str(
 			cmd, "command", rcp_string_type);
 	if (!cmd_name_rec){
-		rcp_error("missing command element");
+		rcp_context_send_caution(con, cmd_rec, 
+				"missing command element");
 		return;
 	}
 	rcp_map_ref cmd_name = rcp_record_data(cmd_name_rec);
@@ -313,7 +347,8 @@ rcp_extern void rcp_context_execute_command_rec(
 			rcp_string_c_str(cmd_name));
 	
 	if (command_type == CMD_INVALID){
-		rcp_error("invalid command");
+		rcp_error(rcp_string_c_str(cmd_name));
+		rcp_error("^ invalid command");
 		return;
 	}
 
@@ -397,6 +432,22 @@ rcp_extern void rcp_context_execute_command_rec(
 				rcp_map_node_value(tlo, node));
 		rcp_map_node_ref old = rcp_map_set(tlo, node);
 		rcp_map_node_delete(tlo, old);
+
+		rcp_context_send_struct(ctx, cmd_type, (rcp_data_ref)&cmd_st);
+		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
+	}
+	if (command_type == CMD_APPEND_VALUE){
+		struct cmd_set_value cmd_st;
+		rcp_type_ref cmd_type = rcp_command_type(CMD_APPEND_VALUE);
+		rcp_init(cmd_type, (rcp_data_ref)&cmd_st);
+		rcp_map_to_struct(cmd, cmd_type, (rcp_data_ref)&cmd_st);
+
+		if (! cmd_st.value)
+			return;
+
+		rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
+		rcp_array_ref tlo = rcp_record_data(tlo_rec);
+		rcp_array_append(tlo, &cmd_st.value);
 
 		rcp_context_send_struct(ctx, cmd_type, (rcp_data_ref)&cmd_st);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);

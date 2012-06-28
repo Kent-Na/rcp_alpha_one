@@ -59,7 +59,6 @@ void cmp_json_build(void *userdata, rcp_record_ref rec)
 	}
 	rcp_string_ref cmd_str = rcp_string_new(NULL);
 	rcp_json_write_record(rec, cmd_str);
-	rcp_info(rcp_string_c_str(cmd_str));
 	st->str = cmd_str;
 }
 

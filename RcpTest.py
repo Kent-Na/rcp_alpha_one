@@ -22,10 +22,10 @@ con = {
 	'value':'message'}
 c.sendCommand(con)
 con = {
-	'command':'setValue',
-	'value':[0,1,2,3,4,5],
+	'command':'appendValue',
+	'value':'test',
 	'path':102}
-#c.sendCommand(con)
+c.sendCommand(con)
 con = {'command':'dump'}
 #c.sendCommand(con)
 c.receiveCommand()

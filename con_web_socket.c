@@ -118,7 +118,8 @@ void con_web_socket_perse_http_field(
 	char* p = line;
 	while (*p != ':'){
 		if (*p == '\0'){
-			rcp_error("http header");
+			rcp_error(line);
+			rcp_error("^ http header");
 			return;	
 		}		
 		p++;

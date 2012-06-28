@@ -31,6 +31,8 @@ struct rcp_type_core{
 	void (*set)(rcp_type_ref type, rcp_data_ref dst, rcp_record_ref src);
 	void (*append)(rcp_type_ref type, rcp_data_ref dst, rcp_record_ref src);
 	void (*unset)(rcp_type_ref type, rcp_data_ref dst, rcp_record_ref src);
+	void (*write_json)(
+			rcp_type_ref type, rcp_data_ref data, rcp_data_ref out);
 };
 
 struct rcp_record_core{
