@@ -1,9 +1,9 @@
 #include <stdio.h>
 
-#include "rcp_pch.h"
-#include "rcp_utility.h"
-#include "rcp_command_list.h"
-#include "rcp_command.h"
+#include "../rcp_pch.h"
+#include "../rcp_utility.h"
+#include "../rcp_command_list.h"
+#include "../rcp_command.h"
 
 int test_json(void);
 int test_tree(void);

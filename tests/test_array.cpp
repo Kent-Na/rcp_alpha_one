@@ -1,8 +1,6 @@
-#include "rcp_pch.h"
-#include "rcp_utility.h"
-#include "rcp_type.h"
-#include "rcp_type_list.h"
-#include "rcp_array.h"
+#include "../rcp_pch.h"
+#include "../rcp_utility.h"
+#include "../rcp_types.h"
 
 #include <random>
 

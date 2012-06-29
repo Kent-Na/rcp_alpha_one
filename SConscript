@@ -39,7 +39,6 @@ mainFiles = [
 	'rcp_epoll.c',
 	'rcp_json.c',
 	'rcp_listener.c',
-	'rcp_main.c',
 	'rcp_receiver.c',
 	'rcp_receiver_classes.c',
 	'rcp_sender.c',
@@ -56,30 +55,21 @@ mainFiles = [
 mainFiles.extend(types)
 mainFiles.extend(connections)
 
-testFiles = [
-	'rcp_pch.h',
-	'rcp_json.c',
-	'rcp_number.c',
-	'rcp_type.c',
-	'rcp_type_etc.c',
-	'rcp_type_list.c',
-	'rcp_type_utility.c',
-	'rcp_tree.c',
-	'rcp_map.c',
-	'rcp_utility.c',
-	'rcp_string.c',
-	'rcp_command.c',
-	'rcp_command_list.c',
-	'rcp_struct.c',
-	'test_json.cpp',
-	'test_tree.cpp',
-	'test_main.cpp',
-	'test_map.cpp',
-	'test_array.cpp',
-	'test_pm.cpp',
-	'rcp_array.c',
+tests = [
+	'tests/test_json.cpp',
+	'tests/test_tree.cpp',
+	'tests/test_map.cpp',
+	'tests/test_array.cpp',
+	'tests/test_pm.cpp',
 ]
 
-env.Program(target = 'main', source = mainFiles)
-#env.Program(target = 'test', source = testFiles)
+main = ['rcp_main.c']
+main.extend(mainFiles)
+
+env.Program(target = 'main', source = main)
+
+mainFiles.extend(tests)
+main = ['tests/test_main.cpp']
+main.extend(mainFiles)
+env.Program(target = 'test', source = main)
 
