@@ -25,9 +25,9 @@ con = {
 	'command':'appendValue',
 	'value':'test',
 	'path':102}
-c.sendCommand(con)
-con = {'command':'dump'}
 #c.sendCommand(con)
+con = {'command':'dump'}
+c.sendCommand(con)
 c.receiveCommand()
 c.receiveCommand()
 c.receiveCommand()

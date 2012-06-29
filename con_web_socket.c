@@ -9,7 +9,8 @@
 #include "rcp_sender.h"
 #include "con_web_socket.h"
 
-const uint8_t http_header_receiving = 0;
+const uint8_t http_request_receiving = 0;
+const uint8_t http_header_receiving = 1;
 const uint8_t http_upgraded = 2;
 
 const uint8_t ws_not_yet = 0;
@@ -42,6 +43,7 @@ const char *ws_header_3 = "Sec-WebSocket-Accept: ";
 
 int con_web_socket_http_on_receive(rcp_receiver_ref con);
 void con_web_socket_frame_on_receive(rcp_receiver_ref con);
+void con_web_socket_http_request(rcp_receiver_ref con, rcp_io_ref io);
 void con_web_socket_perse_http_field(
 		rcp_receiver_ref con, char *line);
 int con_web_socket_http_next_field(rcp_receiver_ref con, rcp_io_ref io);
@@ -51,7 +53,7 @@ void con_web_socket_send_http_header(
 void con_web_socket_init(rcp_receiver_ref con){
 	struct con_web_socket *st = rcp_receiver_l2(con);
 	rcp_buffer_init(&st->buffer, RCP_PROTOCOL_JSON_BUFFER_SIZE);
-	st->http_state = http_header_receiving;	
+	st->http_state = http_request_receiving;	
 }
 void con_web_socket_deinit(rcp_receiver_ref con){
 	struct con_web_socket *st = rcp_receiver_l2(con);
@@ -69,11 +71,39 @@ void con_web_socket_on_receive(rcp_receiver_ref con, rcp_io_ref io)
 	size_t len = rcp_io_receive(io, space, size);
 	rcp_buffer_supplied(&st->buffer, len);
 
+	if (st->http_state == http_request_receiving){
+		con_web_socket_http_request(con, io);
+	}
 	if (st->http_state == http_header_receiving){
 		while (!con_web_socket_http_next_field(con, io)){}
 	}
 }
 
+void con_web_socket_http_request(rcp_receiver_ref con, rcp_io_ref io)
+{
+	struct con_web_socket *st = rcp_receiver_l2(con);
+
+	unsigned char *d_begin = rcp_buffer_data(&st->buffer); 
+	unsigned char *d_end = rcp_buffer_data_end(&st->buffer);
+	const char expected[] = "GET /rcp HTTP/1.1\r\n";
+	size_t ex_len = sizeof expected - 1;
+
+	if (ex_len > d_end - d_begin)
+		return;
+
+	const char *p = expected;
+	unsigned char *d = d_begin;
+
+	while (*p && *p++ == *d++);
+	if (*p){
+		rcp_error("http request");
+		//rcp_io_close(io);
+		return;
+	}
+
+	rcp_buffer_consumed_at(&st->buffer, d);
+	st->http_state = http_header_receiving;	
+}
 int con_web_socket_http_next_field(rcp_receiver_ref con, rcp_io_ref io)
 {
 	struct con_web_socket *st = rcp_receiver_l2(con);

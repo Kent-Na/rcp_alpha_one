@@ -57,7 +57,7 @@ void con_ssl_set_fd(rcp_io_ref io, struct rcp_epoll_action *unit,
 	struct epoll_event ev;
 	ev.events = EPOLLIN|EPOLLPRI|EPOLLRDHUP|EPOLLERR|EPOLLHUP;
 	ev.data.ptr = st->unit;
-	epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
+	err = epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
 	if (err)
 		rcp_error("epoll ctl");
 }
