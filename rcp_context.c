@@ -19,7 +19,7 @@
 
 #include "cmd_types.h"
 
-#include "con_file.h"
+#include "connections/con_file.h"
 
 
 struct rcp_context_core{

@@ -1,13 +1,13 @@
-#include "rcp_pch.h"
-#include "rcp_defines.h"
-#include "rcp_utility.h"
-#include "rcp_buffer.h"
+#include "../rcp_pch.h"
+#include "../rcp_defines.h"
+#include "../rcp_utility.h"
+#include "../rcp_buffer.h"
 
-#include "rcp_type.h"
+#include "../rcp_type.h"
 
-#include "rcp_io.h"
-#include "rcp_receiver.h"
-#include "rcp_sender.h"
+#include "../rcp_io.h"
+#include "../rcp_receiver.h"
+#include "../rcp_sender.h"
 #include "con_null_terminate.h"
 
 //struct rcp_receiver_layer2_class_part

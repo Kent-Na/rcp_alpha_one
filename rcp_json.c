@@ -2,12 +2,7 @@
 #include "rcp_utility.h"
 #include "rcp_defines.h"
 
-#include "rcp_type.h"
-#include "rcp_type_list.h"
-#include "rcp_string.h"
-#include "rcp_tree.h"
-#include "rcp_map.h"
-#include "rcp_array.h"
+#include "rcp_types.h"
 
 #include "rcp_json.h"
 

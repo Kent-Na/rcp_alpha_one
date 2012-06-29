@@ -9,9 +9,9 @@
 #include "rcp_sender.h"
 #include "rcp_buffer.h"
 
-#include "con_null_terminate.h"
-#include "con_web_socket.h"
-#include "con_json.h"
+#include "connections/con_null_terminate.h"
+#include "connections/con_web_socket.h"
+#include "connections/con_json.h"
 
 ///
 //receiver

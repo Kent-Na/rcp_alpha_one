@@ -1,15 +1,15 @@
-#include "rcp_pch.h"
-#include "rcp_utility.h"
-#include "rcp_command_list.h"
-#include "rcp_command.h"
-#include "rcp_epoll.h"
-#include "rcp_io.h"
+#include "../rcp_pch.h"
+#include "../rcp_utility.h"
+#include "../rcp_command_list.h"
+#include "../rcp_command.h"
+#include "../rcp_epoll.h"
+#include "../rcp_io.h"
 
-#include "rcp_types.h"
-#include "rcp_sender.h"
-#include "rcp_receiver.h"
+#include "../rcp_types.h"
+#include "../rcp_sender.h"
+#include "../rcp_receiver.h"
 
-#include "rcp_json.h"
+#include "../rcp_json.h"
 
 rcp_extern rcp_record_ref con_json_execute(
 		rcp_receiver_ref con, const char *begin, const char *end)

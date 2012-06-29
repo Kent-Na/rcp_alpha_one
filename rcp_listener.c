@@ -14,8 +14,8 @@
 #include "rcp_sender_classes.h"
 #include "rcp_receiver_classes.h"
 
-#include "con_plain.h"
-#include "con_ssl.h"
+#include "connections/con_plain.h"
+#include "connections/con_ssl.h"
 
 ///
 //listener

@@ -1,12 +1,12 @@
-#include "rcp_pch.h"
-#include "rcp_utility.h"
-#include "rcp_defines.h"
+#include "../rcp_pch.h"
+#include "../rcp_utility.h"
+#include "../rcp_defines.h"
 
 #define RCP_INTERNAL_STRUCTURE
 
-#include "rcp_type.h"
+#include "../rcp_type.h"
 #include "rcp_type_list.h"
-#include "rcp_tree.h"
+#include "../rcp_tree.h"
 #include "rcp_map.h"
 
 typedef struct rcp_map_core *rcp_map_core_ref;

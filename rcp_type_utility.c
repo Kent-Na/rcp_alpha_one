@@ -1,11 +1,7 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 #include "rcp_defines.h"
-#include "rcp_type.h"
-#include "rcp_type_list.h"
-#include "rcp_string.h"
-#include "rcp_map.h"
-#include "rcp_struct.h"
+#include "rcp_types.h"
 
 rcp_extern rcp_record_ref rcp_map_find_c_str(
 		rcp_map_ref map, const char *key, rcp_type_ref type)
