@@ -21,6 +21,8 @@ struct rcp_connection_core{
 	rcp_record_ref username;
 	uint32_t login_id;
 	rcp_context_ref ctx;
+
+	uint32_t permission;
 };
 
 rcp_connection_ref rcp_connection_new()

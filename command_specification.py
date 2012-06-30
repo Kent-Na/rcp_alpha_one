@@ -178,12 +178,6 @@ commandList.append({
 	"longDescription":"",
 	})
 
-commandList.append({
-	"name":"*updateUserList",
-	"shortDescription":"",
-	"longDescription":"",
-	})
-
 #Value
 command = {
 	"name":"sendValue",

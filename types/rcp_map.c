@@ -24,6 +24,11 @@ rcp_map_ref rcp_map_new(
 	return map;
 }
 
+rcp_extern void rcp_map_delete(
+		rcp_map_ref map)
+{
+	rcp_delete(rcp_map_type, map);
+}
 void rcp_map_init(rcp_type_ref type, rcp_data_ref data)
 {
 	rcp_map_core_ref core = data;

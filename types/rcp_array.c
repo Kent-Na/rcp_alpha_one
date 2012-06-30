@@ -70,7 +70,10 @@ rcp_extern rcp_data_ref rcp_array_new(rcp_type_ref type)
 	rcp_array_init_with_type(core, type);
 	return ar;
 }
-rcp_extern void rcp_array_delete(rcp_array_ref data);
+rcp_extern void rcp_array_delete(rcp_array_ref data)
+{
+	rcp_delete(rcp_array_type, data);
+}
 
 rcp_extern size_t rcp_array_count(rcp_array_ref array){
 	rcp_array_core_ref core = array;

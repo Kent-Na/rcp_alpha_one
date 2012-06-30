@@ -25,6 +25,8 @@
 struct rcp_context_core{
 	rcp_record_ref top_level_record;
 	rcp_tree_ref connections;
+	rcp_map_ref permissions;
+	uint64_t base_permission;
 
 	//connections that closed but not send "removeUser" command. 
 	rcp_array_ref dead;
@@ -63,10 +65,14 @@ void rcp_context_init(rcp_context_ref ctx){
 		rcp_array_new_rec(rcp_ref_type);
 	ctx->connections = rcp_tree_new(rcp_pointer_type_compare,NULL);
 	ctx->dead = rcp_array_new(rcp_pointer_type);
+	ctx->permissions = rcp_map_new(rcp_string_type, rcp_uint64_type);
+	ctx->base_permission = RCP_PMS_LOGIN | RCP_PMS_READ | RCP_PMS_WRITE;
 }
 void rcp_context_uninit(rcp_context_ref ctx){
 	//ctx->top_level_record
 	rcp_tree_delete(ctx->connections);
+	rcp_array_delete(ctx->dead);
+	rcp_map_delete(ctx->permissions);
 }
 
 rcp_record_ref rcp_context_top_level_record(rcp_context_ref ctx){
@@ -356,12 +362,28 @@ rcp_extern void rcp_context_execute_command_rec(
 	if (command_type == CMD_KILL){
 		rcp_listen_end();
 	}
-	if (command_type == CMD_DUMP){
-		rcp_context_page_out(ctx);
-	}
 	if (command_type == CMD_LOGIN_CONTEXT){
 		rcp_info("login ctx");
 		rcp_context_ref ctx = rcp_context_get(0);
+		uint64_t permission = ctx->base_permission;
+		rcp_string_ref username = rcp_record_data(
+				rcp_connection_username(con));
+		if (username){
+			rcp_map_node_ref node = 
+				rcp_map_find(ctx->permissions, username);
+			if (node){
+				uint64_t user_permission;
+				rcp_copy(rcp_uint64_type,
+						rcp_map_node_value(ctx->permissions, node),
+						(rcp_data_ref)&user_permission);
+				permission |= user_permission;
+			}
+		}
+		if (! (permission & RCP_PMS_LOGIN)){
+			rcp_context_send_caution(con, cmd_rec, 
+					"not enough permission");
+			return;
+		}
 		
 		rcp_context_send_all_con(ctx, con);
 		rcp_context_send_all_data(ctx, con);	
@@ -369,6 +391,11 @@ rcp_extern void rcp_context_execute_command_rec(
 	}
 
 	if (command_type == CMD_LOGIN_USER){
+		if (rcp_connection_username(con)){
+			rcp_context_send_caution(con, cmd_rec, 
+					"you are already user logined");
+			return;
+		}
 		struct cmd_login_user cmd_recv;
 		rcp_type_ref cmd_type = rcp_command_type(CMD_LOGIN_USER);
 		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
@@ -376,13 +403,13 @@ rcp_extern void rcp_context_execute_command_rec(
 
 		if (rcp_record_type(cmd_recv.username) != rcp_string_type){
 			rcp_context_send_caution(con, cmd_rec, 
-					"type:username must be string");
+					"type of username must be string");
 			return;
 		}
 
 		if (rcp_record_type(cmd_recv.password) != rcp_string_type){
 			rcp_context_send_caution(con, cmd_rec, 
-					"type:username must be string");
+					"type of username must be string");
 			return;
 		}
 
@@ -406,6 +433,76 @@ rcp_extern void rcp_context_execute_command_rec(
 	}
 	////////////////////////////////
 
+	if (command_type == CMD_DUMP){
+		rcp_context_page_out(ctx);
+	}
+	if (command_type == CMD_ADD_PERMISSION ||
+			command_type == CMD_REMOVE_PERMISSION){
+		struct cmd_add_permission cmd_recv;
+		rcp_type_ref cmd_type = rcp_command_type(CMD_ADD_PERMISSION);
+		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
+		rcp_map_to_struct(cmd, cmd_type, (rcp_data_ref)&cmd_recv);
+
+		uint64_t old;
+		rcp_string_ref username = NULL;
+		if (cmd_recv.username)
+			username = rcp_record_data(cmd_recv.username);
+		rcp_map_node_ref node = NULL;
+
+		if (username){
+			if (!rcp_user_exist(rcp_string_c_str(username))){
+				rcp_context_send_caution(con, cmd_rec, 
+						"a specified user is not existed");
+				return;
+			}
+		
+			node = rcp_map_find(ctx->permissions, username);
+			if (!node){
+				rcp_map_node_new(ctx->permissions);
+				rcp_copy(rcp_string_type,
+						username,
+						rcp_map_node_key(ctx->permissions, node));
+				uint64_t initial = 0;
+				rcp_copy(rcp_uint64_type,
+						(rcp_data_ref)&initial,
+						rcp_map_node_value(ctx->permissions, node));
+			}
+
+			rcp_copy(rcp_uint64_type,
+					rcp_map_node_value(ctx->permissions, node),
+					(rcp_data_ref)&old);
+
+		}
+		else{
+			old = ctx->base_permission;
+		}
+
+		uint64_t new = old;
+
+		if (command_type == CMD_ADD_PERMISSION){
+			new |= RCP_PMS_LOGIN;
+			new |= RCP_PMS_READ;
+			new |= RCP_PMS_WRITE;
+		}
+		else if (command_type == CMD_REMOVE_PERMISSION){
+			new &= ~RCP_PMS_LOGIN;
+			new &= ~RCP_PMS_READ;
+			new &= ~RCP_PMS_WRITE;
+		}
+		else{
+			rcp_error("never reach this point");
+		}
+
+		if (username){
+			rcp_assert(node, "omg");
+			rcp_copy(rcp_uint64_type,
+					(rcp_data_ref)&new,
+					rcp_map_node_value(ctx->permissions, node));
+		}
+		else{
+			ctx->base_permission = new;
+		}
+	}
 	if (command_type == CMD_SEND_VALUE){
 		struct cmd_set_value cmd_st;
 		rcp_type_ref cmd_type = rcp_command_type(CMD_SEND_VALUE);
