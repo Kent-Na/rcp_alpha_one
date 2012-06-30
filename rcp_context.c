@@ -114,6 +114,7 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 			rcp_error("con to rm from ctx is missing");
 			return;
 		}
+		rcp_tree_verify(ctx->connections);
 		rcp_tree_remove(ctx->connections, node);
 		rcp_tree_node_delete(node);
 

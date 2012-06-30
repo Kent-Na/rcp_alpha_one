@@ -365,6 +365,16 @@ rcp_extern void rcp_tree_remove(
 		return;
 	}
 
+	{
+		int cond0 = tree->root == node;
+		int cond1 = node->l == NULL;
+		int cond2 = node->r == NULL;
+		if (cond0 && cond1 && cond2){
+			tree->root = NULL;
+			return;
+		}
+	}
+
 	rcp_tree_node_ref t = node;
 	if (t->l)
 		t = t->l;

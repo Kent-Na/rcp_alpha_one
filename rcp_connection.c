@@ -90,6 +90,10 @@ void rcp_connection_send_rec(rcp_connection_ref con, rcp_receiver_ref rec)
 	rcp_connection_send(con);
 	rcp_sender_cluster_clean_up(cls);
 }
+
+extern void rcp_context_remove_connection(
+		rcp_context_ref ctx, rcp_connection_ref con);
+
 void rcp_connection_on_receive(rcp_connection_ref con)
 {
 	rcp_receiver_on_receive(con->receiver, con->io);
@@ -98,6 +102,9 @@ void rcp_connection_on_receive(rcp_connection_ref con)
 		rcp_context_execute_command_rec(con->ctx, con, rec);
 		rec = rcp_receiver_next_command(con->receiver);
 	}
+
+	if (con->ctx && !rcp_io_alive(con->io))
+		rcp_context_remove_connection(con->ctx, con);
 }
 int rcp_connection_alive(rcp_connection_ref con)
 {
