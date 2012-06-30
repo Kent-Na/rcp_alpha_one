@@ -26,6 +26,10 @@ con = {
 	'value':'test',
 	'path':102}
 con = {
+	'command':'addPermission',
+	'username':'black'}
+c.sendCommand(con)
+con = {
 	'command':'removePermission'}
 c.sendCommand(con)
 con = {'command':'dump'}

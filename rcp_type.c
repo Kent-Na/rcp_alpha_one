@@ -61,8 +61,10 @@ rcp_type_ref rcp_record_type(rcp_record_ref rec)
 void* rcp_record_data(rcp_record_ref rec)
 {
 #ifdef RCP_SELF_TEST
-	if (!rec)
-		rcp_error("request null rec data");
+	if (!rec){
+		rcp_caution("request null rec data");
+		return NULL;
+	}
 #endif
 	return rec + 1;
 }

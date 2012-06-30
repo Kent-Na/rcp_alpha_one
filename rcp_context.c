@@ -458,7 +458,7 @@ rcp_extern void rcp_context_execute_command_rec(
 		
 			node = rcp_map_find(ctx->permissions, username);
 			if (!node){
-				rcp_map_node_new(ctx->permissions);
+				node = rcp_map_node_new(ctx->permissions);
 				rcp_copy(rcp_string_type,
 						username,
 						rcp_map_node_key(ctx->permissions, node));
@@ -466,6 +466,7 @@ rcp_extern void rcp_context_execute_command_rec(
 				rcp_copy(rcp_uint64_type,
 						(rcp_data_ref)&initial,
 						rcp_map_node_value(ctx->permissions, node));
+				rcp_map_set(ctx->permissions, node);
 			}
 
 			rcp_copy(rcp_uint64_type,
