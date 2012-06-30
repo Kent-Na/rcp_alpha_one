@@ -193,6 +193,15 @@ void rcp_listener_epoll_event(
 	//printf("accept_done\n");
 	rcp_info("accept_done");
 	//set timeout
+	struct timeval tv;
+	tv.tv_sec = RCP_SEND_TIMEOUT_SEC;
+	tv.tv_usec = 0;
+	if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO,
+				&tv, sizeof tv) <0){
+		rcp_error("set socket timeout");
+		close(fd);
+		return;
+	}
 
 	//log
 
