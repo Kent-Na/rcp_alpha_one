@@ -4,7 +4,7 @@
 #include "../rcp_io.h"
 
 //for set fd
-#include "../rcp_epoll.h"
+#include "../rcp_event.h"
 
 #include "con_plain.h"
 
@@ -97,18 +97,13 @@ void con_plain_on_close(
 	st->fd = -1;
 }
 
-void con_plain_set_fd(rcp_io_ref io, struct rcp_epoll_action *unit,
+void con_plain_set_fd(rcp_io_ref io, rcp_event_action_ref unit,
 		int epfd, int fd)
 {
 	struct con_plain *st = rcp_io_data(io);
 	st->unit = unit;
 	st->fd = fd;
 
-	struct epoll_event ev;
-	ev.events = EPOLLIN|EPOLLPRI|EPOLLRDHUP|EPOLLERR|EPOLLHUP;
-	ev.data.ptr = st->unit;
-	int err = epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
-	if (err)
-		rcp_error("epoll ctl");
+	rcp_event_add_fd(epfd, fd, unit);
 }
 

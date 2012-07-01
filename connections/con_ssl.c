@@ -2,7 +2,7 @@
 #include "../rcp_defines.h"
 #include "../rcp_utility.h"
 #include "../rcp_io.h"
-#include "../rcp_epoll.h"
+#include "../rcp_event.h"
 
 #include "con_ssl.h"
 #include "../rcp_ssl.h"
@@ -25,7 +25,7 @@ void con_ssl_init(rcp_io_ref io){
 	st->ssl = NULL;
 }
 
-void con_ssl_set_fd(rcp_io_ref io, struct rcp_epoll_action *unit,
+void con_ssl_set_fd(rcp_io_ref io, rcp_event_action_ref unit,
 		int epfd, int fd)
 {
 	struct con_ssl *st = rcp_io_data(io);
@@ -54,12 +54,7 @@ void con_ssl_set_fd(rcp_io_ref io, struct rcp_epoll_action *unit,
 		printf("%s\n",strerror(errno));
 	}
 
-	struct epoll_event ev;
-	ev.events = EPOLLIN|EPOLLPRI|EPOLLRDHUP|EPOLLERR|EPOLLHUP;
-	ev.data.ptr = st->unit;
-	err = epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
-	if (err)
-		rcp_error("epoll ctl");
+	rcp_event_add_fd(epfd, fd, unit);
 }
 
 void con_ssl_release(rcp_io_ref io)

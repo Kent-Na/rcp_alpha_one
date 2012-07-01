@@ -9,7 +9,7 @@
 
 #include "rcp_type.h"
 
-#include "rcp_epoll.h"
+#include "rcp_event.h"
 #include "rcp_io.h"
 #include "rcp_sender.h"
 #include "rcp_receiver.h"
@@ -36,9 +36,9 @@ int main (int argc, const char** argv)
 	rcp_context_manager_init();
 	rcp_context_new(0);
 
-	int epfd = epoll_create(10);
-	rcp_listen_start(epfd);
-	rcp_epoll_run(epfd);
+	int e_queue= rcp_event_new();
+	rcp_listen_start(e_queue);
+	rcp_event_run(e_queue);
 
 	return 0;
 }

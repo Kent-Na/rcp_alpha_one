@@ -14,6 +14,8 @@
 
 #ifdef __linux__
 #include <sys/epoll.h>
+#else
+#include <sys/event.h>
 #endif
 
 #include <openssl/ssl.h>

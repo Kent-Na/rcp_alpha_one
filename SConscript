@@ -2,10 +2,11 @@ env = Environment()
 Import('env')
 
 #env.Append(CCFLAGS = ['-O3'])
-env.Append(CCFLAGS = ['-Wall','-g'])
-env.Append(CFLAGS = ['-Wno-pointer-sign'])
+env.Append(CCFLAGS = ['-Wall','-g','-lc'])
+env.Append(CFLAGS = ['-Wno-pointer-sign','-Wno-deprecated-declarations'])
 env.Append(CXXFLAGS = ['-std=gnu++0x'])
 env.Append(LIBS = ['ssl','m'])
+env.Append(LINKFLAGS = ['-framework CoreServices'])
 
 types = [
 	'types/rcp_array.c',
@@ -36,7 +37,8 @@ mainFiles = [
 	'rcp_command_type.c',
 	'rcp_connection.c',
 	'rcp_context.c',
-	'rcp_epoll.c',
+	'rcp_event_epoll.c',
+	'rcp_event_kqueue.c',
 	'rcp_json.c',
 	'rcp_listener.c',
 	'rcp_receiver.c',

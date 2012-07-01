@@ -1,7 +1,7 @@
 
 struct con_plain{
 	int fd;
-	struct rcp_epoll_action *unit;
+	rcp_event_action_ref unit;
 };
 
 void con_plain_init(rcp_io_ref io);
@@ -14,7 +14,7 @@ int con_plain_alive(rcp_io_ref io);
 void con_plain_on_close(
 		rcp_io_ref io);
 
-void con_plain_set_fd(rcp_io_ref io, struct rcp_epoll_action *unit,
+void con_plain_set_fd(rcp_io_ref io, rcp_event_action_ref unit,
 		int epfd, int fd);
 
 extern struct rcp_io_class con_plain_class;

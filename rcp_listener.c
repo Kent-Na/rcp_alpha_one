@@ -1,7 +1,7 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
 #include "rcp_utility.h"
-#include "rcp_epoll.h"
+#include "rcp_event.h"
 
 #include "rcp_types.h"
 #include "rcp_io.h"
@@ -23,7 +23,7 @@
 
 struct rcp_listener_class{
 	struct rcp_io_class *io_klass;
-	void(*io_set_fd)(rcp_io_ref io, struct rcp_epoll_action *unit,
+	void(*io_set_fd)(rcp_io_ref io, struct rcp_event_action *unit,
 			int epfd, int fd);
 	rcp_sender_ref (*sender_class)(rcp_sender_cluster_ref);
 	struct rcp_receiver_class *receiver_klass;
@@ -55,42 +55,51 @@ struct rcp_listener{
 	int fd;
 };
 
-void rcp_listener_epoll_event(
-		int epfd, struct epoll_event *ev, epoll_data_t userdata);
+void rcp_listener_event_event(
+		int epfd, rcp_event_ref ev, void *userdata);
 rcp_connection_ref rcp_listener_connection_new(
 		struct rcp_listener_class *klass, int epfd, int fd);
-void rcp_listener_delete(rcp_epoll_action_ref unit);
-rcp_epoll_action_ref rcp_listener_new(
+void rcp_listener_delete(rcp_event_action_ref unit);
+rcp_event_action_ref rcp_listener_new(
 		struct rcp_listener_class *klass, uint16_t port,  int epfd);
 
 
-void rcp_connection_epoll_action(int epfd, struct epoll_event *ev,
-		epoll_data_t data)
+void rcp_connection_event_action(int epfd, rcp_event_ref ev,
+		void *userdata)
 {
-	rcp_connection_ref con = (rcp_connection_ref)data.ptr;
+	rcp_connection_ref con = userdata;
+#ifdef RCP_USE_EPOLL
 	if (ev->events & EPOLLIN){
 		rcp_connection_on_receive(con);
 	}
 	if (ev->events & EPOLLRDHUP){
 		rcp_connection_on_close(con);
 	}
+#endif
+#ifdef RCP_USE_KQUEUE
+	rcp_connection_on_receive(con);
+
+	if (ev->flags & EV_EOF){
+		rcp_connection_on_close(con);
+	}
+#endif
 }
 
 
 
-rcp_epoll_action_ref rcp_listener_plain_json_new(int epfd)
+rcp_event_action_ref rcp_listener_plain_json_new(int epfd)
 {
 	return rcp_listener_new(
 			&lis_plain_json_class, RCP_RAW_JSON_PORT_NUMBER, epfd);	
 }
 
-rcp_epoll_action_ref rcp_listener_ws_json_new(int epfd)
+rcp_event_action_ref rcp_listener_ws_json_new(int epfd)
 {
 	return rcp_listener_new(
 			&lis_ws_json_class, RCP_WS_JSON_PORT_NUMBER, epfd);	
 }
 
-rcp_epoll_action_ref rcp_listener_wss_json_new(int epfd)
+rcp_event_action_ref rcp_listener_wss_json_new(int epfd)
 {
 	return rcp_listener_new(
 			&lis_wss_json_class, RCP_WSS_JSON_PORT_NUMBER, epfd);	
@@ -104,9 +113,9 @@ rcp_connection_ref rcp_listener_connection_new(
 	rcp_io_ref io = rcp_io_new(klass->io_klass);
 	rcp_connection_set_io(con, io);
 
-	struct rcp_epoll_action *unit = malloc(sizeof *unit);
-	unit->action = rcp_connection_epoll_action;
-	unit->userdata.ptr = con;
+	struct rcp_event_action *unit = malloc(sizeof *unit);
+	unit->action = rcp_connection_event_action;
+	unit->userdata = con;
 	klass->io_set_fd(io, unit, epfd, fd);
 
 	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
@@ -118,21 +127,21 @@ rcp_connection_ref rcp_listener_connection_new(
 	return con;
 }
 
-void rcp_listener_delete(rcp_epoll_action_ref unit)
+void rcp_listener_delete(rcp_event_action_ref unit)
 {
-	struct rcp_listener *lis = unit->userdata.ptr;
+	struct rcp_listener *lis = unit->userdata;
 	close(lis->fd);
 	free(lis);
 	free(unit);
 }
 
-rcp_epoll_action_ref rcp_listener_new(
+rcp_event_action_ref rcp_listener_new(
 		struct rcp_listener_class *klass, uint16_t port,  int epfd)
 {
-	struct rcp_epoll_action* unit = malloc(sizeof *unit);
+	rcp_event_action_ref unit = malloc(sizeof *unit);
 	struct rcp_listener *lis = malloc(sizeof *lis);
-	unit->action= rcp_listener_epoll_event;
-	unit->userdata.ptr = lis;
+	unit->action= rcp_listener_event_event;
+	unit->userdata = lis;
 	lis->fd = -1;
 	lis->klass = klass;
 
@@ -166,22 +175,17 @@ rcp_epoll_action_ref rcp_listener_new(
 		return NULL;
 	}
 
-	// ! setup epoll event
-	struct epoll_event ev;
-	ev.events = EPOLLIN | EPOLLPRI | EPOLLERR | EPOLLHUP;
-	ev.data.ptr = unit;
-	err = epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &ev);
-	if (err){
-		rcp_error("errorrrr");
-	}
+	// ! setup event event
+	rcp_event_add_fd(epfd, fd, unit);
+
 	rcp_info("listen_done");
 	return unit;
 }
 
-void rcp_listener_epoll_event(
-		int epfd, struct epoll_event *ev, epoll_data_t userdata)
+void rcp_listener_event_event(
+		int epfd, rcp_event_ref ev, void *userdata)
 {
-	struct rcp_listener *lis = userdata.ptr;
+	struct rcp_listener *lis = userdata;
 	int listener_fd = lis->fd;
 	
 	//connect

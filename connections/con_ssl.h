@@ -3,12 +3,12 @@ struct con_ssl{
 	int fd;
 	BIO* bio;
 	SSL* ssl;
-	struct rcp_epoll_action *unit;
+	rcp_event_action_ref unit;
 };
 
 void con_ssl_init(rcp_io_ref io);
 void con_ssl_release(rcp_io_ref io);
-void con_ssl_set_fd(rcp_io_ref io, struct rcp_epoll_action *unit,
+void con_ssl_set_fd(rcp_io_ref io, rcp_event_action_ref unit,
 		int epfd, int fd);
 size_t con_ssl_send(
 		rcp_io_ref io, const void *data, size_t len);

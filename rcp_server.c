@@ -3,7 +3,7 @@
 #include "rcp_defines.h"
 #include "rcp_types.h"
 #include "rcp_tree.h"
-#include "rcp_epoll.h"
+#include "rcp_event.h"
 #include "rcp_io.h"
 #include "rcp_sender.h"
 #include "rcp_receiver.h"
@@ -51,9 +51,9 @@ rcp_context_ref rcp_context_new(uint32_t id)
 ///
 //listener
 //
-rcp_epoll_action_ref plain_json = NULL;
-rcp_epoll_action_ref plain_ws_json = NULL;
-rcp_epoll_action_ref plain_wss_json = NULL;
+rcp_event_action_ref plain_json = NULL;
+rcp_event_action_ref plain_ws_json = NULL;
+rcp_event_action_ref plain_wss_json = NULL;
 void rcp_listen_start(int epfd)
 {
 	if (plain_json)
