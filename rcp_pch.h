@@ -16,6 +16,10 @@
 #include <sys/endian.h>
 #endif
 
+#ifdef __APPLE__
+#include <sys/_endian.h>
+#endif
+
 #ifdef __linux__
 #include <sys/epoll.h>
 #else

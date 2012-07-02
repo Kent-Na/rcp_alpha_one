@@ -6,17 +6,17 @@
 
 #include "rcp_json.h"
 
-inline int rcp_json_is_number(char ch)
+static inline int rcp_json_is_number(char ch)
 {
 	return '0' <= ch && ch <= '9';
 }
 
-inline int rcp_json_is_space(char ch)
+static inline int rcp_json_is_space(char ch)
 {
 	return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n';
 }
 
-inline char rcp_json_get_next_char(const char *ptr, const char *end)
+static inline char rcp_json_get_next_char(const char *ptr, const char *end)
 {
 	if (ptr >= end)
 		return '\0';
@@ -24,7 +24,7 @@ inline char rcp_json_get_next_char(const char *ptr, const char *end)
 		return *ptr;
 }
 
-inline void rcp_json_skip_space(const char **ptr, const char *end)
+static inline void rcp_json_skip_space(const char **ptr, const char *end)
 {
 	char ch = rcp_json_get_next_char(*ptr, end);
 	while (rcp_json_is_space(ch)){
