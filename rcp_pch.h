@@ -12,7 +12,9 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#ifdef __FreeBSD__
 #include <sys/endian.h>
+#endif
 
 #ifdef __linux__
 #include <sys/epoll.h>

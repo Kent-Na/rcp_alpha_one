@@ -1,9 +1,10 @@
 #ifdef __linux__
 
 #include "rcp_pch.h"
+#include "rcp_utility.h"
 #include "rcp_event.h"
 
-void rcp_event_new()
+int rcp_event_new()
 {
 	return epoll_create(10);
 }
@@ -31,7 +32,7 @@ void rcp_event_run(int epfd)
 }
 
 
-void rcp_event_add_fd(int kq, int fd, rcp_event_action_ref action)
+void rcp_event_add_fd(int epfd, int fd, rcp_event_action_ref action)
 {
 	struct epoll_event ev;
 	ev.events = EPOLLIN|EPOLLPRI|EPOLLRDHUP|EPOLLERR|EPOLLHUP;
