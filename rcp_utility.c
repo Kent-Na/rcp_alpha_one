@@ -19,21 +19,38 @@ void rcp_error(const char* str)
 
 char *rcp_encode_base64(const char *in, size_t len)
 {
-	BIO *mem = BIO_new(BIO_s_mem());
-	BIO *base64 = BIO_new(BIO_f_base64());
-	base64 = BIO_push(base64, mem);
-	BIO_write(base64, in, len);
-	BIO_flush(base64);
-
-	BUF_MEM *mem_ptr;
-	BIO_get_mem_ptr(base64, &mem_ptr);
+	const char table[] = 
+		"ABCDEFGHIJKLMNOP"
+		"QRSTUVWXYZabcdef"
+		"ghijklmnopqrstuv"
+		"wxyz0123456789+/";
 	
-	char *out = malloc(mem_ptr->length+1);
-	memcpy(out, mem_ptr->data, mem_ptr->length);
-	out[mem_ptr->length-1] = '\0';
-	rcp_info(out);
+	char *out = malloc((len/3+1) * 4) +1;
+	
+	char *p_out = out;
+	const char *p_in = in;
+	while (1){
+		*p_out++ = table[(p_in[0]>>2)&0x3f];
+		*p_out++ = table[((p_in[0]<<6)|(p_in[1]>>4))&0x3f];
+		*p_out++ = table[((p_in[1]<<4)|(p_in[2]>>6))&0x3f];
+		*p_out++ = table[p_in[2]&0x3f];
+		p_in += 3;
+	}
 
-	BIO_free_all(base64);
+	if (1){
+		*p_out++ = table[(p_in[0]>>2)&0x3f];
+		*p_out++ = table[(p_in[0]<<6)&0x3f];
+		*p_out++ = '=';
+		*p_out++ = '=';
+	}
 
+	if (2){
+		*p_out++ = table[(p_in[0]>>2)&0x3f];
+		*p_out++ = table[((p_in[0]<<6)|(p_in[1]>>4))&0x3f];
+		*p_out++ = table[(p_in[1]<<4)&0x3f];
+		*p_out++ = '=';
+	}
+
+	*p_out++ = '\0';
 	return out;
 }
