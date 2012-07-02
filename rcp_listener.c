@@ -17,6 +17,9 @@
 #include "connections/con_plain.h"
 #include "connections/con_ssl.h"
 
+#include "rcp_context.h"
+#include "rcp_server.h"
+
 ///
 //listener
 //
