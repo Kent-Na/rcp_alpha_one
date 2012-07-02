@@ -95,7 +95,7 @@ void rcp_listen_end()
 //shared sender
 //
 
-rcp_sender_cluster_ref cluster = NULL;
+static rcp_sender_cluster_ref cluster = NULL;
 
 void rcp_shared_sender_cluster_init()
 {

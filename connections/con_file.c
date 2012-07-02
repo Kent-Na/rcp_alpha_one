@@ -35,7 +35,11 @@ rcp_io_ref con_file_io_new_wr(const char* path)
 {
 	rcp_io_ref io = rcp_io_new(&con_file_class);
 	struct con_file *st = rcp_io_data(io);
+#ifdef __FreeBSD__
+	st->fd = open(path, O_WRONLY | O_TRUNC | O_CREAT);
+#else
 	st->fd = open(path, O_WRONLY | O_TRUNC | O_CREAT, S_IRUSR|S_IWUSR);
+#endif
 	return io;
 }
 rcp_io_ref con_file_io_new_rd(const char* path)

@@ -2,11 +2,12 @@ env = Environment()
 Import('env')
 
 #env.Append(CCFLAGS = ['-O3'])
-env.Append(CCFLAGS = ['-Wall','-g','-lc'])
+env.Replace(CC = 'gcc47')
+env.Replace(CXX = 'g++47')
+env.Append(CCFLAGS = ['-Wall','-g'])
 env.Append(CFLAGS = ['-Wno-pointer-sign','-Wno-deprecated-declarations'])
 env.Append(CXXFLAGS = ['-std=gnu++0x'])
 env.Append(LIBS = ['ssl','m'])
-env.Append(LINKFLAGS = ['-framework CoreServices'])
 
 types = [
 	'types/rcp_array.c',

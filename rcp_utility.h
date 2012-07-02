@@ -15,3 +15,6 @@ rcp_extern void rcp_error(const char* str);
 char *rcp_encode_base64(const char *in, size_t len);
 
 typedef int rcp_err;
+
+#ifdef __FreeBSD__
+#endif

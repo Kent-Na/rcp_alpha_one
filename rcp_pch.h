@@ -12,6 +12,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include <sys/endian.h>
+
 #ifdef __linux__
 #include <sys/epoll.h>
 #else
