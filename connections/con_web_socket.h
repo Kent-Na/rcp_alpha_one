@@ -1,3 +1,5 @@
+#include "../def/rcp_io.h"
+#include "../def/rcp_receiver.h"
 
 struct con_web_socket{
 	struct rcp_buffer buffer;

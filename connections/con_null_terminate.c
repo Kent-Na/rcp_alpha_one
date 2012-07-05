@@ -3,7 +3,7 @@
 #include "../rcp_utility.h"
 #include "../rcp_buffer.h"
 
-#include "../rcp_type.h"
+#include "../def/rcp_record.h"
 
 #include "../rcp_io.h"
 #include "../rcp_receiver.h"

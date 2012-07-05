@@ -4,12 +4,15 @@
 #include "rcp_tree.h"
 #include "rcp_command_list.h"
 #define RCP_INTERNAL_STRUCTURE
-#include "rcp_types.h"
+#include "types/rcp_type_list.h"
+#include "types/rcp_string.h"
+#include "types/rcp_struct.h"
+#include "rcp_type.h"
 #include "cmd_types.h"
 
-rcp_struct_type_ref cmd_open_type(){
+rcp_type_ref cmd_open_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_open);
 	t_core->type_id = 0x100;
@@ -45,9 +48,9 @@ rcp_struct_type_ref cmd_open_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_kill_type(){
+rcp_type_ref cmd_kill_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_kill);
 	t_core->type_id = 0x100;
@@ -73,9 +76,9 @@ rcp_struct_type_ref cmd_kill_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_dump_type(){
+rcp_type_ref cmd_dump_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_dump);
 	t_core->type_id = 0x100;
@@ -101,9 +104,9 @@ rcp_struct_type_ref cmd_dump_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_close_type(){
+rcp_type_ref cmd_close_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_close);
 	t_core->type_id = 0x100;
@@ -129,9 +132,9 @@ rcp_struct_type_ref cmd_close_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_ping_type(){
+rcp_type_ref cmd_ping_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_ping);
 	t_core->type_id = 0x100;
@@ -157,9 +160,9 @@ rcp_struct_type_ref cmd_ping_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_pong_type(){
+rcp_type_ref cmd_pong_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_pong);
 	t_core->type_id = 0x100;
@@ -185,9 +188,9 @@ rcp_struct_type_ref cmd_pong_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_create_user_type(){
+rcp_type_ref cmd_create_user_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_create_user);
 	t_core->type_id = 0x100;
@@ -223,9 +226,9 @@ rcp_struct_type_ref cmd_create_user_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_delete_user_type(){
+rcp_type_ref cmd_delete_user_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_delete_user);
 	t_core->type_id = 0x100;
@@ -261,9 +264,9 @@ rcp_struct_type_ref cmd_delete_user_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_login_user_type(){
+rcp_type_ref cmd_login_user_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_login_user);
 	t_core->type_id = 0x100;
@@ -299,9 +302,9 @@ rcp_struct_type_ref cmd_login_user_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_add_user_type(){
+rcp_type_ref cmd_add_user_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_add_user);
 	t_core->type_id = 0x100;
@@ -332,9 +335,9 @@ rcp_struct_type_ref cmd_add_user_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_remove_user_type(){
+rcp_type_ref cmd_remove_user_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_remove_user);
 	t_core->type_id = 0x100;
@@ -365,9 +368,9 @@ rcp_struct_type_ref cmd_remove_user_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_add_permission_type(){
+rcp_type_ref cmd_add_permission_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_add_permission);
 	t_core->type_id = 0x100;
@@ -403,9 +406,9 @@ rcp_struct_type_ref cmd_add_permission_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_remove_permission_type(){
+rcp_type_ref cmd_remove_permission_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_remove_permission);
 	t_core->type_id = 0x100;
@@ -441,9 +444,9 @@ rcp_struct_type_ref cmd_remove_permission_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_create_context_type(){
+rcp_type_ref cmd_create_context_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_create_context);
 	t_core->type_id = 0x100;
@@ -469,9 +472,9 @@ rcp_struct_type_ref cmd_create_context_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_delete_context_type(){
+rcp_type_ref cmd_delete_context_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_delete_context);
 	t_core->type_id = 0x100;
@@ -502,9 +505,9 @@ rcp_struct_type_ref cmd_delete_context_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_login_context_type(){
+rcp_type_ref cmd_login_context_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_login_context);
 	t_core->type_id = 0x100;
@@ -535,9 +538,9 @@ rcp_struct_type_ref cmd_login_context_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_update_name_type(){
+rcp_type_ref cmd_update_name_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_update_name);
 	t_core->type_id = 0x100;
@@ -563,37 +566,9 @@ rcp_struct_type_ref cmd_update_name_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_update_user_list_type(){
+rcp_type_ref cmd_send_value_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
-	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_update_user_list);
-	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
-	t_core->init = rcp_struct_init;
-	t_core->deinit = rcp_struct_deinit;
-	t_core->copy = NULL;
-	t_core->compare = NULL;
-
-	struct rcp_type_struct_ext* s_core = 
-		(struct rcp_type_struct_ext*)(t_core+1);
-	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 1;
-
-	struct rcp_struct_param_core *param = 
-		(struct rcp_struct_param_core*)(s_core+1);
-
-	param->name = rcp_string_new("command");
-	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_update_user_list, command);
-	param ++;
-
-	return s_type;
-}
-
-rcp_struct_type_ref cmd_send_value_type(){
-	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_send_value);
 	t_core->type_id = 0x100;
@@ -629,9 +604,9 @@ rcp_struct_type_ref cmd_send_value_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_set_value_type(){
+rcp_type_ref cmd_set_value_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(4);
+	rcp_type_ref s_type = rcp_struct_type_new(4);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_set_value);
 	t_core->type_id = 0x100;
@@ -672,9 +647,9 @@ rcp_struct_type_ref cmd_set_value_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_unset_value_type(){
+rcp_type_ref cmd_unset_value_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_unset_value);
 	t_core->type_id = 0x100;
@@ -705,9 +680,9 @@ rcp_struct_type_ref cmd_unset_value_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_append_value_type(){
+rcp_type_ref cmd_append_value_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(4);
+	rcp_type_ref s_type = rcp_struct_type_new(4);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_append_value);
 	t_core->type_id = 0x100;
@@ -748,9 +723,9 @@ rcp_struct_type_ref cmd_append_value_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_create_struct_type(){
+rcp_type_ref cmd_create_struct_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_create_struct);
 	t_core->type_id = 0x100;
@@ -776,9 +751,9 @@ rcp_struct_type_ref cmd_create_struct_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_add_struct_type(){
+rcp_type_ref cmd_add_struct_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_add_struct);
 	t_core->type_id = 0x100;
@@ -804,9 +779,9 @@ rcp_struct_type_ref cmd_add_struct_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_error_type(){
+rcp_type_ref cmd_error_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_error);
 	t_core->type_id = 0x100;
@@ -842,9 +817,9 @@ rcp_struct_type_ref cmd_error_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_caution_type(){
+rcp_type_ref cmd_caution_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_caution);
 	t_core->type_id = 0x100;
@@ -880,9 +855,9 @@ rcp_struct_type_ref cmd_caution_type(){
 	return s_type;
 }
 
-rcp_struct_type_ref cmd_info_type(){
+rcp_type_ref cmd_info_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_info);
 	t_core->type_id = 0x100;
@@ -907,7 +882,7 @@ rcp_struct_type_ref cmd_info_type(){
 
 	return s_type;
 }
-rcp_type_ref rcp_command_type_table[27];
+rcp_type_ref rcp_command_type_table[26];
 
 void rcp_command_type_table_init(){
 
@@ -945,8 +920,6 @@ void rcp_command_type_table_init(){
 		cmd_login_context_type();
 	rcp_command_type_table[CMD_UPDATE_NAME] = 
 		cmd_update_name_type();
-	rcp_command_type_table[CMD_UPDATE_USER_LIST] = 
-		cmd_update_user_list_type();
 	rcp_command_type_table[CMD_SEND_VALUE] = 
 		cmd_send_value_type();
 	rcp_command_type_table[CMD_SET_VALUE] = 

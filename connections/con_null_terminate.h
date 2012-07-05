@@ -1,4 +1,8 @@
 
+#include "../def/rcp_io.h"
+#include "../def/rcp_type.h"
+#include "../def/rcp_receiver.h"
+
 struct con_null_terminate{
 	struct rcp_buffer buffer;
 };

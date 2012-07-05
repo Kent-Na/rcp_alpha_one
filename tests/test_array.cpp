@@ -1,7 +1,8 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
-#include "../rcp_types.h"
 
+#include "../types/rcp_type_list.h"
+#include "../types/rcp_array.h"
 #include <random>
 
 int test_array(void){

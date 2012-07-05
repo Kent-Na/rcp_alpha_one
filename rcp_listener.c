@@ -3,7 +3,6 @@
 #include "rcp_utility.h"
 #include "rcp_event.h"
 
-#include "rcp_types.h"
 #include "rcp_io.h"
 #include "rcp_sender.h"
 #include "rcp_receiver.h"
@@ -17,7 +16,6 @@
 #include "connections/con_plain.h"
 #include "connections/con_ssl.h"
 
-#include "rcp_context.h"
 #include "rcp_server.h"
 
 ///
@@ -26,9 +24,9 @@
 
 struct rcp_listener_class{
 	struct rcp_io_class *io_klass;
-	void(*io_set_fd)(rcp_io_ref io, struct rcp_event_action *unit,
+	void(*io_set_fd)(rcp_io_ref io, rcp_event_action_ref unit,
 			int epfd, int fd);
-	rcp_sender_ref (*sender_class)(rcp_sender_cluster_ref);
+	rcp_sender_l1_ref (*sender_class)(rcp_sender_cluster_ref);
 	struct rcp_receiver_class *receiver_klass;
 };
 
@@ -116,13 +114,13 @@ rcp_connection_ref rcp_listener_connection_new(
 	rcp_io_ref io = rcp_io_new(klass->io_klass);
 	rcp_connection_set_io(con, io);
 
-	struct rcp_event_action *unit = malloc(sizeof *unit);
+	rcp_event_action_ref unit = malloc(sizeof *unit);
 	unit->action = rcp_connection_event_action;
 	unit->userdata = con;
 	klass->io_set_fd(io, unit, epfd, fd);
 
 	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
-	rcp_sender_ref sender = klass->sender_class(cls); 
+	rcp_sender_l1_ref sender = klass->sender_class(cls); 
 	rcp_connection_set_sender(con, sender);
 
 	rcp_receiver_ref receiver = rcp_receiver_new(klass->receiver_klass);

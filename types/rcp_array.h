@@ -1,14 +1,26 @@
+#include "../def/rcp_type.h"
+#include "../def/rcp_data.h"
+#include "../def/rcp_record.h"
+#include "../def/rcp_array.h"
+#include "../def/rcp_array_iterater.h"
 
-
-typedef rcp_data_ref rcp_array_ref;
-
-typedef struct rcp_array_core *rcp_array_core_ref;
-
-typedef void *rcp_array_iterater_ref;
+#ifdef RCP_INTERNAL_STRUCTURE
+struct rcp_array_core{
+	rcp_type_ref type;
+	void *data;
+	size_t size;//allocated data count
+	size_t count;//used data count
+};
+#endif 
 
 rcp_extern rcp_record_ref rcp_array_new_rec(rcp_type_ref type);
-rcp_extern rcp_data_ref rcp_array_new(rcp_type_ref type);
+
+rcp_extern rcp_array_ref rcp_array_new(rcp_type_ref type);
 rcp_extern void rcp_array_delete(rcp_array_ref data);
+
+void rcp_array_init(rcp_type_ref type, rcp_data_ref data);
+void rcp_array_init_with_type(void *data, rcp_type_ref type);
+void rcp_array_deinit(rcp_type_ref type, rcp_data_ref data);
 
 rcp_extern rcp_type_ref rcp_array_data_type(rcp_array_ref array);
 

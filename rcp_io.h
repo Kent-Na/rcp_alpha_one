@@ -1,4 +1,4 @@
-typedef struct rcp_io_core *rcp_io_ref;
+#include "def/rcp_io.h"
 
 struct rcp_io_core{
 	struct rcp_io_class *klass;

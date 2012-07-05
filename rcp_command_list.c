@@ -3,7 +3,6 @@
 #include "rcp_command_list.h"
 const char* rcp_command_str_table[]={
 	CMD_STR_UPDATE_NAME,
-	CMD_STR_UPDATE_USER_LIST,
 	CMD_STR_ADD_PERMISSION,
 	CMD_STR_ADD_STRUCT,
 	CMD_STR_ADD_USER,

@@ -2,6 +2,7 @@
 #include "rcp_utility.h"
 #include "rcp_defines.h"
 #include "rcp_type.h"
+#include "rcp_record.h"
 #include "rcp_sender.h"
 
 #define CMP_DONE (1)
@@ -55,7 +56,7 @@ void rcp_sender_l1_clean_up(rcp_sender_l1_ref l1)
 	l1->state = CMP_NOT_YET;
 	l1->klass->clean_up(l1 + 1);
 }
-void rcp_sender_result(rcp_sender_ref cmp, 
+void rcp_sender_result(rcp_sender_l1_ref cmp, 
 		const uint8_t **begin, const uint8_t **end)
 {
 	struct rcp_sender_l0_core *l0 = cmp->l0;

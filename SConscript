@@ -1,13 +1,15 @@
 env = Environment()
 Import('env')
 
-#env.Append(CCFLAGS = ['-O3'])
-env.Replace(CC = 'gcc47')
-env.Replace(CXX = 'g++47')
+env.Append(CCFLAGS = ['-O3'])
+#env.Replace(CC = 'clang')
+#env.Replace(CXX = 'clang')
+env.Replace(CC = 'gcc-4.6')
+env.Replace(CXX = 'g++-4.6')
 env.Append(CCFLAGS = ['-Wall','-g'])
 env.Append(CFLAGS = ['-Wno-pointer-sign','-Wno-deprecated-declarations'])
-env.Append(CXXFLAGS = ['-std=gnu++0x'])
-env.Append(LIBS = ['ssl','m'])
+env.Append(CXXFLAGS = ['-xc++','-std=gnu++0x'])
+env.Append(LIBS = ['ssl','m','crypto'])
 
 types = [
 	'types/rcp_array.c',
@@ -41,6 +43,7 @@ mainFiles = [
 	'rcp_event_epoll.c',
 	'rcp_event_kqueue.c',
 	'rcp_json.c',
+	'rcp_json_write.c',
 	'rcp_listener.c',
 	'rcp_receiver.c',
 	'rcp_receiver_classes.c',
@@ -49,6 +52,7 @@ mainFiles = [
 	'rcp_server.c',
 	'rcp_ssl.c',
 	'rcp_tree.c',
+	'rcp_record.c',
 	'rcp_type.c',
 	'rcp_type_utility.c',
 	'rcp_user.c',

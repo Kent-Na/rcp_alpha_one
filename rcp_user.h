@@ -1,3 +1,4 @@
+#include "def/rcp_string.h"
 
 struct rcp_user_info{
 	rcp_string_ref username;

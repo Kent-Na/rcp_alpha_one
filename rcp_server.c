@@ -1,49 +1,48 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 #include "rcp_defines.h"
-#include "rcp_types.h"
-#include "rcp_tree.h"
-#include "rcp_event.h"
-#include "rcp_io.h"
-#include "rcp_sender.h"
-#include "rcp_receiver.h"
+
 #include "rcp_connection.h"
 #include "rcp_listener.h"
 #include "rcp_context.h"
 #include "rcp_sender_classes.h"
 #include "rcp_server.h"
 
+#include "rcp_type.h"
+#include "types/rcp_type_list.h"
+#include "types/rcp_dict.h"
+#include "types/rcp_number.h"
+
 ///
 //context
 //
 
-rcp_tree_ref contexts = NULL;
+rcp_type_ref uint32_ptr_map = NULL;
+rcp_dict_ref contexts = NULL;
 
 void rcp_context_manager_init()
 {
-	contexts = rcp_tree_new(rcp_uint32_type_compare, NULL);
+	uint32_ptr_map = rcp_dict_type_new(rcp_uint32_type, rcp_pointer_type);
+	contexts = (rcp_dict_ref)rcp_new(uint32_ptr_map); 
 }
 
 rcp_context_ref rcp_context_get(rcp_context_id_t id)
 {
-	rcp_tree_node_ref node = rcp_tree_find(contexts, &id);
+	rcp_dict_node_ref node = rcp_dict_find(contexts, (rcp_data_ref)&id);
 	if (node == NULL)
 		return NULL;
-	uint32_t *key = rcp_tree_node_data(node);
-	rcp_context_ref ctx = (void*)(key + 1);
-	return ctx;
+	return (rcp_context_ref)rcp_dict_node_data(uint32_ptr_map, node);
 }
 
-rcp_context_ref rcp_context_new(uint32_t id)
+rcp_context_ref rcp_context_create(uint32_t id)
 {
-	rcp_tree_node_ref node = rcp_tree_node_new(
-			sizeof (uint32_t) + rcp_context_size);
+	rcp_context_ref ctx = rcp_context_new();
 
-	uint32_t *key = rcp_tree_node_data(node);
-	*key = id;
-	rcp_context_ref ctx = (void*)(key + 1);
-	rcp_context_init(ctx);
-	rcp_tree_add(contexts, node);
+	rcp_dict_node_ref node = rcp_dict_node_new(uint32_ptr_map);
+	*(uint32_t*)rcp_dict_node_key(uint32_ptr_map, node) = id;
+	*(rcp_context_ref*)rcp_dict_node_data(uint32_ptr_map, node) = ctx;
+
+	rcp_dict_set_node(contexts, node);
 	rcp_context_page_in(ctx);
 	return ctx;
 }

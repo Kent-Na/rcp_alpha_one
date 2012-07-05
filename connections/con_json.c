@@ -5,11 +5,14 @@
 #include "../rcp_event.h"
 #include "../rcp_io.h"
 
-#include "../rcp_types.h"
 #include "../rcp_sender.h"
 #include "../rcp_receiver.h"
 
+#include "../rcp_type.h"
 #include "../rcp_json.h"
+
+#include "../types/rcp_string.h"
+#include "../types/rcp_type_list.h"
 
 rcp_extern rcp_record_ref con_json_execute(
 		rcp_receiver_ref con, const char *begin, const char *end)
@@ -58,7 +61,7 @@ void cmp_json_build(void *userdata, rcp_record_ref rec)
 		cmp_json_clean_up(userdata);
 	}
 	rcp_string_ref cmd_str = rcp_string_new(NULL);
-	rcp_json_write_record(rec, cmd_str);
+	rcp_write_json(rcp_ref_type, (rcp_data_ref)&rec, cmd_str);
 	st->str = cmd_str;
 }
 

@@ -19,15 +19,18 @@ typedef int rcp_err;
 #ifdef __APPLE__
 static inline uint16_t be16toh(uint16_t val){
 	uint8_t in[2];
-	*(uint16_t*)in = val;
+	uint16_t* in_p = (uint16_t*)in; 
+	*in_p = val;
 	uint8_t out[2];
 	out[0] = in[1];
 	out[1] = in[0];
-	return *(uint16_t*)out;
+	uint16_t* out_p = (uint16_t*)out; 
+	return *out_p;
 }
 static inline uint64_t be64toh(uint64_t val){
 	uint8_t in[8];
-	*(uint64_t*)in = val;
+	uint64_t* in_p = (uint64_t*)in; 
+	*in_p = val;
 	uint8_t out[8];
 	out[0] = in[7];
 	out[1] = in[6];
@@ -37,7 +40,8 @@ static inline uint64_t be64toh(uint64_t val){
 	out[5] = in[2];
 	out[6] = in[1];
 	out[7] = in[0];
-	return *(uint64_t*)out;
+	uint64_t* out_p = (uint64_t*)out; 
+	return *out_p;
 }
 
 #define htobe16(v) be16toh(v)

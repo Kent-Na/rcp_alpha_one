@@ -1,20 +1,21 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
 #include "rcp_utility.h"
-#include "rcp_types.h"
+
+#include "rcp_connection.h"
 #include "rcp_io.h"
 #include "rcp_sender.h"
 #include "rcp_receiver.h"
-#include "rcp_connection.h"
-#include "rcp_event.h"
-#include "rcp_listener.h"
 #include "rcp_context.h"
-#include "rcp_sender_classes.h"
+
 #include "rcp_server.h"
+#include "rcp_sender_classes.h"
+
+#include "rcp_record.h"
 
 struct rcp_connection_core{
 	rcp_io_ref io;
-	rcp_sender_ref sender;
+	rcp_sender_l1_ref sender;
 	rcp_receiver_ref receiver;
 
 	//statuses
@@ -58,7 +59,7 @@ void rcp_connection_set_io(
 	con->io = io;
 }
 void rcp_connection_set_sender(
-		rcp_connection_ref con, rcp_sender_ref sender)
+		rcp_connection_ref con, rcp_sender_l1_ref sender)
 {
 #ifdef RCP_SELF_TEST
 	if (con->sender){
@@ -85,7 +86,7 @@ void rcp_connection_send(rcp_connection_ref con)
 	rcp_sender_result(con->sender, &begin, &end);
 	rcp_io_send(con->io, begin, end-begin);
 }
-void rcp_connection_send_rec(rcp_connection_ref con, rcp_receiver_ref rec)
+void rcp_connection_send_rec(rcp_connection_ref con, rcp_record_ref rec)
 {
 	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
 	rcp_sender_cluster_set_rec(cls, rec);

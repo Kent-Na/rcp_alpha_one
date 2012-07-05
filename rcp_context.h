@@ -1,8 +1,8 @@
+#include "def/rcp_context.h"
+#include "def/rcp_connection.h"
+#include "def/rcp_record.h"
 
-rcp_extern size_t rcp_context_size;
-
-typedef struct rcp_context_core* rcp_context_ref;
-
+rcp_extern rcp_context_ref rcp_context_new();
 rcp_extern void rcp_context_init(rcp_context_ref ctx);
 
 //connection management

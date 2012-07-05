@@ -14,47 +14,73 @@ def newTypeInfo(name, cType):
 	}
 
 typeTable = [
-#	[id,	name,		c_type]
+#	[id,	name,		c_type
+#	 init, 	deinit,	copy, 	compare, write_json]
 #someting special
-	[0,		'null',		None],
-	[1,		'ref',		'rcp_record_ref'],
-#	[2,		'internal',	no info],
+	[0,		'null',		None,				'0',
+	 False,	False,	False,	False, True],
+	[1,		'ref',		'rcp_record_ref',	'sizeof(rcp_record_ref*)',
+	 True,	True,	True,	False, True],
+#	[2,		used in internal],
 
 #16-24 container
-	[16,	'map',		'rcp_record_ref'],
+	[16,	'map',		'rcp_record_ref',	'sizeof(struct rcp_map_core)',
+	 True,	True,	False,	False, True],
 #	[17,	'set',		None],
-	[18,	'array',	'rcp_record_ref'],
+#	 False,	False,	False,	False, True],
+	[18,	'array',	'rcp_record_ref',	'sizeof(struct rcp_array_core)',
+	 True,	True,	False,	False, True],
 #	[19,	'struct',	None],
+#	 False,	False,	False,	False, True],
 
-	[20,	'string',	'rcp_record_ref'],
+	[20,	'string',	'rcp_record_ref', 'sizeof(struct rcp_string_core)',
+	 True,	True,	True,	True, True],
 #	[21,	'binaly',	None],
+#	 False,	False,	False,	False, True],
+
 #25-31 bool
-	[25,	'bool8',	'uint8_t'],
-	[26,	'bool32',	'uint32_t'],
+	[25,	'bool8',	'uint8_t',	'1',
+	 False,	False,	True,	False, True],
+	[26,	'bool32',	'uint32_t',	'4',
+	 False,	False,	True,	False, True],
 
 #32-63 number
 #32-39 uint
-	[32,	'uint8',	'uint8_t'],
-	[33,	'uint16',	'uint16_t'],
-	[34,	'uint32',	'uint32_t'],
-	[35,	'uint64',	'uint64_t'],
+	[32,	'uint8',	'uint8_t',	'1',
+	 False,	False,	True,	True, True],
+	[33,	'uint16',	'uint16_t',	'2',
+	 False,	False,	True,	True, True],
+	[34,	'uint32',	'uint32_t',	'4',
+	 False,	False,	True,	True, True],
+	[35,	'uint64',	'uint64_t',	'8',
+	 False,	False,	True,	True, True],
 
 #40-47 int
-	[40,	'int8',		'int8_t'],
-	[41,	'int16',	'int16_t'],
-	[42,	'int32',	'int32_t'],
-	[43,	'int64',	'int64_t'],
+	[40,	'int8',		'int8_t',	'1',
+	 False,	False,	True,	True, True],
+	[41,	'int16',	'int16_t',	'2',
+	 False,	False,	True,	True, True],
+	[42,	'int32',	'int32_t',	'4',
+	 False,	False,	True,	True, True],
+	[43,	'int64',	'int64_t',	'8',
+	 False,	False,	True,	True, True],
 
 #48-55 float
 #	[48,	'half',		'half'],
-	[49,	'float',	'float'],
-	[50,	'double',	'double'],
+	[49,	'float',	'float',	'4',
+	 False,	False,	True,	True, True],
+	[50,	'double',	'double',	'8',
+	 False,	False,	True,	True, True],
+
+#	[id,	name,		c_type
+#	 init, 	deinit,		copy, 	compare, write_json]
 ]
 
 #for internal use
 exTypeTable = [
 #	[id,	name,		c_type]
-	[2,		'pointer',	'void*'],
+	[2,		'pointer',	'void*',	'sizeof(void*)',
+	 False,	False,	False,	True, False],
 ]
 
 typeList = []
@@ -64,15 +90,39 @@ for typeInfo in typeTable:
 	typeInfoDict['typeID'] = typeInfo[0]
 	typeInfoDict['typeName'] = typeInfo[1]
 	typeInfoDict['cTypeName'] = typeInfo[2]
+	typeInfoDict['dataSize'] = typeInfo[3]
+	def f(f,tn,fn):
+		if (not f):
+			return 'NULL'
+		else:
+		 	return 'rcp_{tn}_{fn}'.format(tn = tn,fn = fn)
+	typeInfoDict['initFunc'] = f(typeInfo[4], typeInfo[1], 'init')
+	typeInfoDict['deinitFunc'] = f(typeInfo[5], typeInfo[1], 'deinit')
+	typeInfoDict['copyFunc'] = f(typeInfo[6], typeInfo[1], 'copy')
+	typeInfoDict['compareFunc'] = f(typeInfo[7], typeInfo[1], 'compare')
+	typeInfoDict['writeJsonFunc'] = f(
+			typeInfo[8], typeInfo[1], 'write_json')
 	typeList.append(typeInfoDict)
 	typeDict[typeInfo[1]] = typeInfoDict
 
 exTypeList = []
 for typeInfo in exTypeTable:
-	typeInfoDict = {}
+	typeInfoDict = {};
 	typeInfoDict['typeID'] = typeInfo[0]
 	typeInfoDict['typeName'] = typeInfo[1]
 	typeInfoDict['cTypeName'] = typeInfo[2]
+	typeInfoDict['dataSize'] = typeInfo[3]
+	def f(f,tn,fn):
+		if (not f):
+			return 'NULL'
+		else:
+		 	return 'rcp_{tn}_{fn}'.format(tn = tn,fn = fn)
+	typeInfoDict['initFunc'] = f(typeInfo[4], typeInfo[1], 'init')
+	typeInfoDict['deinitFunc'] = f(typeInfo[5], typeInfo[1], 'deinit')
+	typeInfoDict['copyFunc'] = f(typeInfo[6], typeInfo[1], 'copy')
+	typeInfoDict['compareFunc'] = f(typeInfo[7], typeInfo[1], 'compare')
+	typeInfoDict['writeJsonFunc'] = f(
+			typeInfo[8], typeInfo[1], 'write_json')
 	exTypeList.append(typeInfoDict);
 
 numberTypeList = [] 
@@ -87,12 +137,13 @@ for typeInfo in exTypeList:
 # generate program(number)
 #
 
+
 numberTypeTemplate="""
-void rcp_{typeName}_type_copy(
+void rcp_{typeName}_copy(
 		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst){{
 	*({cTypeName}*)dst = *({cTypeName}*)src;
 }}
-int rcp_{typeName}_type_compare(
+int rcp_{typeName}_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r){{
 	if (*({cTypeName}*)l<*({cTypeName}*)r)
 		return -1;
@@ -100,43 +151,51 @@ int rcp_{typeName}_type_compare(
 		return +1;
 	return 0;
 }}
-const struct rcp_type_core rcp_{typeName}_type_def = {{
-	sizeof({cTypeName}),
-	RCP_TYPE_{capName},
-	"{typeName}",
-	NULL,//init
-	NULL,//free
-	rcp_{typeName}_type_copy,
-	rcp_{typeName}_type_compare,
-}};
 """
 
 numberTypeHeaderTemplate="""
-rcp_extern int rcp_{typeName}_type_compare(
-		const void* ex, void* l, void* r);
+rcp_extern void rcp_{typeName}_copy(
+		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);
+rcp_extern int rcp_{typeName}_compare(
+		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r);
 """
 
 outNumberCFile.write('//This file was generated by program.\n')
-outNumberCFile.write('#include "rcp_pch.h"\n');
-outNumberCFile.write('#include "rcp_utility.h"\n');
+outNumberCFile.write('#include "../rcp_pch.h"\n');
+outNumberCFile.write('#include "../rcp_utility.h"\n');
 outNumberCFile.write('#define RCP_INTERNAL_STRUCTURE\n');
-outNumberCFile.write('#include "rcp_type.h"\n');
+outNumberCFile.write('#include "../rcp_type.h"\n');
 outNumberCFile.write('#include "rcp_type_list.h"\n');
+
 for info in numberTypeList:
 	outNumberCFile.write(numberTypeTemplate.format(
 				capName = info['typeName'].upper(),
 				**info))
 
 outNumberCHeader.write('//This file was generated by program.\n')
+outNumberCHeader.write('#include "../def/rcp_type.h"\n');
+outNumberCHeader.write('#include "../def/rcp_data.h"\n');
 for info in numberTypeList:
 	outNumberCHeader.write(numberTypeHeaderTemplate.format(**info))
 
 #
-# generate program(number)
+# generate program(genelic)
 #
 
+typeDefTemplate="""
+struct rcp_type_core rcp_{typeName}_type_def = {{
+	{dataSize},
+	{typeID},
+	"{typeName}",
+	{initFunc},
+	{deinitFunc},
+	{copyFunc},
+	{compareFunc},
+	{writeJsonFunc},
+}};
+"""
+
 typeTemplate="""
-extern const struct rcp_type_core rcp_{typeName}_type_def;
 const rcp_type_ref rcp_{typeName}_type = &rcp_{typeName}_type_def;
 """
 
@@ -146,16 +205,30 @@ extern const rcp_type_ref rcp_{typeName}_type;
 """
 
 outListCFile.write('//This file was generated by program.\n')
-outListCFile.write('#include "rcp_pch.h"\n');
-outListCFile.write('#include "rcp_utility.h"\n');
+outListCFile.write('#include "../rcp_pch.h"\n');
+outListCFile.write('#include "../rcp_utility.h"\n');
 outListCFile.write('#define RCP_INTERNAL_STRUCTURE\n');
-outListCFile.write('#include "rcp_type.h"\n');
+outListCFile.write('#include "../rcp_tree.h"\n');
+outListCFile.write('#include "../rcp_type.h"\n');
+outListCFile.write('#include "../rcp_json_write.h"\n');
+
+outListCFile.write('#include "rcp_number.h"\n');
+outListCFile.write('#include "rcp_map.h"\n');
+outListCFile.write('#include "rcp_array.h"\n');
+outListCFile.write('#include "rcp_string.h"\n');
+outListCFile.write('#include "rcp_type_etc.h"\n');
+
+for info in typeList:
+	outListCFile.write(typeDefTemplate.format(**info))
+for info in exTypeList:
+	outListCFile.write(typeDefTemplate.format(**info))
 for info in typeList:
 	outListCFile.write(typeTemplate.format(**info))
 for info in exTypeList:
 	outListCFile.write(typeTemplate.format(**info))
 
 outListCHeader.write('//This file was generated by program.\n')
+outListCHeader.write('#include "../def/rcp_type.h"\n');
 for info in typeList:
 	outListCHeader.write(typeHeaderTemplate.format(
 				capName = info['typeName'].upper(),

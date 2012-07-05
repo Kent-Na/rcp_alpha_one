@@ -22,14 +22,14 @@ fieldTemplate = """\
 """
 
 genFuncTemplate = """
-rcp_struct_type_ref cmd_{command_name}_type(){{
+rcp_type_ref cmd_{command_name}_type(){{
 	{gen_core}
 	return s_type;
 }}
 """
 
 genFuncCoreTemplate = """
-	rcp_struct_type_ref s_type = rcp_struct_type_new({param_count});
+	rcp_type_ref s_type = rcp_struct_type_new({param_count});
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct {c_struct_name});
 	t_core->type_id = 0x100;
@@ -58,6 +58,9 @@ genFuncParamTemplate = """
 ###
 #build struct def
 ###
+
+outPutCHeader.write('#include "def/rcp_type.h"\n')
+outPutCHeader.write('#include "def/rcp_record.h"\n')
 
 for info in commandList:
 	addParameter(info, "string", "command")
@@ -94,7 +97,10 @@ outPutCFile.write('#include "rcp_utility.h"\n')
 outPutCFile.write('#include "rcp_tree.h"\n')
 outPutCFile.write('#include "rcp_command_list.h"\n')
 outPutCFile.write('#define RCP_INTERNAL_STRUCTURE\n')
-outPutCFile.write('#include "rcp_types.h"\n')
+outPutCFile.write('#include "types/rcp_type_list.h"\n')
+outPutCFile.write('#include "types/rcp_string.h"\n')
+outPutCFile.write('#include "types/rcp_struct.h"\n')
+outPutCFile.write('#include "rcp_type.h"\n')
 outPutCFile.write('#include "cmd_types.h"\n')
 
 for info in commandList:

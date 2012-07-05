@@ -24,7 +24,7 @@ void rcp_event_run(int kq)
 		}
 		for (i = 0; i<nfds; i++){
 			struct kevent *event = events+i;
-			struct rcp_event_action *unit = event->udata;
+			rcp_event_action_ref unit = event->udata;
 			unit->action(kq, event, unit->userdata);
 		}
 	}

@@ -1,3 +1,5 @@
+#include "def/rcp_type.h"
+#include "def/rcp_record.h"
 
 struct cmd_open{
 	rcp_record_ref version;
@@ -80,10 +82,6 @@ struct cmd_login_context{
 };
 
 struct cmd_update_name{
-	rcp_record_ref command;
-};
-
-struct cmd_update_user_list{
 	rcp_record_ref command;
 };
 

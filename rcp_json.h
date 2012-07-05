@@ -1,4 +1,5 @@
-
+#include "def/rcp_record.h"
+#include "def/rcp_string.h"
 
 //type table
 //json		<->		rcp
@@ -28,15 +29,3 @@ rcp_extern int rcp_json_parse_literal(const char **begin, const char *end,
 
 rcp_extern rcp_record_ref rcp_json_parse_number(
 		const char** begin, const char* end);
-
-//rcp_extern int rcp_json_parse_number(const char** begin, const char* end,
-//		struct rcp_json_number *result);
-
-rcp_extern void rcp_json_write_record(
-		rcp_record_ref rec, rcp_string_ref out);
-rcp_extern void rcp_json_write_map(rcp_map_ref rec, rcp_string_ref out);
-rcp_extern void rcp_json_write_array(rcp_array_ref rec, rcp_string_ref out);
-rcp_extern void rcp_json_write_string(
-		rcp_string_ref rec, rcp_string_ref out);
-void rcp_json_write_int64(void *value, rcp_string_ref out);
-void rcp_json_write_double(void *value, rcp_string_ref out);

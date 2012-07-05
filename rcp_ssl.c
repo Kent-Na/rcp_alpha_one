@@ -12,7 +12,7 @@ static SSL_CTX *ctx=NULL;
 
 void rcp_ssl_ctx_init()
 {
-	const SSL_METHOD *method = SSLv3_server_method();
+	SSL_METHOD *method = SSLv3_server_method();
 	if (method == NULL){
 		rcp_error("e1\n");
 	}

@@ -2,6 +2,7 @@
 #include "rcp_defines.h"
 #include "rcp_utility.h"
 #include "rcp_type.h"
+#include "rcp_record.h"
 #include "rcp_sender.h"
 #include "rcp_sender_classes.h"
 
@@ -14,7 +15,7 @@
 #include "connections/con_json.h"
 
 
-struct rcp_sender_cluster{
+struct rcp_sender_cluster_core{
 	struct rcp_sender_terget *tgt;
 
 	struct rcp_sender_l0_core *json;
@@ -39,12 +40,12 @@ rcp_sender_cluster_ref rcp_sender_cluster_new()
 	return cluster;
 }
 
-rcp_sender_ref rcp_sender_cluster_json_nt(rcp_sender_cluster_ref cluster)
+rcp_sender_l1_ref rcp_sender_cluster_json_nt(rcp_sender_cluster_ref cluster)
 {
 	return cluster->json_nt;
 }
 
-rcp_sender_ref rcp_sender_cluster_json_ws(rcp_sender_cluster_ref cluster)
+rcp_sender_l1_ref rcp_sender_cluster_json_ws(rcp_sender_cluster_ref cluster)
 {
 	return cluster->json_ws;
 }

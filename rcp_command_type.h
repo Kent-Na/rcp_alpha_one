@@ -72,7 +72,7 @@ struct gen_error{
 
 rcp_sturct_type_ref cmd_protocol_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_protocol);
 	t_core->type_id = 0x100;
@@ -102,7 +102,7 @@ rcp_sturct_type_ref cmd_protocol_type(){
 
 rcp_sturct_type_ref cmd_create_user_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_create_user);
 	t_core->type_id = 0x100;
@@ -132,7 +132,7 @@ rcp_sturct_type_ref cmd_create_user_type(){
 
 rcp_sturct_type_ref cmd_delete_user_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(4);
+	rcp_type_ref s_type = rcp_struct_type_new(4);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_delete_user);
 	t_core->type_id = 0x100;
@@ -170,7 +170,7 @@ rcp_sturct_type_ref cmd_delete_user_type(){
 
 rcp_sturct_type_ref cmd_add_user_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_add_user);
 	t_core->type_id = 0x100;
@@ -196,7 +196,7 @@ rcp_sturct_type_ref cmd_add_user_type(){
 
 rcp_sturct_type_ref cmd_remove_user_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_remove_user);
 	t_core->type_id = 0x100;
@@ -222,7 +222,7 @@ rcp_sturct_type_ref cmd_remove_user_type(){
 
 rcp_sturct_type_ref cmd_update_user_permission_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_update_user_permission);
 	t_core->type_id = 0x100;
@@ -252,7 +252,7 @@ rcp_sturct_type_ref cmd_update_user_permission_type(){
 
 rcp_sturct_type_ref cmd_delete_context_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_delete_context);
 	t_core->type_id = 0x100;
@@ -278,7 +278,7 @@ rcp_sturct_type_ref cmd_delete_context_type(){
 
 rcp_sturct_type_ref cmd_login_context_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_login_context);
 	t_core->type_id = 0x100;
@@ -304,7 +304,7 @@ rcp_sturct_type_ref cmd_login_context_type(){
 
 rcp_sturct_type_ref cmd_set_value_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_set_value);
 	t_core->type_id = 0x100;
@@ -338,7 +338,7 @@ rcp_sturct_type_ref cmd_set_value_type(){
 
 rcp_sturct_type_ref cmd_unset_value_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(1);
+	rcp_type_ref s_type = rcp_struct_type_new(1);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_unset_value);
 	t_core->type_id = 0x100;
@@ -364,7 +364,7 @@ rcp_sturct_type_ref cmd_unset_value_type(){
 
 rcp_sturct_type_ref cmd_append_value_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_append_value);
 	t_core->type_id = 0x100;
@@ -398,7 +398,7 @@ rcp_sturct_type_ref cmd_append_value_type(){
 
 rcp_sturct_type_ref cmd_error_type(){
 	
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct gen_error);
 	t_core->type_id = 0x100;

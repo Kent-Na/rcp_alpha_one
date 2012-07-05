@@ -2,24 +2,15 @@
 
 #include "rcp_pch.h"
 #include "rcp_utility.h"
-#include "rcp_command_list.h"
-#include "rcp_command.h"
 
 #include "rcp_ssl.h"
 
-#include "rcp_type.h"
+#include "rcp_command_list.h"
+#include "rcp_command.h"
+#include "cmd_types.h"
 
 #include "rcp_event.h"
-#include "rcp_io.h"
-#include "rcp_sender.h"
-#include "rcp_receiver.h"
-#include "rcp_connection.h"
-#include "rcp_sender_classes.h"
-#include "rcp_context.h"
 #include "rcp_server.h"
-
-
-#include "cmd_types.h"
 
 void rcp_main();
 
@@ -34,7 +25,7 @@ int main (int argc, const char** argv)
 
 	rcp_command_type_table_init();
 	rcp_context_manager_init();
-	rcp_context_new(0);
+	rcp_context_create(0);
 
 	int e_queue= rcp_event_new();
 	rcp_listen_start(e_queue);

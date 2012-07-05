@@ -1,3 +1,6 @@
+#include "def/rcp_receiver.h"
+#include "def/rcp_record.h"
+
 
 //Layer 1
 //plain socket or ssl socket
@@ -6,8 +9,6 @@
 //
 //hold basic connection state
 //ie. userid, loginid ...
-
-typedef void *rcp_receiver_ref;
 
 struct rcp_receiver_core{
 	struct rcp_receiver_class *klass;

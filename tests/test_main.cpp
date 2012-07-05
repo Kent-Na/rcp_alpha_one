@@ -12,7 +12,6 @@ int test_array(void);
 int test_struct(void);
 
 int main (int argc, const char** argv){
-	SSL_library_init();
 
 	//rcp_command
 	{

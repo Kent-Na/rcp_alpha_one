@@ -2,6 +2,7 @@
 #include "rcp_defines.h"
 #include "rcp_utility.h"
 #include "rcp_type.h"
+#include "rcp_record.h"
 #include "rcp_io.h"
 #include "rcp_receiver.h"
 
@@ -89,7 +90,7 @@ rcp_record_ref rcp_receiver_next_command(rcp_receiver_ref con)
 			klass->l2.clean_space(con);
 			return NULL;
 		}
-		rcp_receiver_ref rec = 
+		rcp_record_ref rec = 
 			klass->l3.execute_command(con, cmd_begin, cmd_end);
 		if (rec)
 			return rec;

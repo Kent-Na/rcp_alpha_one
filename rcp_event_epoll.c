@@ -24,7 +24,7 @@ void rcp_event_run(int epfd)
 			return;
 		}
 		for (i = 0; i<nfds; i++){
-			struct rcp_event_action *unit = events[i].data.ptr;
+			rcp_event_action_ref unit = events[i].data.ptr;
 			unit->action(epfd, &events[i], unit->userdata);
 		}
 	}

@@ -9,14 +9,6 @@
 #include "../rcp_tree.h"
 #include "rcp_dict.h"
 
-typedef rcp_data_ref rcp_dict_ref;
-
-#ifdef RCP_INTERNAL_STRUCTURE
-typedef rcp_tree_node_ref rcp_dict_node_ref;
-#else
-typedef void *rcp_dict_node_ref;
-#endif
-
 ///
 //type map
 //
@@ -27,7 +19,7 @@ struct rcp_type_map_ext{
 
 struct rcp_type_core rcp_dict_type_def = {
 	sizeof(struct rcp_tree),
-	RCP_TYPE_MAP,
+	0,
 	"map",
 	rcp_dict_init,//init
 	rcp_dict_deinit,//free
@@ -35,7 +27,7 @@ struct rcp_type_core rcp_dict_type_def = {
 	NULL,//comp
 };
 
-rcp_dict_type_ref rcp_dict_type_new(
+rcp_type_ref rcp_dict_type_new(
 		rcp_type_ref key_type, rcp_type_ref data_type)
 {
 	rcp_type_ref type = malloc(sizeof *type +
@@ -49,18 +41,18 @@ rcp_dict_type_ref rcp_dict_type_new(
 }
 
 void rcp_dict_type_delete(
-		rcp_dict_type_ref type)
+		rcp_type_ref type)
 {
 	free((void*)type);
 }
 
-rcp_type_ref rcp_dict_type_key_type(rcp_dict_type_ref type)
+rcp_type_ref rcp_dict_type_key_type(rcp_type_ref type)
 {
 	struct rcp_type_map_ext* ext = 
 		(struct rcp_type_map_ext*)(type + 1);
 	return ext->key_type;
 }
-rcp_type_ref rcp_dict_type_data_type(rcp_dict_type_ref type)
+rcp_type_ref rcp_dict_type_data_type(rcp_type_ref type)
 {
 	struct rcp_type_map_ext* ext = 
 		(struct rcp_type_map_ext*)(type + 1);
@@ -74,69 +66,71 @@ rcp_type_ref rcp_dict_type_data_type(rcp_dict_type_ref type)
 void rcp_dict_init(rcp_type_ref type, rcp_data_ref data)
 {
 	rcp_type_ref key_type = rcp_dict_type_key_type(type);
-	rcp_tree_init(data, (void*)key_type->compare, 
+	rcp_tree_init((rcp_tree_ref)data, (void*)key_type->compare, 
 			(void*)key_type);
 }
 void rcp_dict_deinit(rcp_type_ref type, rcp_data_ref data)
 {
-	rcp_dict_node_ref node = rcp_dict_begin(data);
+	rcp_dict_node_ref node = rcp_dict_begin((rcp_dict_ref)data);
 	while(node){
 		rcp_dict_node_deinit(type, node);
 		node = rcp_dict_node_next(node);
 	}
-	rcp_tree_deinit(data);
+	rcp_tree_deinit((rcp_tree_ref)data);
 }
 
-rcp_data_ref rcp_dict_at(rcp_dict_type_ref type, rcp_data_ref data,
+rcp_data_ref rcp_dict_at(rcp_type_ref type, rcp_data_ref data,
 		rcp_data_ref key)
 {
-	rcp_dict_node_ref node = rcp_dict_find(data, key);
+	rcp_dict_node_ref node = rcp_dict_find((rcp_dict_ref)data, key);
 	return rcp_dict_node_data(type, node);
 }
 
-rcp_data_ref rcp_dict_set(rcp_dict_type_ref type, rcp_data_ref data,
+rcp_data_ref rcp_dict_set(rcp_type_ref type, rcp_data_ref data,
 		rcp_record_ref rec);
-rcp_data_ref rcp_dict_unset(rcp_dict_type_ref type, rcp_data_ref data,
+rcp_data_ref rcp_dict_unset(rcp_type_ref type, rcp_data_ref data,
 		rcp_record_ref rec);
 
 rcp_extern 
 rcp_dict_node_ref rcp_dict_find(
-		rcp_dict_ref map, rcp_data_ref key)
+		rcp_dict_ref dict, rcp_data_ref key)
 {
-	return rcp_tree_find(map, key);
+	return (rcp_dict_node_ref)rcp_tree_find((rcp_tree_ref)dict, key);
 }
 
 rcp_extern 
 rcp_dict_node_ref rcp_dict_set_node(
-		rcp_dict_ref map, rcp_dict_node_ref node)
+		rcp_dict_ref dict, rcp_dict_node_ref node)
 {
-	return rcp_tree_set(map, node);
+	return (rcp_dict_node_ref)rcp_tree_set(
+			(rcp_tree_ref)dict, (rcp_tree_node_ref)node);
 }
 
 rcp_extern 
-void rcp_dict_unset_node(rcp_dict_ref map, rcp_dict_node_ref node)
+void rcp_dict_unset_node(rcp_dict_ref dict, rcp_dict_node_ref node)
 {
-	return rcp_tree_remove(map, node);
+	return rcp_tree_remove((rcp_tree_ref)dict, (rcp_tree_node_ref)node);
 }
 
 ///
 //map node
 //
 
-rcp_dict_node_ref rcp_dict_node_alloc(rcp_dict_type_ref type)
+rcp_dict_node_ref rcp_dict_node_alloc(rcp_type_ref type)
 {
 	rcp_type_ref key_type = rcp_dict_type_key_type(type);
 	rcp_type_ref data_type = rcp_dict_type_data_type(type);
-	return rcp_tree_node_new(key_type->size + data_type->size);
+	return (rcp_dict_node_ref)rcp_tree_node_new(
+			key_type->size + data_type->size);
 }
 
 void rcp_dict_node_dealloc(rcp_dict_node_ref node)
 {
-	rcp_tree_node_delete(node);
+	rcp_tree_node_delete((rcp_tree_node_ref)node);
 }
 
 rcp_extern 
-void rcp_dict_node_init(rcp_dict_type_ref type, rcp_dict_node_ref node)
+void rcp_dict_node_init(rcp_type_ref type, rcp_dict_node_ref node)
 {
 	rcp_type_ref key_type = rcp_dict_type_key_type(type);
 	rcp_type_ref data_type = rcp_dict_type_data_type(type);
@@ -148,7 +142,7 @@ void rcp_dict_node_init(rcp_dict_type_ref type, rcp_dict_node_ref node)
 }
 
 rcp_extern 
-void rcp_dict_node_deinit(rcp_dict_type_ref type, rcp_dict_node_ref node)
+void rcp_dict_node_deinit(rcp_type_ref type, rcp_dict_node_ref node)
 {
 	rcp_type_ref key_type = rcp_dict_type_key_type(type);
 	rcp_type_ref data_type = rcp_dict_type_data_type(type);
@@ -160,7 +154,7 @@ void rcp_dict_node_deinit(rcp_dict_type_ref type, rcp_dict_node_ref node)
 }
 
 rcp_extern 
-rcp_dict_node_ref rcp_dict_node_new(rcp_dict_type_ref type)
+rcp_dict_node_ref rcp_dict_node_new(rcp_type_ref type)
 {
 	rcp_dict_node_ref node = rcp_dict_node_alloc(type);
 	rcp_dict_node_init(type, node);
@@ -168,7 +162,7 @@ rcp_dict_node_ref rcp_dict_node_new(rcp_dict_type_ref type)
 }
 
 rcp_extern 
-void rcp_dict_node_delete(rcp_dict_type_ref type, rcp_dict_node_ref node)
+void rcp_dict_node_delete(rcp_type_ref type, rcp_dict_node_ref node)
 {
 	rcp_dict_node_deinit(type, node);
 	rcp_dict_node_dealloc(node);
@@ -176,17 +170,17 @@ void rcp_dict_node_delete(rcp_dict_type_ref type, rcp_dict_node_ref node)
 
 rcp_extern 
 rcp_data_ref rcp_dict_node_key(
-		rcp_dict_type_ref type, rcp_dict_node_ref node)
+		rcp_type_ref type, rcp_dict_node_ref node)
 {
-	return rcp_tree_node_data(node);
+	return (rcp_data_ref)rcp_tree_node_data((rcp_tree_node_ref)node);
 }
 
 rcp_extern 
 rcp_data_ref rcp_dict_node_data(
-		rcp_dict_type_ref type, rcp_dict_node_ref node)
+		rcp_type_ref type, rcp_dict_node_ref node)
 {
 	rcp_type_ref key_type = rcp_dict_type_key_type(type);
-	return rcp_tree_node_data(node) + key_type->size; 
+	return rcp_tree_node_data((rcp_tree_node_ref)node) + key_type->size; 
 }
 
 ///
@@ -194,12 +188,12 @@ rcp_data_ref rcp_dict_node_data(
 rcp_extern 
 rcp_dict_node_ref rcp_dict_begin(rcp_dict_ref map)
 {
-	return rcp_tree_begin(map);
+	return (rcp_dict_node_ref)rcp_tree_begin((rcp_tree_ref)map);
 }
 
 rcp_extern 
 rcp_dict_node_ref rcp_dict_node_next(rcp_dict_node_ref node)
 {
-	return rcp_tree_node_next(node);
+	return (rcp_dict_node_ref)rcp_tree_node_next((rcp_tree_node_ref)node);
 }
 

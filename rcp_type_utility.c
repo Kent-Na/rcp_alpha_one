@@ -1,7 +1,13 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 #include "rcp_defines.h"
-#include "rcp_types.h"
+
+#include "rcp_type.h"
+#include "rcp_record.h"
+#include "types/rcp_map.h"
+#include "types/rcp_struct.h"
+#include "types/rcp_string.h"
+#include "types/rcp_type_list.h"
 
 rcp_extern rcp_record_ref rcp_map_find_c_str(
 		rcp_map_ref map, const char *key, rcp_type_ref type)
@@ -20,7 +26,7 @@ rcp_extern rcp_record_ref rcp_map_find_c_str(
 
 	rcp_string_ref str = rcp_string_new(key);
 	rcp_map_node_ref node = rcp_map_find(map, str);
-	rcp_delete(rcp_string_type, str);
+	rcp_string_delete(str);
 	if (!node){
 		rcp_caution("not found");
 		return NULL;
@@ -52,7 +58,7 @@ rcp_extern void rcp_map_to_struct(rcp_map_ref in,
 	while (1){
 		int comp = rcp_compair(rcp_string_type, 
 				rcp_map_node_key(in, node), 
-				rcp_struct_param_name(param));
+				(rcp_data_ref)rcp_struct_param_name(param));
 
 		if (comp < 0){
 			node = rcp_map_node_next(node);
@@ -97,7 +103,8 @@ void rcp_struct_to_map(rcp_type_ref in_type,
 		rcp_map_node_ref node = rcp_map_node_new(out);
 		//key
 		rcp_string_ref p_name = rcp_struct_param_name(param);
-		rcp_copy(rcp_string_type, p_name, rcp_map_node_key(out, node));
+		rcp_copy(rcp_string_type, 
+				(rcp_data_ref)p_name, rcp_map_node_key(out, node));
 		//value
 		rcp_type_ref type = rcp_struct_param_type(param);
 		if (type == rcp_ref_type){

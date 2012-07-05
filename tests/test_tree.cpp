@@ -1,13 +1,15 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
-#include "../rcp_types.h"
+#include "../types/rcp_number.h"
 #include "../rcp_tree.h"
 
 #include <random>
 
+typedef int(*cmp)(const void*, void*, void*);
+
 int test_tree(void){
 
-	rcp_tree_ref tree = rcp_tree_new(rcp_uint32_type_compare, NULL);
+	rcp_tree_ref tree = rcp_tree_new((cmp)rcp_uint32_compare, NULL);
 	std::mt19937 eng(time(NULL));
 	std::uniform_int_distribution<int> dist(0,500);
 
@@ -40,7 +42,7 @@ int test_tree(void){
 	rcp_tree_delete(tree);
 
 	//iterate
-	tree = rcp_tree_new(rcp_uint32_type_compare, NULL);
+	tree = rcp_tree_new((cmp)rcp_uint32_compare, NULL);
 	for (int i = 0; i<200; i++){
 		uint32_t dat = i;
 		rcp_tree_node_ref node = rcp_tree_node_new(sizeof (uint32_t));
@@ -92,7 +94,7 @@ int test_tree(void){
 	rcp_tree_delete(tree);
 
 	//more itr
-	tree = rcp_tree_new(rcp_uint32_type_compare,NULL);
+	tree = rcp_tree_new((cmp)rcp_uint32_compare,NULL);
 	{
 		uint32_t dat = 1;
 		rcp_tree_node_ref node = rcp_tree_node_new(sizeof (uint32_t));
@@ -104,7 +106,7 @@ int test_tree(void){
 
 	//iterate _r
 	{
-		tree = rcp_tree_new(rcp_uint32_type_compare,NULL);
+		tree = rcp_tree_new((cmp)rcp_uint32_compare,NULL);
 		for (int i = 0; i<200; i++){
 			uint32_t dat = 199-i;
 			rcp_tree_node_ref node = rcp_tree_node_new(sizeof (uint32_t));
@@ -131,7 +133,7 @@ int test_tree(void){
 
 	//rm node
 	for (int i = 0; i<50; i++){
-		tree = rcp_tree_new(rcp_uint32_type_compare,NULL);
+		tree = rcp_tree_new((cmp)rcp_uint32_compare,NULL);
 		for (int i = 0; i<200; i++){
 			uint32_t dat = 199-i;
 			rcp_tree_node_ref node = rcp_tree_node_new(sizeof (uint32_t));

@@ -3,11 +3,17 @@
 
 #include "../rcp_tree.h"
 
+#include "../rcp_type_utility.h"
+#include "../rcp_record.h"
+#include "../types/rcp_type_list.h"
+#include "../types/rcp_string.h"
+#include "../rcp_type_utility.h"
+#include "../types/rcp_map.h"
+
 #define RCP_INTERNAL_STRUCTURE
 
-#include "../rcp_types.h"
-
-#include "../rcp_type_utility.h"
+#include "../rcp_type.h"
+#include "../types/rcp_struct.h"
 
 struct pm_task{
 	rcp_record_ref name;
@@ -16,7 +22,7 @@ struct pm_task{
 
 int test_struct(void){
 
-	rcp_struct_type_ref s_type = rcp_struct_type_new(2);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct pm_task);
 	t_core->type_id = 0x100;
@@ -48,12 +54,12 @@ int test_struct(void){
 	task->progress = 32;
 
 	rcp_map_ref map = rcp_map_new(rcp_string_type, rcp_ref_type);
-	rcp_struct_to_map(s_type, task, map);
+	rcp_struct_to_map(s_type, (rcp_struct_ref)task, map);
 
 	struct pm_task cpy;
 	cpy.name = NULL;
 	cpy.progress = 0;
-	rcp_map_to_struct(map, s_type, (rcp_data_ref)&cpy);
+	rcp_map_to_struct(map, s_type, (rcp_struct_ref)&cpy);
 
 	if (task->name != cpy.name)
 		rcp_error("name");

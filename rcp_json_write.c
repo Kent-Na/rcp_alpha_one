@@ -1,43 +1,50 @@
+#include "rcp_pch.h"
+#include "rcp_utility.h"
 
-void rcp_record_write_json(rcp_record_ref rec, rcp_string_ref out)
+#include "rcp_type.h"
+#include "rcp_record.h"
+#include "types/rcp_string.h"
+#include "types/rcp_map.h"
+#include "types/rcp_array.h"
+#include "types/rcp_type_list.h"
+
+void rcp_null_write_json(rcp_type_ref type, 
+		rcp_data_ref data, rcp_string_ref out)
 {
-	if (!rec){
-		rcp_string_append_c_str(out,"null");
-		return;
-	}
-	rcp_type_ref type = rcp_record_type(rec);
-	rcp_data_ref data = rcp_record_data(rec);
-	if (type == rcp_string_type)
-		rcp_string(data, out);
-	else if (type == rcp_int64_type)
-		rcp_int64(data, out);
-	else if (type == rcp_double_type)
-		rcp_double(data, out);
-	else if (type == rcp_map_type)
-		rcp_map(data, out);
-	else if (type == rcp_array_type)
-		rcp_array(data, out);
-	else if (type == rcp_bool8_type){
-		if (*(uint8_t*)rcp_record_data(rec))
-			rcp_string_append_c_str(out,"true");
-		else
-			rcp_string_append_c_str(out,"false");
-	}
-	else if (type == rcp_bool32_type){
-		if (*(uint32_t*)rcp_record_data(rec))
-			rcp_string_append_c_str(out,"true");
-		else
-			rcp_string_append_c_str(out,"false");
-	}
-	else if (type == rcp_null_type)
-		rcp_string_append_c_str(out,"null");
-	else 
-		rcp_string_append_c_str(out,"null");
+	rcp_string_append_c_str(out,"null");
 }
 
-void rcp_number_write_json(uint64_t value, rcp_string_ref out)
+void rcp_ref_write_json(rcp_type_ref type, 
+		rcp_data_ref data, rcp_string_ref out)
 {
-	uint64_t num = value;
+	rcp_record_ref rec = *(rcp_record_ref *)data;
+	if (!rcp_record_data(rec)){
+		rcp_null_write_json(rcp_null_type, NULL, out);
+		return;
+	}
+	rcp_write_json(rcp_record_type(rec), rcp_record_data(rec), out);	
+}
+
+void rcp_bool8_write_json(rcp_type_ref type, 
+		rcp_data_ref value, rcp_string_ref out)
+{
+	if (*(uint8_t*)value)
+		rcp_string_append_c_str(out,"true");
+	else
+		rcp_string_append_c_str(out,"false");
+}
+
+void rcp_bool32_write_json(rcp_type_ref type, 
+		rcp_data_ref value, rcp_string_ref out)
+{
+	if (*(uint8_t*)value)
+		rcp_string_append_c_str(out,"true");
+	else
+		rcp_string_append_c_str(out,"false");
+}
+
+void rcp_uint_write_json(uint64_t num, rcp_string_ref out)
+{
 	if (num == 0){
 		rcp_string_put(out, '0');
 		return;
@@ -56,16 +63,66 @@ void rcp_number_write_json(uint64_t value, rcp_string_ref out)
 		rcp_string_put(out, '0' + *p);
 	}
 }
-void rcp_int64_write_json(void *value, rcp_string_ref out){
-	int64_t num = *(int64_t*)value;
-	if (num < 0){
+
+void rcp_int_write_json(int64_t value, rcp_string_ref out){
+	if (value< 0){
 		rcp_string_put(out, '-');
-		num *= -1;
+		rcp_uint_write_json(-value, out);
 	}
-	rcp_number(num, out);
+	else{
+		rcp_uint_write_json(value, out);
+	}
 }
-void rcp_double_write_json(void *value, rcp_string_ref out){
-	double num = *(double*)value;
+
+void rcp_uint64_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
+{
+	rcp_uint_write_json(*(uint64_t*)value, out);
+}
+
+void rcp_uint32_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
+{
+	rcp_uint_write_json(*(uint32_t*)value, out);
+}
+
+void rcp_uint16_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
+{
+	rcp_uint_write_json(*(uint16_t*)value, out);
+}
+
+void rcp_uint8_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
+{
+	rcp_uint_write_json(*(uint8_t*)value, out);
+}
+
+void rcp_int64_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
+{
+	rcp_int_write_json(*(uint64_t*)value, out);
+}
+
+void rcp_int32_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
+{
+	rcp_int_write_json(*(uint32_t*)value, out);
+}
+
+void rcp_int16_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
+{
+	rcp_int_write_json(*(uint16_t*)value, out);
+}
+
+void rcp_int8_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
+{
+	rcp_int_write_json(*(uint8_t*)value, out);
+}
+
+void rcp_float_val_write_json(double num, rcp_string_ref out){
 
 	if (num == 0.0){
 		rcp_string_put(out, '0');
@@ -101,35 +158,45 @@ void rcp_double_write_json(void *value, rcp_string_ref out){
 	}
 
 	rcp_string_put(out, 'e');
-	rcp_int64(&exp, out);
+	rcp_int_write_json(exp, out);
 }
-void rcp_map_write_json(rcp_map_ref map, rcp_string_ref out)
+
+void rcp_double_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
 {
+	rcp_float_val_write_json(*(double*)value, out);
+}
+
+void rcp_float_write_json(rcp_type_ref type,
+		rcp_data_ref value, rcp_string_ref out)
+{
+	rcp_float_val_write_json(*(float*)value, out);
+}
+
+void rcp_map_write_json(rcp_type_ref type,
+		rcp_data_ref data, rcp_string_ref out)
+{
+	rcp_map_ref map = (rcp_map_ref)data;
 
 #ifdef RCP_SELF_TEST
 	if (rcp_map_key_type(map) != rcp_string_type){
 		rcp_error("json:map key type");
 		return;
 	}
-	if (rcp_map_value_type(map) != rcp_ref_type){
-		rcp_error("json:map value type");
-		return;
-	}
-
 #endif
+
+	rcp_type_ref val_type = rcp_map_value_type(map);
 
 	rcp_map_node_ref node = rcp_map_begin(map);
 	rcp_string_put(out, '{');
 	while (node){
-		rcp_string(rcp_map_node_key(map, node), out);
+		rcp_write_json(rcp_string_type,
+				rcp_map_node_key(map, node), out);
 
 		rcp_string_put(out, ':');
 
-		rcp_record_ref value = NULL;
-		rcp_copy(rcp_ref_type, rcp_map_node_value(map, node),
-				(rcp_data_ref)&value);
-		rcp_record(value, out);
-		rcp_record_release(value);
+		rcp_write_json(val_type, 
+				rcp_map_node_value(map, node), out);
 		
 		node = rcp_map_node_next(node);
 		if (node)
@@ -138,33 +205,30 @@ void rcp_map_write_json(rcp_map_ref map, rcp_string_ref out)
 	rcp_string_put(out, '}');
 }
 
-void rcp_array_write_json(rcp_array_ref array, rcp_string_ref out)
+void rcp_array_write_json(rcp_type_ref type,
+		rcp_data_ref data, rcp_string_ref out)
 {
-#ifdef RCP_SELF_TEST
-	if (rcp_array_data_type(array) != rcp_ref_type){
-		rcp_error("json:array value type");
-		return;
-	}
-#endif
+	rcp_array_ref array = (rcp_array_ref)array;
+	rcp_type_ref ary_type = rcp_array_data_type(array);
 
 	rcp_array_iterater_ref itr = rcp_array_begin(array);
 	rcp_string_put(out, '[');
 	while (itr){
+		rcp_write_json(ary_type, 
+				rcp_array_iterater_data(array, itr), out);
 
-		rcp_record_ref value = NULL;
-		rcp_copy(rcp_ref_type, rcp_array_iterater_data(array, itr), 
-				(rcp_data_ref)&value);
-		rcp_record(value, out);
-		rcp_record_release(value);
-		
 		itr = rcp_array_iterater_next(array, itr);
 		if (itr)
 			rcp_string_put(out, ',');
 	}
 	rcp_string_put(out, ']');
 }
-void rcp_string_write_json(rcp_string_ref str, rcp_string_ref out)
+
+void rcp_string_write_json(rcp_type_ref type,
+		rcp_data_ref data, rcp_string_ref out)
 {
+	rcp_string_ref str = (rcp_string_ref)data;
+
 	const char* c_str = rcp_string_c_str(str);
 
 	rcp_string_put(out, '\"');
