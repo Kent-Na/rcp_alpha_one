@@ -74,6 +74,7 @@ void rcp_context_init(rcp_context_ref ctx)
 	ctx->dead = rcp_array_new(rcp_pointer_type);
 	ctx->permissions = rcp_map_new(rcp_string_type, rcp_uint64_type);
 	ctx->base_permission = RCP_PMS_LOGIN | RCP_PMS_READ | RCP_PMS_WRITE;
+	printf("%p,\n",ctx);
 }
 void rcp_context_uninit(rcp_context_ref ctx)
 {
@@ -379,6 +380,11 @@ rcp_extern void rcp_context_execute_command_rec(
 	if (command_type == CMD_LOGIN_CONTEXT){
 		rcp_info("login ctx");
 		rcp_context_ref ctx = rcp_context_get(0);
+		if (!ctx){
+			rcp_context_send_caution(con, cmd_rec, 
+					"context not found");
+			return;
+		}
 		uint64_t permission = ctx->base_permission;
 		rcp_string_ref username = (rcp_string_ref)rcp_record_data(
 				rcp_connection_username(con));

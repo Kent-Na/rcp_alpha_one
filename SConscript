@@ -1,7 +1,7 @@
 env = Environment()
 Import('env')
 
-env.Append(CCFLAGS = ['-O3'])
+#env.Append(CCFLAGS = ['-O3'])
 #env.Replace(CC = 'clang')
 #env.Replace(CXX = 'clang')
 env.Replace(CC = 'gcc-4.6')

@@ -80,7 +80,7 @@ typeTable = [
 exTypeTable = [
 #	[id,	name,		c_type]
 	[2,		'pointer',	'void*',	'sizeof(void*)',
-	 False,	False,	False,	True, False],
+	 False,	False,	True,	True, False],
 ]
 
 typeList = []

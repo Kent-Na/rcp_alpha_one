@@ -204,7 +204,7 @@ struct rcp_type_core rcp_pointer_type_def = {
 	"pointer",
 	NULL,
 	NULL,
-	NULL,
+	rcp_pointer_copy,
 	rcp_pointer_compare,
 	NULL,
 };

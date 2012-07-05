@@ -31,7 +31,7 @@ rcp_context_ref rcp_context_get(rcp_context_id_t id)
 	rcp_dict_node_ref node = rcp_dict_find(contexts, (rcp_data_ref)&id);
 	if (node == NULL)
 		return NULL;
-	return (rcp_context_ref)rcp_dict_node_data(uint32_ptr_map, node);
+	return *(rcp_context_ref*)rcp_dict_node_data(uint32_ptr_map, node);
 }
 
 rcp_context_ref rcp_context_create(uint32_t id)
