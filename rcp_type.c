@@ -63,7 +63,7 @@ void rcp_swap(rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst)
 	free(tmp);
 }
 
-rcp_extern int rcp_compair(rcp_type_ref type, 
+rcp_extern int rcp_compare(rcp_type_ref type, 
 		rcp_data_ref l, rcp_data_ref r)
 {
 	return type->compare(type, l, r);

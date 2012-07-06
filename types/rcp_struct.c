@@ -103,7 +103,7 @@ rcp_struct_param_ref rcp_parameter_from_str(
 	while (max >= min){
 		size_t mid = (min+max)>>1;
 		rcp_struct_param_ref param_mid = param_base + mid;
-		int cmp = rcp_compair(rcp_string_type, 
+		int cmp = rcp_compare(rcp_string_type, 
 				(rcp_data_ref)param_mid->name,(rcp_data_ref)str);
 
 		if (cmp<0)

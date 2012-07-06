@@ -25,6 +25,7 @@ con = {
 	'command':'appendValue',
 	'value':'test',
 	'path':102}
+#c.sendCommand(con)
 con = {
 	'command':'addPermission',
 	'username':'black'}

@@ -64,7 +64,7 @@ rcp_extern void rcp_copy(rcp_type_ref type,
 rcp_extern void rcp_swap(rcp_type_ref type,
 		rcp_data_ref src, rcp_data_ref dst);
 
-rcp_extern int rcp_compair(rcp_type_ref type, 
+rcp_extern int rcp_compare(rcp_type_ref type, 
 		rcp_data_ref l, rcp_data_ref r);
 
 rcp_extern void rcp_write_json(rcp_type_ref type, 

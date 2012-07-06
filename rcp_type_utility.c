@@ -56,7 +56,7 @@ rcp_extern void rcp_map_to_struct(rcp_map_ref in,
 	rcp_map_node_ref node = rcp_map_begin(in);
 	rcp_struct_param_ref param = rcp_struct_type_begin(out_type);
 	while (1){
-		int comp = rcp_compair(rcp_string_type, 
+		int comp = rcp_compare(rcp_string_type, 
 				rcp_map_node_key(in, node), 
 				(rcp_data_ref)rcp_struct_param_name(param));
 

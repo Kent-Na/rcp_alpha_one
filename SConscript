@@ -20,6 +20,7 @@ types = [
 	'types/rcp_number.c',
 	'types/rcp_struct.c',
 	'types/rcp_type_etc.c',
+	'types/rcp_alias.c',
 	]
 
 connections = [

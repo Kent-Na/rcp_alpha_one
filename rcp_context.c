@@ -74,7 +74,6 @@ void rcp_context_init(rcp_context_ref ctx)
 	ctx->dead = rcp_array_new(rcp_pointer_type);
 	ctx->permissions = rcp_map_new(rcp_string_type, rcp_uint64_type);
 	ctx->base_permission = RCP_PMS_LOGIN | RCP_PMS_READ | RCP_PMS_WRITE;
-	printf("%p,\n",ctx);
 }
 void rcp_context_uninit(rcp_context_ref ctx)
 {
