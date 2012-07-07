@@ -23,8 +23,7 @@ struct rcp_receiver_class *rcp_receiver_class(rcp_receiver_ref con)
 
 void *rcp_receiver_l2(rcp_receiver_ref con)
 {
-	size_t l2_data_offset = sizeof (struct rcp_receiver_core);
-	return con + l2_data_offset;
+	return con + 1;
 }
 void *rcp_receiver_l3(rcp_receiver_ref con)
 {
@@ -32,7 +31,7 @@ void *rcp_receiver_l3(rcp_receiver_ref con)
 	struct rcp_receiver_class *klass = core->klass;
 	size_t l2_data_offset = sizeof (struct rcp_receiver_core);
 	size_t l3_data_offset = l2_data_offset + klass->layer2_data_size;
-	return con + l3_data_offset;
+	return (void*)con + l3_data_offset;
 }
 rcp_receiver_ref rcp_receiver_new(struct rcp_receiver_class* klass)
 {

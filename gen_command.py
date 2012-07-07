@@ -38,6 +38,7 @@ genFuncCoreTemplate = """
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -96,6 +97,7 @@ outPutCFile.write('#include "rcp_pch.h"\n')
 outPutCFile.write('#include "rcp_utility.h"\n')
 outPutCFile.write('#include "rcp_tree.h"\n')
 outPutCFile.write('#include "rcp_command_list.h"\n')
+outPutCFile.write('#include "rcp_json_write.h"\n')
 outPutCFile.write('#define RCP_INTERNAL_STRUCTURE\n')
 outPutCFile.write('#include "types/rcp_type_list.h"\n')
 outPutCFile.write('#include "types/rcp_string.h"\n')

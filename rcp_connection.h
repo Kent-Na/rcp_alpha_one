@@ -27,8 +27,6 @@ void rcp_connection_set_receiver(
 rcp_extern
 void rcp_connection_send(rcp_connection_ref con);
 rcp_extern
-void rcp_connection_send_rec(rcp_connection_ref con, rcp_record_ref rec);
-rcp_extern
 void rcp_connection_on_receive(rcp_connection_ref con);
 rcp_extern
 int rcp_connection_alive(rcp_connection_ref con);
@@ -38,6 +36,9 @@ void rcp_connection_on_close(rcp_connection_ref con);
 rcp_extern
 void rcp_connection_set_context(
 		rcp_connection_ref con, rcp_context_ref ctx);
+rcp_extern
+rcp_context_ref rcp_connection_context(
+		rcp_connection_ref con);
 rcp_extern
 void rcp_connection_set_username(
 		rcp_connection_ref con, rcp_record_ref username);

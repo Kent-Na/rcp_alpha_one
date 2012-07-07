@@ -24,7 +24,7 @@ rcp_extern rcp_record_ref con_json_execute(
 
 void cmp_json_init(void *userdata);
 void cmp_json_deinit(void *userdata);
-void cmp_json_build(void *userdata, rcp_record_ref rec);
+void cmp_json_build(void *userdata, rcp_type_ref type, rcp_data_ref data);
 void cmp_json_result(void *userdata, 
 		const uint8_t **begin, const uint8_t **end);
 void cmp_json_clean_up(void *userdata);
@@ -53,7 +53,7 @@ void cmp_json_deinit(void *userdata)
 	if (st->str)
 		rcp_string_delete(st->str);
 }
-void cmp_json_build(void *userdata, rcp_record_ref rec)
+void cmp_json_build(void *userdata, rcp_type_ref type, rcp_data_ref data)
 {
 	struct cmp_json* st = userdata;
 	if (st->str){
@@ -61,8 +61,10 @@ void cmp_json_build(void *userdata, rcp_record_ref rec)
 		cmp_json_clean_up(userdata);
 	}
 	rcp_string_ref cmd_str = rcp_string_new(NULL);
-	rcp_write_json(rcp_ref_type, (rcp_data_ref)&rec, cmd_str);
+	rcp_write_json(type, data, cmd_str);
 	st->str = cmd_str;
+
+	//not delete cmd_str here
 }
 
 void cmp_json_result(void *userdata, 

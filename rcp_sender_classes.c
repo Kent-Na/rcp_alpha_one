@@ -28,7 +28,8 @@ rcp_sender_cluster_ref rcp_sender_cluster_new()
 {
 	rcp_sender_cluster_ref cluster = malloc(sizeof *cluster);
 	cluster->tgt = malloc(sizeof *cluster->tgt);
-	cluster->tgt->rec = NULL;
+	cluster->tgt->data = NULL;
+	cluster->tgt->type = NULL;
 
 	cluster->json = rcp_sender_l0_new(&cmp_json_class, cluster->tgt);
 
@@ -49,15 +50,17 @@ rcp_sender_l1_ref rcp_sender_cluster_json_ws(rcp_sender_cluster_ref cluster)
 {
 	return cluster->json_ws;
 }
-void rcp_sender_cluster_set_rec(rcp_sender_cluster_ref cluster,
-		rcp_record_ref rec)
+void rcp_sender_cluster_set_data(rcp_sender_cluster_ref cluster,
+		rcp_type_ref type, rcp_data_ref data)
 {
-	rcp_assert(cluster->tgt->rec == NULL, "didn't clean up");
-	cluster->tgt->rec = rec;
+	rcp_assert(cluster->tgt->data== NULL, "didn't clean up");
+	cluster->tgt->type = type;
+	cluster->tgt->data = data;
 }
 void rcp_sender_cluster_clean_up(rcp_sender_cluster_ref cluster)
 {
-	cluster->tgt->rec = NULL;
+	cluster->tgt->data = NULL;
+	cluster->tgt->type = NULL;
 
 	rcp_sender_l0_clean_up(cluster->json);
 	rcp_sender_l1_clean_up(cluster->json_nt);

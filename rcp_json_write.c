@@ -1,11 +1,14 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
+#include "rcp_defines.h"
 
 #include "rcp_type.h"
 #include "rcp_record.h"
 #include "types/rcp_string.h"
 #include "types/rcp_map.h"
 #include "types/rcp_array.h"
+#include "types/rcp_struct.h"
+#include "types/rcp_dict.h"
 #include "types/rcp_type_list.h"
 
 void rcp_null_write_json(rcp_type_ref type, 
@@ -171,6 +174,62 @@ void rcp_float_write_json(rcp_type_ref type,
 		rcp_data_ref value, rcp_string_ref out)
 {
 	rcp_float_val_write_json(*(float*)value, out);
+}
+
+void rcp_struct_write_json(rcp_type_ref type,
+		rcp_data_ref data, rcp_string_ref out)
+{
+	rcp_struct_ref st = (rcp_struct_ref)data;
+	rcp_struct_param_ref param = rcp_struct_type_begin(type);
+
+	rcp_string_put(out, '{');
+	while (param){
+		rcp_write_json(rcp_string_type,
+				(rcp_data_ref)rcp_struct_param_name(param), out);
+
+		rcp_string_put(out, ':');
+
+		rcp_write_json(rcp_struct_param_type(param), 
+				rcp_struct_data(st, param), out);
+		
+		param = rcp_struct_param_next(type, param);
+		if (param)
+			rcp_string_put(out, ',');
+	}
+	rcp_string_put(out, '}');
+}
+
+void rcp_dict_write_json(rcp_type_ref type,
+		rcp_data_ref data, rcp_string_ref out)
+{
+	rcp_dict_ref dict = (rcp_dict_ref)data;
+
+	const rcp_type_ref key_type = rcp_dict_type_key_type(type);
+	const rcp_type_ref data_type = rcp_dict_type_data_type(type);
+
+#ifdef RCP_SELF_TEST
+	if (key_type != rcp_string_type){
+		rcp_error("json:dict key type");
+		return;
+	}
+#endif
+
+	rcp_dict_node_ref node = rcp_dict_begin(dict);
+	rcp_string_put(out, '{');
+	while (node){
+		rcp_write_json(rcp_string_type,
+				rcp_dict_node_key(type, node), out);
+
+		rcp_string_put(out, ':');
+
+		rcp_write_json(data_type, 
+				rcp_dict_node_data(type, node), out);
+		
+		node = rcp_dict_node_next(node);
+		if (node)
+			rcp_string_put(out, ',');
+	}
+	rcp_string_put(out, '}');
 }
 
 void rcp_map_write_json(rcp_type_ref type,

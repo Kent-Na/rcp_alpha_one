@@ -3,6 +3,7 @@
 #include "rcp_utility.h"
 #include "rcp_tree.h"
 #include "rcp_command_list.h"
+#include "rcp_json_write.h"
 #define RCP_INTERNAL_STRUCTURE
 #include "types/rcp_type_list.h"
 #include "types/rcp_string.h"
@@ -21,6 +22,7 @@ rcp_type_ref cmd_open_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -59,6 +61,7 @@ rcp_type_ref cmd_kill_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -87,6 +90,7 @@ rcp_type_ref cmd_dump_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -115,6 +119,7 @@ rcp_type_ref cmd_close_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -143,6 +148,7 @@ rcp_type_ref cmd_ping_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -171,6 +177,7 @@ rcp_type_ref cmd_pong_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -199,6 +206,7 @@ rcp_type_ref cmd_create_user_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -237,6 +245,7 @@ rcp_type_ref cmd_delete_user_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -275,6 +284,7 @@ rcp_type_ref cmd_login_user_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -313,6 +323,7 @@ rcp_type_ref cmd_add_user_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -346,6 +357,7 @@ rcp_type_ref cmd_remove_user_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -379,6 +391,7 @@ rcp_type_ref cmd_add_permission_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -417,6 +430,7 @@ rcp_type_ref cmd_remove_permission_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -455,6 +469,7 @@ rcp_type_ref cmd_create_context_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -483,6 +498,7 @@ rcp_type_ref cmd_delete_context_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -516,6 +532,7 @@ rcp_type_ref cmd_login_context_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -549,6 +566,7 @@ rcp_type_ref cmd_update_name_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -577,6 +595,7 @@ rcp_type_ref cmd_send_value_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -615,6 +634,7 @@ rcp_type_ref cmd_set_value_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -658,6 +678,7 @@ rcp_type_ref cmd_unset_value_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -691,6 +712,7 @@ rcp_type_ref cmd_append_value_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -734,6 +756,7 @@ rcp_type_ref cmd_create_struct_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -762,6 +785,7 @@ rcp_type_ref cmd_add_struct_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -790,6 +814,7 @@ rcp_type_ref cmd_error_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -828,6 +853,7 @@ rcp_type_ref cmd_caution_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
@@ -866,6 +892,7 @@ rcp_type_ref cmd_info_type(){
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
 	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
 
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);

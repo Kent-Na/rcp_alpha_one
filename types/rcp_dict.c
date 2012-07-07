@@ -2,6 +2,8 @@
 #include "../rcp_utility.h"
 #include "../rcp_defines.h"
 
+#include "../rcp_json_write.h"
+
 #define RCP_INTERNAL_STRUCTURE
 
 #include "../rcp_type.h"
@@ -10,30 +12,27 @@
 #include "rcp_dict.h"
 
 ///
-//type map
+//type dict
 //
-struct rcp_type_map_ext{
-	rcp_type_ref key_type;
-	rcp_type_ref data_type;
-};
 
 struct rcp_type_core rcp_dict_type_def = {
 	sizeof(struct rcp_tree),
 	0,
-	"map",
+	"dict",
 	rcp_dict_init,//init
 	rcp_dict_deinit,//free
 	NULL,//copy
 	NULL,//comp
+	rcp_dict_write_json,
 };
 
 rcp_type_ref rcp_dict_type_new(
 		rcp_type_ref key_type, rcp_type_ref data_type)
 {
 	rcp_type_ref type = malloc(sizeof *type +
-			sizeof (struct rcp_type_map_ext));
-	struct rcp_type_map_ext* ext = 
-		(struct rcp_type_map_ext*)(type + 1);
+			sizeof (struct rcp_type_dict_ext));
+	struct rcp_type_dict_ext* ext = 
+		(struct rcp_type_dict_ext*)(type + 1);
 	memcpy((void*)type, &rcp_dict_type_def, sizeof *type);
 	ext->key_type = key_type;
 	ext->data_type = data_type;
@@ -48,20 +47,29 @@ void rcp_dict_type_delete(
 
 rcp_type_ref rcp_dict_type_key_type(rcp_type_ref type)
 {
-	struct rcp_type_map_ext* ext = 
-		(struct rcp_type_map_ext*)(type + 1);
+	struct rcp_type_dict_ext* ext = 
+		(struct rcp_type_dict_ext*)(type + 1);
 	return ext->key_type;
 }
 rcp_type_ref rcp_dict_type_data_type(rcp_type_ref type)
 {
-	struct rcp_type_map_ext* ext = 
-		(struct rcp_type_map_ext*)(type + 1);
+	struct rcp_type_dict_ext* ext = 
+		(struct rcp_type_dict_ext*)(type + 1);
 	return ext->data_type;
 }
 
 ///
-//map itself
+//dict itself
 //
+
+rcp_dict_ref rcp_dict_new(rcp_type_ref type)
+{
+	return (rcp_dict_ref)rcp_new(type);
+}
+void rcp_dict_delete(rcp_type_ref type, rcp_dict_ref data)
+{
+	rcp_delete(type,(rcp_data_ref)data);
+}
 
 void rcp_dict_init(rcp_type_ref type, rcp_data_ref data)
 {
@@ -113,7 +121,7 @@ void rcp_dict_unset_node(rcp_dict_ref dict, rcp_dict_node_ref node)
 }
 
 ///
-//map node
+//dict node
 //
 
 rcp_dict_node_ref rcp_dict_node_alloc(rcp_type_ref type)
@@ -186,9 +194,9 @@ rcp_data_ref rcp_dict_node_data(
 ///
 //iterate
 rcp_extern 
-rcp_dict_node_ref rcp_dict_begin(rcp_dict_ref map)
+rcp_dict_node_ref rcp_dict_begin(rcp_dict_ref dict)
 {
-	return (rcp_dict_node_ref)rcp_tree_begin((rcp_tree_ref)map);
+	return (rcp_dict_node_ref)rcp_tree_begin((rcp_tree_ref)dict);
 }
 
 rcp_extern 

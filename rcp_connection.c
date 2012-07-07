@@ -86,13 +86,6 @@ void rcp_connection_send(rcp_connection_ref con)
 	rcp_sender_result(con->sender, &begin, &end);
 	rcp_io_send(con->io, begin, end-begin);
 }
-void rcp_connection_send_rec(rcp_connection_ref con, rcp_record_ref rec)
-{
-	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
-	rcp_sender_cluster_set_rec(cls, rec);
-	rcp_connection_send(con);
-	rcp_sender_cluster_clean_up(cls);
-}
 
 extern void rcp_context_remove_connection(
 		rcp_context_ref ctx, rcp_connection_ref con);
@@ -124,6 +117,12 @@ void rcp_connection_set_context(
 {
 	rcp_assert(con->ctx == NULL,"double ctx login");
 	con->ctx = ctx;
+}
+rcp_extern
+rcp_context_ref rcp_connection_context(
+		rcp_connection_ref con)
+{
+	return con->ctx;
 }
 
 rcp_extern

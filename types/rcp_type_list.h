@@ -54,3 +54,41 @@ extern const rcp_type_ref rcp_double_type;
 
 #define RCP_TYPE_POINTER ((rcp_type_id_t)2)
 extern const rcp_type_ref rcp_pointer_type;
+#ifdef RCP_INTERNAL_STRUCTURE
+
+extern struct rcp_type_core rcp_null_type_def;
+
+extern struct rcp_type_core rcp_ref_type_def;
+
+extern struct rcp_type_core rcp_map_type_def;
+
+extern struct rcp_type_core rcp_array_type_def;
+
+extern struct rcp_type_core rcp_string_type_def;
+
+extern struct rcp_type_core rcp_bool8_type_def;
+
+extern struct rcp_type_core rcp_bool32_type_def;
+
+extern struct rcp_type_core rcp_uint8_type_def;
+
+extern struct rcp_type_core rcp_uint16_type_def;
+
+extern struct rcp_type_core rcp_uint32_type_def;
+
+extern struct rcp_type_core rcp_uint64_type_def;
+
+extern struct rcp_type_core rcp_int8_type_def;
+
+extern struct rcp_type_core rcp_int16_type_def;
+
+extern struct rcp_type_core rcp_int32_type_def;
+
+extern struct rcp_type_core rcp_int64_type_def;
+
+extern struct rcp_type_core rcp_float_type_def;
+
+extern struct rcp_type_core rcp_double_type_def;
+
+extern struct rcp_type_core rcp_pointer_type_def;
+#endif

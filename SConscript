@@ -17,6 +17,7 @@ types = [
 	'types/rcp_string.c',
 	'types/rcp_type_list.c',
 	'types/rcp_dict.c',
+	'types/rcp_dict_list.c',
 	'types/rcp_number.c',
 	'types/rcp_struct.c',
 	'types/rcp_type_etc.c',

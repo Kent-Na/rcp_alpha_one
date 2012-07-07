@@ -1,8 +1,6 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 #include "rcp_defines.h"
-#include "rcp_type.h"
-#include "rcp_record.h"
 #include "rcp_sender.h"
 
 #define CMP_DONE (1)
@@ -62,7 +60,7 @@ void rcp_sender_result(rcp_sender_l1_ref cmp,
 	struct rcp_sender_l0_core *l0 = cmp->l0;
 	struct rcp_sender_l1_core *l1 = cmp;
 	if (l0->state != CMP_DONE){
-		l0->klass->build(l0+1, l0->tgt->rec);
+		l0->klass->build(l0+1, l0->tgt->type, l0->tgt->data);
 		l0->state = CMP_DONE;
 	}
 	if (l1->state != CMP_DONE){

@@ -1,13 +1,15 @@
-#include "def/rcp_record.h"
+#include "def/rcp_data.h"
+#include "def/rcp_type.h"
 #include "def/rcp_sender_l0.h"
 #include "def/rcp_sender_l1.h"
 
 struct rcp_sender_terget{
-	rcp_record_ref rec;
+	rcp_data_ref data;
+	rcp_type_ref type;
 };
 
 ///
-//layer 0 (record(map) to byte array)
+//layer 0 (data to byte array)
 
 struct rcp_sender_l0_class{
 	size_t size;
@@ -16,7 +18,7 @@ struct rcp_sender_l0_class{
 
 	void (*deinit)(void *userdata);
 
-	void (*build)(void *userdata, rcp_record_ref rec);
+	void (*build)(void *userdata, rcp_type_ref type, rcp_data_ref data);
 
 	void (*result)(void *userdata, 
 			const uint8_t **begin, const uint8_t **end);

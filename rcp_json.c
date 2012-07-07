@@ -6,7 +6,8 @@
 #include "rcp_type.h"
 #include "types/rcp_string.h"
 #include "types/rcp_array.h"
-#include "types/rcp_map.h"
+#include "types/rcp_dict.h"
+#include "types/rcp_dict_list.h"
 #include "types/rcp_type_list.h"
 
 #include "rcp_json.h"
@@ -148,8 +149,9 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 
 	ptr ++;
 
-	rcp_record_ref map_rec = rcp_map_new_rec(rcp_string_type, rcp_ref_type);
-	rcp_map_ref map = (rcp_map_ref)rcp_record_data(map_rec);
+	const rcp_type_ref dict_type = rcp_str_ref_dict;
+	rcp_record_ref dict_rec = rcp_record_new(dict_type);
+	rcp_dict_ref dict = (rcp_dict_ref)rcp_record_data(dict_rec);
 	rcp_record_ref key = NULL;
 	rcp_record_ref value = NULL;
 
@@ -177,12 +179,12 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 		}
 		rcp_json_skip_space(&ptr, end);
 
-		rcp_map_node_ref node = rcp_map_node_new(map);
+		rcp_dict_node_ref node = rcp_dict_node_new(dict_type);
 		rcp_move(rcp_string_type,
-				rcp_record_data(key),rcp_map_node_key(map, node));
+				rcp_record_data(key),rcp_dict_node_key(dict_type, node));
 		rcp_move(rcp_ref_type,
-				(rcp_data_ref)&value,rcp_map_node_value(map, node));
-		rcp_map_set(map, node);
+				(rcp_data_ref)&value,rcp_dict_node_data(dict_type, node));
+		rcp_dict_set_node(dict, node);
 
 		rcp_record_init(key);
 		rcp_record_release(key);
@@ -199,7 +201,7 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 
 		if (ch == '}'){
 			*begin = ptr;
-			return map_rec;
+			return dict_rec;
 		}
 
 		break;
@@ -208,7 +210,7 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 	//fail
 	rcp_record_release(key);
 	rcp_record_release(value);
-	rcp_record_release(map_rec);
+	rcp_record_release(dict_rec);
 	return NULL;
 }
 

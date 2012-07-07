@@ -4,7 +4,7 @@
 //type table
 //json		<->		rcp
 
-//object	<->		map(string, ref) 
+//object	<->		dict(string, ref) 
 //array		<->		array(ref)
 //string	<->		string
 //number	<->		double or int64
