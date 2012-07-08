@@ -17,7 +17,7 @@ rcp_type_ref cmd_open_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_open);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -56,7 +56,7 @@ rcp_type_ref cmd_kill_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_kill);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -85,7 +85,7 @@ rcp_type_ref cmd_dump_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_dump);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -114,7 +114,7 @@ rcp_type_ref cmd_close_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_close);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -143,7 +143,7 @@ rcp_type_ref cmd_ping_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_ping);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -172,7 +172,7 @@ rcp_type_ref cmd_pong_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_pong);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -201,7 +201,7 @@ rcp_type_ref cmd_create_user_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_create_user);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -240,7 +240,7 @@ rcp_type_ref cmd_delete_user_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_delete_user);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -279,7 +279,7 @@ rcp_type_ref cmd_login_user_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_login_user);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -318,7 +318,7 @@ rcp_type_ref cmd_add_user_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_add_user);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -352,7 +352,7 @@ rcp_type_ref cmd_remove_user_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_remove_user);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -386,7 +386,7 @@ rcp_type_ref cmd_add_permission_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_add_permission);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -425,7 +425,7 @@ rcp_type_ref cmd_remove_permission_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_remove_permission);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -464,7 +464,7 @@ rcp_type_ref cmd_create_context_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_create_context);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -493,7 +493,7 @@ rcp_type_ref cmd_delete_context_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_delete_context);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -527,7 +527,7 @@ rcp_type_ref cmd_login_context_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_login_context);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -561,7 +561,7 @@ rcp_type_ref cmd_update_name_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_update_name);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -590,7 +590,7 @@ rcp_type_ref cmd_send_value_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_send_value);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -629,7 +629,7 @@ rcp_type_ref cmd_set_value_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_set_value);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -673,7 +673,7 @@ rcp_type_ref cmd_unset_value_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_unset_value);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -707,7 +707,7 @@ rcp_type_ref cmd_append_value_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_append_value);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -751,7 +751,7 @@ rcp_type_ref cmd_create_struct_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_create_struct);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -780,7 +780,7 @@ rcp_type_ref cmd_add_struct_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_add_struct);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -803,13 +803,47 @@ rcp_type_ref cmd_add_struct_type(){
 	return s_type;
 }
 
+rcp_type_ref cmd_add_type_type(){
+	
+	rcp_type_ref s_type = rcp_struct_type_new(2);
+	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
+	t_core->size = sizeof (struct cmd_add_type);
+	t_core->type_id = 0x100;
+	t_core->type_name = NULL;
+	t_core->init = rcp_struct_init;
+	t_core->deinit = rcp_struct_deinit;
+	t_core->copy = NULL;
+	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
+
+	struct rcp_type_struct_ext* s_core = 
+		(struct rcp_type_struct_ext*)(t_core+1);
+	s_core->name = rcp_string_new("ttt");
+	s_core->param_count = 2;
+
+	struct rcp_struct_param_core *param = 
+		(struct rcp_struct_param_core*)(s_core+1);
+
+	param->name = rcp_string_new("command");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_add_type, command);
+	param ++;
+
+	param->name = rcp_string_new("name");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_add_type, name);
+	param ++;
+
+	return s_type;
+}
+
 rcp_type_ref cmd_error_type(){
 	
 	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_error);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -848,7 +882,7 @@ rcp_type_ref cmd_caution_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_caution);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -887,7 +921,7 @@ rcp_type_ref cmd_info_type(){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_info);
 	t_core->type_id = 0x100;
-	t_core->type_name = "ttt";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -909,7 +943,7 @@ rcp_type_ref cmd_info_type(){
 
 	return s_type;
 }
-rcp_type_ref rcp_command_type_table[26];
+rcp_type_ref rcp_command_type_table[27];
 
 void rcp_command_type_table_init(){
 
@@ -959,6 +993,8 @@ void rcp_command_type_table_init(){
 		cmd_create_struct_type();
 	rcp_command_type_table[CMD_ADD_STRUCT] = 
 		cmd_add_struct_type();
+	rcp_command_type_table[CMD_ADD_TYPE] = 
+		cmd_add_type_type();
 	rcp_command_type_table[CMD_ERROR] = 
 		cmd_error_type();
 	rcp_command_type_table[CMD_CAUTION] = 

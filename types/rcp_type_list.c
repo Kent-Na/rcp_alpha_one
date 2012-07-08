@@ -14,7 +14,7 @@
 struct rcp_type_core rcp_null_type_def = {
 	0,
 	0,
-	"null",
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -25,7 +25,7 @@ struct rcp_type_core rcp_null_type_def = {
 struct rcp_type_core rcp_ref_type_def = {
 	sizeof(rcp_record_ref*),
 	1,
-	"ref",
+	NULL,
 	rcp_ref_init,
 	rcp_ref_deinit,
 	rcp_ref_copy,
@@ -36,7 +36,7 @@ struct rcp_type_core rcp_ref_type_def = {
 struct rcp_type_core rcp_map_type_def = {
 	sizeof(struct rcp_map_core),
 	16,
-	"map",
+	NULL,
 	rcp_map_init,
 	rcp_map_deinit,
 	NULL,
@@ -47,7 +47,7 @@ struct rcp_type_core rcp_map_type_def = {
 struct rcp_type_core rcp_array_type_def = {
 	sizeof(struct rcp_array_core),
 	18,
-	"array",
+	NULL,
 	rcp_array_init,
 	rcp_array_deinit,
 	NULL,
@@ -58,7 +58,7 @@ struct rcp_type_core rcp_array_type_def = {
 struct rcp_type_core rcp_string_type_def = {
 	sizeof(struct rcp_string_core),
 	20,
-	"string",
+	NULL,
 	rcp_string_init,
 	rcp_string_deinit,
 	rcp_string_copy,
@@ -69,7 +69,7 @@ struct rcp_type_core rcp_string_type_def = {
 struct rcp_type_core rcp_bool8_type_def = {
 	1,
 	25,
-	"bool8",
+	NULL,
 	NULL,
 	NULL,
 	rcp_bool8_copy,
@@ -80,7 +80,7 @@ struct rcp_type_core rcp_bool8_type_def = {
 struct rcp_type_core rcp_bool32_type_def = {
 	4,
 	26,
-	"bool32",
+	NULL,
 	NULL,
 	NULL,
 	rcp_bool32_copy,
@@ -91,7 +91,7 @@ struct rcp_type_core rcp_bool32_type_def = {
 struct rcp_type_core rcp_uint8_type_def = {
 	1,
 	32,
-	"uint8",
+	NULL,
 	NULL,
 	NULL,
 	rcp_uint8_copy,
@@ -102,7 +102,7 @@ struct rcp_type_core rcp_uint8_type_def = {
 struct rcp_type_core rcp_uint16_type_def = {
 	2,
 	33,
-	"uint16",
+	NULL,
 	NULL,
 	NULL,
 	rcp_uint16_copy,
@@ -113,7 +113,7 @@ struct rcp_type_core rcp_uint16_type_def = {
 struct rcp_type_core rcp_uint32_type_def = {
 	4,
 	34,
-	"uint32",
+	NULL,
 	NULL,
 	NULL,
 	rcp_uint32_copy,
@@ -124,7 +124,7 @@ struct rcp_type_core rcp_uint32_type_def = {
 struct rcp_type_core rcp_uint64_type_def = {
 	8,
 	35,
-	"uint64",
+	NULL,
 	NULL,
 	NULL,
 	rcp_uint64_copy,
@@ -135,7 +135,7 @@ struct rcp_type_core rcp_uint64_type_def = {
 struct rcp_type_core rcp_int8_type_def = {
 	1,
 	40,
-	"int8",
+	NULL,
 	NULL,
 	NULL,
 	rcp_int8_copy,
@@ -146,7 +146,7 @@ struct rcp_type_core rcp_int8_type_def = {
 struct rcp_type_core rcp_int16_type_def = {
 	2,
 	41,
-	"int16",
+	NULL,
 	NULL,
 	NULL,
 	rcp_int16_copy,
@@ -157,7 +157,7 @@ struct rcp_type_core rcp_int16_type_def = {
 struct rcp_type_core rcp_int32_type_def = {
 	4,
 	42,
-	"int32",
+	NULL,
 	NULL,
 	NULL,
 	rcp_int32_copy,
@@ -168,7 +168,7 @@ struct rcp_type_core rcp_int32_type_def = {
 struct rcp_type_core rcp_int64_type_def = {
 	8,
 	43,
-	"int64",
+	NULL,
 	NULL,
 	NULL,
 	rcp_int64_copy,
@@ -179,7 +179,7 @@ struct rcp_type_core rcp_int64_type_def = {
 struct rcp_type_core rcp_float_type_def = {
 	4,
 	49,
-	"float",
+	NULL,
 	NULL,
 	NULL,
 	rcp_float_copy,
@@ -190,7 +190,7 @@ struct rcp_type_core rcp_float_type_def = {
 struct rcp_type_core rcp_double_type_def = {
 	8,
 	50,
-	"double",
+	NULL,
 	NULL,
 	NULL,
 	rcp_double_copy,
@@ -201,7 +201,7 @@ struct rcp_type_core rcp_double_type_def = {
 struct rcp_type_core rcp_pointer_type_def = {
 	sizeof(void*),
 	2,
-	"pointer",
+	NULL,
 	NULL,
 	NULL,
 	rcp_pointer_copy,

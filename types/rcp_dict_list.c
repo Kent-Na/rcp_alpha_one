@@ -18,7 +18,7 @@ struct rcp_dict_core{
 	{\
 		sizeof(struct rcp_tree),\
 		0,\
-		"map",\
+		NULL,\
 		rcp_dict_init,\
 		rcp_dict_deinit,\
 		NULL,\

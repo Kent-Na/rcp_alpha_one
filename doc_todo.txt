@@ -6,6 +6,7 @@ Return pong on recive ping frame at web_socket.
 Determin release timing of rcp_connection.
 Write con_web_socket_deinit.
 apply new permission without relogin
+fix memoly reak at execute command with error.
 
 ---wall of done------------
 Set timeout to connection.

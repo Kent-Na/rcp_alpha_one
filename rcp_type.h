@@ -7,7 +7,7 @@
 struct rcp_type_core{
 	size_t size;
 	uint16_t type_id;
-	const char* type_name;
+	rcp_string_ref type_name;
 
 	//It is allowed to re-init data just after init. but not when modefied
 	//or init with extra data like "init_with_c_str".
@@ -35,6 +35,10 @@ struct rcp_type_core{
 
 };
 #endif
+
+rcp_extern void rcp_type_delete(rcp_type_ref type);
+rcp_extern void rcp_type_set_name(rcp_type_ref type, rcp_string_ref str);
+rcp_extern rcp_string_ref rcp_type_name(rcp_type_ref type);
 
 //alloc and init
 rcp_extern rcp_data_ref rcp_new(rcp_type_ref type);

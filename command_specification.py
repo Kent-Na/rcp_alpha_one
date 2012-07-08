@@ -219,7 +219,7 @@ addParameter(command, "ref", "value")
 addParameter(command, "string", "type")
 commandList.append(command)
 
-#Struct
+#Type
 commandList.append({
 	"name":"createStruct",
 	"shortDescription":"",
@@ -231,6 +231,15 @@ commandList.append({
 	"shortDescription":"",
 	"longDescription":"",
 	})
+
+command = {
+	"name":"addType",
+	"shortDescription":"create new type and add to current context",
+	"longDescription":"current implement only support dict(string,ref).",
+	}
+
+addParameter(command, "string", "name")
+commandList.append(command)
 
 #Error
 command = {

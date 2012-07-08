@@ -13,7 +13,7 @@ struct rcp_alias_ext{
 struct rcp_type_core rcp_alias_template = {
 	0,
 	20,
-	"alias",
+	NULL,
 	NULL,//init
 	NULL,//deinit
 	NULL,//copy
@@ -48,6 +48,20 @@ rcp_extern rcp_type_ref rcp_alias_type_new(rcp_type_ref real_type)
 rcp_type_ref rcp_alias_real_type(rcp_type_ref type)
 {
 	return *(rcp_type_ref*)(type + 1);
+}
+int rcp_alias_is(rcp_type_ref type)
+{
+	if (type->init == rcp_alias_init)
+		return 1;
+	if (type->deinit == rcp_alias_deinit)
+		return 1;
+	if (type->copy == rcp_alias_copy)
+		return 1;
+	if (type->compare == rcp_alias_compare)
+		return 1;
+	if (type->write_json == rcp_alias_write_json)
+		return 1;
+	return 0;
 }
 
 void rcp_alias_init(rcp_type_ref type, rcp_data_ref data)

@@ -1,18 +1,11 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 #include "rcp_defines.h"
-#include "rcp_record.h"
 
 #define RCP_INTERNAL_STRUCTURE
 
+#include "rcp_record.h"
 #include "rcp_type.h"
-
-struct rcp_record_core{
-	rcp_type_ref type;
-	uint64_t owner_id;
-	uint32_t ref_count;
-	uint32_t frags;
-};
 
 rcp_extern void rcp_record_delete(rcp_record_ref);
 
