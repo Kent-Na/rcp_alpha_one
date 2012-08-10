@@ -122,5 +122,17 @@ int con_ssl_alive(
 }
 void con_ssl_on_close(rcp_io_ref io)
 {
+	struct con_ssl *st = rcp_io_data(io);
+	int r_val;
+	r_val = SSL_shutdown(st->ssl);
+	if (r_val != 0)
+		rcp_error("ssl close err 1");
+	shutdown(st->fd, 1);
+	r_val = SSL_shutdown(st->ssl);
+	if (r_val != 1)
+		rcp_error("ssl close err 2");
+	SSL_free(st->ssl);
+	close(st->fd);
+	st->fd = -1;
 	return;
 }

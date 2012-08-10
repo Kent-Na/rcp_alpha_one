@@ -68,7 +68,11 @@ size_t con_plain_receive(
 		rcp_error("No connection");
 
 	ssize_t r_len;
+#ifdef MSG_NOSIGNAL
+	r_len = recv(fd, data, len, MSG_NOSIGNAL);
+#else
 	r_len = read(fd, data, len);
+#endif
 
 	if (r_len <= 0){
 		rcp_info("Connection closed");
@@ -94,6 +98,7 @@ void con_plain_on_close(
 		rcp_io_ref io)
 {
 	struct con_plain *st = rcp_io_data(io);
+	close(st->fd);
 	st->fd = -1;
 }
 
