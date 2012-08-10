@@ -4,6 +4,7 @@
 
 rcp_extern rcp_type_ref rcp_alias_type_new(rcp_type_ref real_type);
 rcp_type_ref rcp_alias_real_type(rcp_type_ref type);
+int rcp_alias_is(rcp_type_ref type);
 
 void rcp_alias_init(rcp_type_ref type, rcp_data_ref data);
 void rcp_alias_deinit(rcp_type_ref type, rcp_data_ref data);

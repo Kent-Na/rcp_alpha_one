@@ -24,20 +24,27 @@ con = {
 c.sendCommand(con)
 con = {'command':'loginContext'}
 c.sendCommand(con)
+con = {'command':'addType',
+		'name':'theNewType'}
+#c.sendCommand(con)
 con = {
 	'command':'sendValue',
 	'type':'uint32',
 	'value':100.1234}
-c.sendCommand(con)
+#c.sendCommand(con)
 con = {
 	'command':'sendValue',
 	'type':'string',
 	'value':'message'}
-c.sendCommand(con)
+#c.sendCommand(con)
 con = {
 	'command':'appendValue',
-	'value':'test',
-	'path':102}
+	'value':{
+		'a':'b',
+		'c':'d'},
+	'path':102,
+	'type':'theNewType'
+}
 #c.sendCommand(con)
 con = {
 	'command':'addPermission',

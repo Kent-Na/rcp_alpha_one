@@ -7,6 +7,7 @@ Determin release timing of rcp_connection.
 Write con_web_socket_deinit.
 apply new permission without relogin
 Swap is danger.
+fix memoly reak at execute command with error.
 
 ---wall of done------------
 Set timeout to connection.

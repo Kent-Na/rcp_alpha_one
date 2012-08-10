@@ -2,6 +2,15 @@
 #include "def/rcp_data.h"
 #include "def/rcp_record.h"
 
+#ifdef RCP_INTERNAL_STRUCTURE
+struct rcp_record_core{
+	rcp_type_ref type;
+	uint64_t owner_id;
+	uint32_t ref_count;
+	uint32_t frags;
+};
+#endif
+
 
 #define RCP_REC_FRAG_ACTIVE (1<<0)
 #define RCP_REC_FRAG_OWNED (1<<1)

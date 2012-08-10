@@ -58,6 +58,7 @@ mainFiles = [
 	'rcp_ssl.c',
 	'rcp_tree.c',
 	'rcp_record.c',
+	'rcp_caster.c',
 	'rcp_type.c',
 	'rcp_type_utility.c',
 	'rcp_user.c',

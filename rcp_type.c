@@ -1,10 +1,27 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 #include "rcp_defines.h"
+#include "types/rcp_string.h"
 
 #define RCP_INTERNAL_STRUCTURE
 
 #include "rcp_type.h"
+
+rcp_extern void rcp_type_delete(rcp_type_ref type)
+{
+	rcp_string_delete(type->type_name);
+	free(type);
+}
+rcp_extern void rcp_type_set_name(rcp_type_ref type, rcp_string_ref str)
+{
+	if (type->type_name && type->type_name != str)
+		rcp_string_delete(type->type_name);
+	type->type_name = str;
+}
+rcp_extern rcp_string_ref rcp_type_name(rcp_type_ref type)
+{
+	return type->type_name;
+}
 
 rcp_extern rcp_data_ref rcp_new(rcp_type_ref type)
 {

@@ -29,8 +29,11 @@
 #include "types/rcp_string.h"
 #include "types/rcp_number.h"
 #include "types/rcp_type_list.h"
+#include "types/rcp_alias.h"
 
 #include "rcp_context.h"
+
+#include "rcp_caster.h"
 
 
 struct rcp_context_core{
@@ -42,7 +45,7 @@ struct rcp_context_core{
 
 	uint64_t base_permission;
 
-	//string _ ptr
+	//string - ptr
 	rcp_dict_ref types;
 
 	//connections that closed but not send "removeUser" command. 
@@ -264,9 +267,24 @@ void rcp_context_send_all_array_data(
 	cmd.command = rcp_string_new_rec(CMD_STR_APPEND_VALUE);
 
 	while (node){
-		cmd.value = *(rcp_record_ref*)rcp_array_iterater_data(tlo, node);
+		rcp_record_ref rec = 
+			*(rcp_record_ref*)rcp_array_iterater_data(tlo, node);
+		
+		rcp_string_ref type_name = rcp_type_name(rcp_record_type(rec));
+		if (type_name){	
+			cmd.type = rcp_record_new(rcp_string_type);
+			rcp_copy(rcp_string_type,
+					(rcp_data_ref)type_name,
+					rcp_record_data(cmd.type));
+		}
+		else{
+			cmd.type = NULL;
+		}
+
+		cmd.value = rec;
 
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
+		rcp_record_release(cmd.type);	
 		node = rcp_array_iterater_next(tlo, node);
 	}
 
@@ -600,11 +618,60 @@ rcp_extern void rcp_context_execute_command_rec(
 		if (! cmd_st.value)
 			return;
 
+		if (cmd_st.type && rcp_record_type(cmd_st.type) == rcp_string_type){
+			rcp_dict_node_ref node = rcp_dict_find(ctx->types,
+					rcp_record_data(cmd_st.type));
+
+			if (!node){
+				rcp_context_send_caution(con, cmd_rec, 
+						"No such type.");
+				return;
+			}
+
+			rcp_type_ref dst_type = *(rcp_type_ref*)
+				rcp_dict_node_data(rcp_str_ptr_dict, node);
+			
+			rcp_record_change_type(cmd_st.value, dst_type);
+			if (rcp_record_type(cmd_st.value) != dst_type){
+				rcp_context_send_caution(con, cmd_rec, 
+						"Can not cast.");
+				return;
+			}
+		}
+
 		rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
 		rcp_array_ref tlo = (rcp_array_ref)rcp_record_data(tlo_rec);
 		rcp_array_append(tlo, &cmd_st.value);
 
 		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)&cmd_st);
+		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
+	}
+	if (command_type == CMD_ADD_TYPE){
+		struct cmd_add_type cmd_st;
+		rcp_type_ref cmd_type = rcp_command_type(CMD_ADD_TYPE);
+		rcp_init(cmd_type, (rcp_data_ref)&cmd_st);
+		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
+			cmd_type, (rcp_struct_ref)&cmd_st);
+
+		if (cmd_st.name && rcp_record_type(cmd_st.name) != rcp_string_type)
+			return;
+
+		rcp_type_ref new_type = rcp_alias_type_new(rcp_str_ref_dict);
+		rcp_dict_node_ref node = rcp_dict_node_new(rcp_str_ptr_dict);
+		rcp_copy(rcp_string_type,
+				rcp_record_data(cmd_st.name),
+				rcp_dict_node_key(rcp_str_ptr_dict, node));
+		rcp_copy(rcp_pointer_type,
+				(rcp_data_ref)&new_type,
+				rcp_dict_node_data(rcp_str_ptr_dict, node));
+		rcp_dict_set_node(ctx->types, node);
+
+		rcp_data_ref name = rcp_new(rcp_string_type);
+		rcp_copy(rcp_string_type,
+				rcp_record_data(cmd_st.name),
+				name);
+		rcp_type_set_name(new_type, (rcp_string_ref)name);
+
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
 	}
 }

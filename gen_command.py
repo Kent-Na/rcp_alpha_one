@@ -33,7 +33,7 @@ genFuncCoreTemplate = """
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct {c_struct_name});
 	t_core->type_id = 0x100;
-	t_core->type_name = "{rcp_type_name}";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;
@@ -117,7 +117,6 @@ for info in commandList:
 	fragment = genFuncCoreTemplate.format(
 			param_count = len(info['parameters']),
 			c_struct_name = c_struct_name,
-			rcp_type_name = "ttt",
 			revert_domain_name = "ttt")
 	for param in sorted(info['parameters'], key = lambda i:i['name']):
 		fragment += genFuncParamTemplate.format(

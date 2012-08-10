@@ -26,7 +26,7 @@ int test_struct(void){
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct pm_task);
 	t_core->type_id = 0x100;
-	t_core->type_name = "pm_task";
+	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
 	t_core->deinit = rcp_struct_deinit;
 	t_core->copy = NULL;

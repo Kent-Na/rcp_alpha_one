@@ -118,6 +118,11 @@ struct cmd_add_struct{
 	rcp_record_ref command;
 };
 
+struct cmd_add_type{
+	rcp_record_ref name;
+	rcp_record_ref command;
+};
+
 struct cmd_error{
 	rcp_record_ref cause;
 	rcp_record_ref reason;
