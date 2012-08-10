@@ -20,6 +20,8 @@ int main (int argc, const char** argv)
 
 	SSL_library_init();
 	rcp_ssl_ctx_init();
+	
+	rcp_db_connect();
 
 	rcp_shared_sender_cluster_init();
 

@@ -54,9 +54,6 @@ size_t rcp_context_size = sizeof (struct rcp_context_core);
 void rcp_context_send_record(rcp_context_ref ctx, rcp_record_ref cmd);
 void rcp_context_send_data(rcp_context_ref ctx, 
 		rcp_type_ref type, rcp_data_ref cmd);
-void rcp_context_send_data_to(
-		rcp_context_ref ctx, rcp_connection_ref con,
-		rcp_type_ref type, rcp_data_ref cmd);
 
 void rcp_context_clean_dead(rcp_context_ref ctx);
 void rcp_context_send_all_data(
@@ -128,7 +125,8 @@ void rcp_context_send_data(rcp_context_ref ctx,
 	rcp_sender_cluster_clean_up(cls);
 	rcp_context_clean_dead(ctx);
 }
-void rcp_context_send_data_to(
+/*
+void rcp_connection_send_data(
 		rcp_context_ref ctx, rcp_connection_ref con,
 		rcp_type_ref type, rcp_data_ref data)
 {
@@ -142,6 +140,7 @@ void rcp_context_send_data_to(
 		rcp_context_test_and_kill(ctx, con);
 	rcp_sender_cluster_clean_up(cls);
 }
+*/
 void rcp_context_add_connection(rcp_context_ref ctx, 
 		rcp_connection_ref con)
 {
@@ -246,7 +245,7 @@ void rcp_context_send_all_con(rcp_context_ref ctx, rcp_connection_ref con)
 		cmd.username = rcp_connection_username(con_t);
 		rcp_record_retain(cmd.username);
 
-		rcp_context_send_data_to(ctx, con, cmd_type, (rcp_data_ref)&cmd);
+		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
 
 		node = rcp_tree_node_next(node);
@@ -267,7 +266,7 @@ void rcp_context_send_all_array_data(
 	while (node){
 		cmd.value = *(rcp_record_ref*)rcp_array_iterater_data(tlo, node);
 
-		rcp_context_send_data_to(ctx, con, cmd_type, (rcp_data_ref)&cmd);
+		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 		node = rcp_array_iterater_next(tlo, node);
 	}
 
@@ -323,8 +322,7 @@ void rcp_context_send_caution(rcp_connection_ref con,
 	cmd.cause = rcp_record_retain(cause);
 	cmd.reason = rcp_string_new_rec(reason);
 	
-	rcp_context_ref ctx = rcp_connection_context(con);
-	rcp_context_send_data_to(ctx, con, cmd_type, (rcp_data_ref)&cmd);
+	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
 }
 
@@ -398,7 +396,44 @@ rcp_extern void rcp_context_execute_command_rec(
 		rcp_context_add_connection(ctx, con);
 	}
 
+	if (command_type == CMD_CREATE_USER){
+		struct cmd_create_user cmd_recv;
+		rcp_type_ref cmd_type = rcp_command_type(CMD_CREATE_USER);
+		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
+		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
+				cmd_type, (rcp_struct_ref)&cmd_recv);
+
+		rcp_string_ref username = 
+			(rcp_string_ref)rcp_record_data(cmd_recv.username);
+		rcp_string_ref password = 
+			(rcp_string_ref)rcp_record_data(cmd_recv.password);
+
+		int r = rcp_user_create(rcp_string_c_str(username),
+								rcp_string_c_str(password));
+
+		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_recv);
+	}
 	if (command_type == CMD_LOGIN_USER){
+		struct cmd_login_user cmd_recv;
+		rcp_type_ref cmd_type = rcp_command_type(CMD_LOGIN_USER);
+		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
+		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
+				cmd_type, (rcp_struct_ref)&cmd_recv);
+
+		rcp_string_ref username = 
+			(rcp_string_ref)rcp_record_data(cmd_recv.username);
+		rcp_string_ref password = 
+			(rcp_string_ref)rcp_record_data(cmd_recv.password);
+
+		int r = rcp_user_autenticate(rcp_string_c_str(username),
+									rcp_string_c_str(password));
+		if (r != 1)
+			rcp_info("login fail");
+		rcp_info("login done");
+
+		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_recv);
+	}
+	if ( 0 && command_type == CMD_LOGIN_USER){
 		if (rcp_connection_username(con)){
 			rcp_context_send_caution(con, cmd_rec, 
 					"you are already user logined");

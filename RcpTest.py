@@ -4,6 +4,19 @@ c = RcpConnection()
 c.connectToDefaultServer()
 c.run()
 con = {
+	'command':'createUser',
+	'username':'cz',
+	'password':'nk'
+}
+c.sendCommand(con)
+con = {
+	'command':'loginUser',
+	'username':'cz',
+	'password':'nk'
+}
+c.sendCommand(con)
+"""
+con = {
 	'command':'loginUser',
 	'username':'black',
 	'password':'bbbox'
@@ -39,3 +52,4 @@ c.receiveCommand()
 c.receiveCommand()
 c.receiveCommand()
 c.receiveCommand()
+"""

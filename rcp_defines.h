@@ -8,5 +8,11 @@
 #define RCP_SSL_CERTIFICATE_FILE_PATH ("key/certificate.pem")
 #define RCP_SSL_PRIVATEKEY_FILE_PATH ("key/key.pem")
 
+#define RCP_SERVER_SALT ("tIIMJNHnjkfKsPiH")
+
+#define RCP_DB_USER ("czel")
+#define RCP_DB_PASSWORD ("construct")
+#define RCP_DB_NAME ("rcp")
+
 //if defined this macro, run time self test will be execute.
 #define RCP_SELF_TEST (1)

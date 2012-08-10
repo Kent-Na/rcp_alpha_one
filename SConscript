@@ -9,7 +9,9 @@ env.Replace(CXX = 'g++-4.6')
 env.Append(CCFLAGS = ['-Wall','-g'])
 env.Append(CFLAGS = ['-Wno-pointer-sign','-Wno-deprecated-declarations'])
 env.Append(CXXFLAGS = ['-xc++','-std=gnu++0x'])
-env.Append(LIBS = ['ssl','m','crypto'])
+env.Append(LIBS = ['ssl','m','crypto','pq'])
+env.Append(LIBPATH = ['/usr/local/pgsql/lib'])
+env.Append(CPPPATH = ['/usr/local/pgsql/include'])
 
 types = [
 	'types/rcp_array.c',
@@ -46,6 +48,7 @@ mainFiles = [
 	'rcp_event_kqueue.c',
 	'rcp_json.c',
 	'rcp_json_write.c',
+	'rcp_send_as_command.c',
 	'rcp_listener.c',
 	'rcp_receiver.c',
 	'rcp_receiver_classes.c',
@@ -59,6 +62,7 @@ mainFiles = [
 	'rcp_type_utility.c',
 	'rcp_user.c',
 	'rcp_utility.c',
+	'rcp_user_pgsql.c',
 ]
 
 mainFiles.extend(types)

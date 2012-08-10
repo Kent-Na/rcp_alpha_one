@@ -7,6 +7,9 @@
 #include "def/rcp_context.h"
 #include "def/rcp_record.h"
 
+#include "def/rcp_type.h"
+#include "def/rcp_data.h"
+
 //rcp_connections
 
 rcp_extern
@@ -26,6 +29,9 @@ void rcp_connection_set_receiver(
 
 rcp_extern
 void rcp_connection_send(rcp_connection_ref con);
+rcp_extern
+void rcp_connection_send_data(rcp_connection_ref con,
+		rcp_type_ref type, rcp_data_ref data);
 rcp_extern
 void rcp_connection_on_receive(rcp_connection_ref con);
 rcp_extern

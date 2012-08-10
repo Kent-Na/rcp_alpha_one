@@ -14,6 +14,7 @@ rcp_context_ref rcp_context_create(uint32_t id);
 rcp_extern void rcp_listen_start(int epfd);
 rcp_extern void rcp_listen_end();
 
+rcp_extern void rcp_db_connect();
 
 ///
 //should be thread local resources

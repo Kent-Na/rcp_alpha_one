@@ -87,8 +87,20 @@ void rcp_connection_send(rcp_connection_ref con)
 	rcp_io_send(con->io, begin, end-begin);
 }
 
-extern void rcp_context_remove_connection(
-		rcp_context_ref ctx, rcp_connection_ref con);
+void rcp_connection_send_data(
+		rcp_connection_ref con,
+		rcp_type_ref type, rcp_data_ref data)
+{
+	if (!con)
+		return;
+
+	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
+	rcp_sender_cluster_set_data(cls, type, data);
+	rcp_connection_send(con);
+	if (con->ctx)
+		rcp_context_test_and_kill(con->ctx, con);
+	rcp_sender_cluster_clean_up(cls);
+}
 
 void rcp_connection_on_receive(rcp_connection_ref con)
 {
