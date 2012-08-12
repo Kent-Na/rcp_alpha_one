@@ -7,6 +7,7 @@
 #include "rcp_sender.h"
 #include "rcp_receiver.h"
 #include "rcp_connection.h"
+#include "rcp_context.h"
 
 #include "rcp_listener.h"
 
@@ -125,6 +126,9 @@ rcp_connection_ref rcp_listener_connection_new(
 
 	rcp_receiver_ref receiver = rcp_receiver_new(klass->receiver_klass);
 	rcp_connection_set_receiver(con, receiver);
+
+	rcp_login_root_context(con);
+
 	return con;
 }
 

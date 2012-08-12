@@ -143,23 +143,24 @@ commandList.append(command)
 
 ##createContext
 command = {
-	"name":"createContext",
+	"name":"addContext",
 	"shortDescription":"",
 	"longDescription":"",
 	"possibleErrors":["Permission denied"],
 	"returnParameters":["contextID"],
 	}
 
+addParameter(command, "string", "name")
 commandList.append(command)
 
 command = {
-	"name":"deleteContext",
+	"name":"removeContext",
 	"shortDescription":"",
 	"longDescription":"",
 	"possibleErrors":["Permission denied"],
 	}
 
-addParameter(command, "uint32", "contextID")
+addParameter(command, "string", "name")
 commandList.append(command)
 
 command = {
@@ -169,7 +170,7 @@ command = {
 	"possibleErrors":["Context not found","Permission denied"],
 	}
 
-addParameter(command, "uint32", "contextID")
+addParameter(command, "string", "name")
 commandList.append(command)
 
 commandList.append({

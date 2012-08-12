@@ -20,3 +20,6 @@ rcp_extern void rcp_context_execute_command_rec(
 		rcp_connection_ref con, rcp_record_ref cmd);
 
 void rcp_context_page_in(rcp_context_ref ctx);
+
+rcp_extern void rcp_login_root_context(
+		rcp_connection_ref con);

@@ -67,17 +67,18 @@ struct cmd_remove_permission{
 	rcp_record_ref command;
 };
 
-struct cmd_create_context{
+struct cmd_add_context{
+	rcp_record_ref name;
 	rcp_record_ref command;
 };
 
-struct cmd_delete_context{
-	uint32_t contextID;
+struct cmd_remove_context{
+	rcp_record_ref name;
 	rcp_record_ref command;
 };
 
 struct cmd_login_context{
-	uint32_t contextID;
+	rcp_record_ref name;
 	rcp_record_ref command;
 };
 
