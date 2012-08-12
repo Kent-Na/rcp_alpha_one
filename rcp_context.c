@@ -269,8 +269,10 @@ void rcp_context_send_all_sub_ctx(rcp_context_ref ctx,
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 
 		cmd.command = rcp_string_new_rec(CMD_STR_ADD_CONTEXT);
-		cmd.name = (rcp_string_ref)rcp_dict_node_key(
-				rcp_str_ptr_dict, node);
+		cmd.name = rcp_string_new_rec(
+				rcp_string_c_str(
+					(rcp_string_ref)rcp_dict_node_key(
+						rcp_str_ptr_dict, node)));
 		rcp_record_retain(cmd.name);
 
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
