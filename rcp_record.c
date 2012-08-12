@@ -56,17 +56,17 @@ void rcp_record_delete(rcp_record_ref rec)
 
 rcp_type_ref rcp_record_type(rcp_record_ref rec)
 {
-		return rec->type;
+	return rec->type;
 }
 
 rcp_data_ref rcp_record_data(rcp_record_ref rec)
 {
 #ifdef RCP_SELF_TEST
-		if (!rec){
-					rcp_caution("request null rec data");
-							return NULL;
-								}
+	if (!rec){
+		rcp_caution("request null rec data");
+			return NULL;
+	}
 #endif
-			return (rcp_data_ref)(rec + 1);
+	return (rcp_data_ref)(rec + 1);
 }
 

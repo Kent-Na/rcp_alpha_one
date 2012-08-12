@@ -261,8 +261,11 @@ addParameter(command, "string", "cause")
 addParameter(command, "string", "reason")
 commandList.append(command)
 
-commandList.append({
+command = {
 	"name":"info",
 	"shortDescription":"",
 	"longDescription":"Send from server when someting important but not faital thing happened.",
-	})
+	}
+addParameter(command, "string", "info")
+addParameter(command, "string", "cause")
+commandList.append(command)

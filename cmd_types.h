@@ -136,6 +136,8 @@ struct cmd_caution{
 };
 
 struct cmd_info{
+	rcp_record_ref info;
+	rcp_record_ref cause;
 	rcp_record_ref command;
 };
 

@@ -5,17 +5,21 @@ c.connectToDefaultServer()
 c.run()
 con = {
 	'command':'createUser',
-	'username':'cz',
-	'password':'nk'
-}
-c.sendCommand(con)
-con = {
-	'command':'loginUser',
-	'username':'cz',
-	'password':'nk'
+	'username':'okd',
+	'password':'okd'
 }
 c.sendCommand(con)
 """
+con = {
+	'command':'kill'
+}
+c.sendCommand(con)
+con = {
+	'command':'createUser',
+	'username':'okd',
+	'password':'okd'
+}
+c.sendCommand(con)
 con = {
 	'command':'loginUser',
 	'username':'black',

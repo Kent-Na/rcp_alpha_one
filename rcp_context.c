@@ -344,6 +344,21 @@ void rcp_context_send_caution(rcp_connection_ref con,
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
 }
 
+void rcp_context_send_info(rcp_connection_ref con, 
+		rcp_record_ref cause, const char* info)
+{
+	struct cmd_info cmd;
+	rcp_type_ref cmd_type=rcp_command_type(CMD_INFO);
+	rcp_init(cmd_type, (rcp_data_ref)&cmd);
+	cmd.command = rcp_string_new_rec(CMD_STR_INFO);
+
+	cmd.cause = rcp_record_retain(cause);
+	cmd.info= rcp_string_new_rec(info);
+	
+	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
+	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+}
+
 rcp_extern void rcp_context_execute_command_rec(
 		rcp_context_ref ctx,
 		rcp_connection_ref con, rcp_record_ref cmd_rec)
@@ -432,11 +447,22 @@ rcp_extern void rcp_context_execute_command_rec(
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_recv);
 	}
 	if (command_type == CMD_LOGIN_USER){
+		if (rcp_connection_username(con)){
+			rcp_context_send_caution(con, cmd_rec, 
+					"you are already user logined");
+			return;
+		}
 		struct cmd_login_user cmd_recv;
 		rcp_type_ref cmd_type = rcp_command_type(CMD_LOGIN_USER);
 		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
 		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
 				cmd_type, (rcp_struct_ref)&cmd_recv);
+
+		if (!(cmd_recv.username && cmd_recv.password)){
+			rcp_context_send_caution(con, cmd_rec, 
+					"Not enough parameters.");
+			return;
+		}
 
 		rcp_string_ref username = 
 			(rcp_string_ref)rcp_record_data(cmd_recv.username);
@@ -445,9 +471,15 @@ rcp_extern void rcp_context_execute_command_rec(
 
 		int r = rcp_user_autenticate(rcp_string_c_str(username),
 									rcp_string_c_str(password));
-		if (r != 1)
-			rcp_info("login fail");
-		rcp_info("login done");
+		if (r != 1){
+			rcp_context_send_caution(con, cmd_rec, 
+					"Inncorrect username and password pair.");
+		}
+		else{
+			rcp_connection_set_username(con, cmd_recv.username);
+			rcp_context_send_info(con, 
+					cmd_rec, "Loggin succeed.");
+		}
 
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_recv);
 	}
