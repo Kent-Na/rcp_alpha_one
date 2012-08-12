@@ -127,7 +127,7 @@ rcp_extern
 void rcp_connection_set_context(
 		rcp_connection_ref con, rcp_context_ref ctx)
 {
-	rcp_assert(con->ctx == NULL,"double ctx login");
+	//rcp_assert(con->ctx == NULL,"double ctx login");
 	con->ctx = ctx;
 }
 rcp_extern

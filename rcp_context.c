@@ -630,6 +630,7 @@ rcp_extern void rcp_context_execute_command_rec(
 		if (!cmd_recv.name){
 			rcp_context_send_caution(con, cmd_rec, 
 					"Not enough parameters.");
+			return;
 		}
 
 		rcp_dict_node_ref node;
@@ -655,11 +656,14 @@ rcp_extern void rcp_context_execute_command_rec(
 					"not enough permission");
 			return;
 		}
+		rcp_context_send_info(con, 
+				cmd_rec, "Loggin succeed.");
 		
+		rcp_context_remove_connection(rcp_connection_context(con), con);
+
 		rcp_context_send_all_con(ctx, con);
 		rcp_context_send_all_data(ctx, con);	
 		rcp_context_send_all_sub_ctx(ctx, con);	
-		rcp_context_remove_connection(rcp_connection_context(con), con);
 		rcp_context_add_connection(ctx, con);
 	}
 
