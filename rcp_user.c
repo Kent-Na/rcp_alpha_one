@@ -138,9 +138,9 @@ int rcp_user_exist(const char* username)
 	rcp_user_load(username, &u_rec);
 	if (u_rec.username){
 		rcp_user_record_deinit(&u_rec);
-		return 0;
+		return 1;
 	}
-	return 1;
+	return 0;
 }
 
 int rcp_user_autenticate(const char* username, const char* password)
