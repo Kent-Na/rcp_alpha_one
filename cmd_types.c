@@ -2,13 +2,13 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 #include "rcp_tree.h"
-#include "rcp_command_list.h"
 #include "rcp_json_write.h"
 #define RCP_INTERNAL_STRUCTURE
 #include "types/rcp_type_list.h"
 #include "types/rcp_string.h"
 #include "types/rcp_struct.h"
 #include "rcp_type.h"
+#include "cmd_list.h"
 #include "cmd_types.h"
 
 rcp_type_ref cmd_open_type(){
@@ -957,67 +957,4 @@ rcp_type_ref cmd_info_type(){
 	param ++;
 
 	return s_type;
-}
-rcp_type_ref rcp_command_type_table[27];
-
-void rcp_command_type_table_init(){
-
-	rcp_command_type_table[CMD_OPEN] = 
-		cmd_open_type();
-	rcp_command_type_table[CMD_KILL] = 
-		cmd_kill_type();
-	rcp_command_type_table[CMD_DUMP] = 
-		cmd_dump_type();
-	rcp_command_type_table[CMD_CLOSE] = 
-		cmd_close_type();
-	rcp_command_type_table[CMD_PING] = 
-		cmd_ping_type();
-	rcp_command_type_table[CMD_PONG] = 
-		cmd_pong_type();
-	rcp_command_type_table[CMD_CREATE_USER] = 
-		cmd_create_user_type();
-	rcp_command_type_table[CMD_DELETE_USER] = 
-		cmd_delete_user_type();
-	rcp_command_type_table[CMD_LOGIN_USER] = 
-		cmd_login_user_type();
-	rcp_command_type_table[CMD_ADD_USER] = 
-		cmd_add_user_type();
-	rcp_command_type_table[CMD_REMOVE_USER] = 
-		cmd_remove_user_type();
-	rcp_command_type_table[CMD_ADD_PERMISSION] = 
-		cmd_add_permission_type();
-	rcp_command_type_table[CMD_REMOVE_PERMISSION] = 
-		cmd_remove_permission_type();
-	rcp_command_type_table[CMD_ADD_CONTEXT] = 
-		cmd_add_context_type();
-	rcp_command_type_table[CMD_REMOVE_CONTEXT] = 
-		cmd_remove_context_type();
-	rcp_command_type_table[CMD_LOGIN_CONTEXT] = 
-		cmd_login_context_type();
-	rcp_command_type_table[CMD_UPDATE_NAME] = 
-		cmd_update_name_type();
-	rcp_command_type_table[CMD_SEND_VALUE] = 
-		cmd_send_value_type();
-	rcp_command_type_table[CMD_SET_VALUE] = 
-		cmd_set_value_type();
-	rcp_command_type_table[CMD_UNSET_VALUE] = 
-		cmd_unset_value_type();
-	rcp_command_type_table[CMD_APPEND_VALUE] = 
-		cmd_append_value_type();
-	rcp_command_type_table[CMD_CREATE_STRUCT] = 
-		cmd_create_struct_type();
-	rcp_command_type_table[CMD_ADD_STRUCT] = 
-		cmd_add_struct_type();
-	rcp_command_type_table[CMD_ADD_TYPE] = 
-		cmd_add_type_type();
-	rcp_command_type_table[CMD_ERROR] = 
-		cmd_error_type();
-	rcp_command_type_table[CMD_CAUTION] = 
-		cmd_caution_type();
-	rcp_command_type_table[CMD_INFO] = 
-		cmd_info_type();
-}
-
-rcp_type_ref rcp_command_type(rcp_command_type_t command_id){
-	return rcp_command_type_table[command_id];
 }

@@ -1,10 +1,9 @@
-//key:str value:any tree
+#include "def/rcp_tree.h"
 
-typedef struct rcp_tree *rcp_tree_ref;
 typedef struct rcp_tree_node_core *rcp_tree_node_ref;
 
 #ifdef RCP_INTERNAL_STRUCTURE
-struct rcp_tree{
+struct rcp_tree_core{
 	rcp_tree_node_ref root;
 	int (*compare)(const void *extra_data, void *l, void *r);
 	void* extra_data;

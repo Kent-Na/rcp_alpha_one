@@ -5,7 +5,8 @@
 
 #include "rcp_connection.h"
 
-#include "rcp_command_list.h"
+#include "rcp_command.h"
+#include "cmd_list.h"
 #include "cmd_types.h"
 
 #include "types/rcp_string.h"

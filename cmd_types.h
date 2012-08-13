@@ -141,7 +141,3 @@ struct cmd_info{
 	rcp_record_ref cause;
 	rcp_record_ref command;
 };
-
-rcp_type_ref rcp_command_type(rcp_command_type_t command_id);
-
-void rcp_command_type_table_init();

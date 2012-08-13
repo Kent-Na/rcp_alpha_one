@@ -5,9 +5,7 @@
 
 #include "rcp_ssl.h"
 
-#include "rcp_command_list.h"
-#include "rcp_command.h"
-#include "cmd_types.h"
+#include "cmd_table.h"
 
 #include "rcp_event.h"
 #include "rcp_server.h"
@@ -25,7 +23,7 @@ int main (int argc, const char** argv)
 
 	rcp_shared_sender_cluster_init();
 
-	rcp_command_type_table_init();
+	rcp_command_table_init();
 	rcp_context_manager_init();
 	rcp_context_create(0);
 

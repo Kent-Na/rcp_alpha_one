@@ -1,31 +1,25 @@
-rcp_extern rcp_command_type_t rcp_command_from_str(const char* str);
+#include "def/rcp_type.h"
+#include "def/rcp_context.h"
+#include "def/rcp_connection.h"
+#include "def/rcp_record.h"
+#include "def/rcp_command.h"
 
-typedef struct rcp_connection rcp_connection;
+typedef uint8_t rcp_command_id_t;
 
-typedef uint32_t rcp_login_id;
-struct rcp_command_t{
-	rcp_command_type_t type;
-	rcp_connection *con;
-	//forrowed by command specific paramaters
+struct rcp_command_core{
+	rcp_command_id_t cmd;
+	const char* cmd_str;
+	rcp_type_ref cmd_type;
+
+	void(*cmd_impl)(
+			rcp_context_ref ctx,
+			rcp_connection_ref con,
+			rcp_record_ref cmd_rec,
+			rcp_type_ref cmd_type,
+			void* cmd);
 };
 
-struct rcp_short_command_t{
-	uint8_t len;				//	1byte
-	rcp_command_type_t type;		//	1byte
-	rcp_login_id login_id;		//	4byte
-};
+rcp_extern rcp_type_ref rcp_command_type(rcp_command_id_t id);
+rcp_extern rcp_command_ref rcp_command_from_str(const char* str);
+rcp_extern rcp_command_ref rcp_command_from_id(rcp_command_id_t id);
 
-
-//command
-
-//connection
-//	userID
-//	loginID
-//	context	
-
-///	server_states
-//	user_database
-//	type_manager
-//	context_manager
-//	connection_manager
-//		epoll

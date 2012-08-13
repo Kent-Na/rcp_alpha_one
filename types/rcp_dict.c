@@ -16,7 +16,7 @@
 //
 
 struct rcp_type_core rcp_dict_type_def = {
-	sizeof(struct rcp_tree),
+	sizeof(struct rcp_tree_core),
 	0,
 	NULL,
 	rcp_dict_init,//init

@@ -35,12 +35,16 @@ connections = [
 	'connections/con_web_socket.c',
 	]
 
+commands = [
+	'cmd_impl.c',
+	'cmd_table.c',
+	'cmd_types.c',
+	]
+
 
 mainFiles = [
-	'cmd_types.c',
 	'rcp_buffer.c',
 	'rcp_command.c',
-	'rcp_command_list.c',
 	'rcp_command_type.c',
 	'rcp_connection.c',
 	'rcp_context.c',
@@ -68,6 +72,7 @@ mainFiles = [
 
 mainFiles.extend(types)
 mainFiles.extend(connections)
+mainFiles.extend(commands)
 
 tests = [
 	'tests/test_json.cpp',

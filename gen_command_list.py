@@ -4,7 +4,7 @@ from command_specification import *
 ##generater constants
 ##
 
-cBaseFileName = 'rcp_command_list'
+cBaseFileName = 'cmd_list'
 outPutCHeader = open(cBaseFileName+'.h','w')
 outPutCFile = open(cBaseFileName+'.c','w')
 

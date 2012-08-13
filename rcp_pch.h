@@ -27,3 +27,4 @@
 #endif
 
 #include <openssl/ssl.h>
+#include <openssl/rand.h>

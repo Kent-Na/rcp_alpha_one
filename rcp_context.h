@@ -1,6 +1,29 @@
 #include "def/rcp_context.h"
 #include "def/rcp_connection.h"
 #include "def/rcp_record.h"
+#include "def/rcp_string.h"
+#include "def/rcp_tree.h"
+
+#ifdef RCP_INTERNAL_STRUCTURE
+struct rcp_context_core{
+	rcp_record_ref top_level_record;
+	rcp_tree_ref connections;
+
+	//string - uint64
+	rcp_dict_ref permissions;
+
+	uint64_t base_permission;
+
+	//string - ptr
+	rcp_dict_ref types;
+
+	//connections that closed but not send "removeUser" command. 
+	rcp_array_ref dead;
+
+	//string - ptr
+	rcp_dict_ref sub_context;
+};
+#endif
 
 rcp_extern rcp_context_ref rcp_context_new();
 rcp_extern void rcp_context_init(rcp_context_ref ctx);
@@ -12,6 +35,9 @@ rcp_extern void rcp_context_add_connection(rcp_context_ref ctx,
 rcp_extern void rcp_context_remove_connection(rcp_context_ref ctx,
 		rcp_connection_ref con);
 
+void rcp_context_test_and_kill(
+		rcp_context_ref ctx, rcp_connection_ref con);
+
 //data management
 rcp_extern rcp_record_ref rcp_context_top_level_record(rcp_context_ref ctx);
 
@@ -20,6 +46,26 @@ rcp_extern void rcp_context_execute_command_rec(
 		rcp_connection_ref con, rcp_record_ref cmd);
 
 void rcp_context_page_in(rcp_context_ref ctx);
+void rcp_context_page_out(rcp_context_ref ctx);
 
 rcp_extern void rcp_login_root_context(
 		rcp_connection_ref con);
+
+void rcp_context_send_data(rcp_context_ref ctx, 
+		rcp_type_ref type, rcp_data_ref data);
+void rcp_context_send_all_con(
+		rcp_context_ref ctx, rcp_connection_ref con);
+void rcp_context_send_all_data(
+		rcp_context_ref ctx, rcp_connection_ref con);
+void rcp_context_send_all_sub_ctx(
+		rcp_context_ref ctx, rcp_connection_ref con);
+void rcp_context_send_caution(rcp_connection_ref con, 
+		rcp_record_ref cause, const char* reason);
+void rcp_context_send_info(rcp_connection_ref con, 
+		rcp_record_ref cause, const char* info);
+
+int64_t rcp_context_permission(
+		rcp_context_ref ctx, rcp_string_ref username);
+
+void rcp_context_set_permission(
+		rcp_context_ref ctx, rcp_string_ref username, int64_t pms);

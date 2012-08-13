@@ -3,12 +3,41 @@ from RcpConnection import *
 c = RcpConnection()
 c.connectToDefaultServer()
 c.run()
+
 con = {
 	'command':'createUser',
-	'username':'okd',
-	'password':'okd'
+	'username':'cz',
+	'password':'const'
+}
+#c.sendCommand(con)
+
+con = {
+	'command':'loginUser',
+	'username':'cz',
+	'password':'const'
 }
 c.sendCommand(con)
+
+con = {
+	'command':'addContext',
+	'name':'cz',
+}
+c.sendCommand(con)
+
+con = {
+	'command':'loginContext',
+	'name':'cz',
+}
+c.sendCommand(con)
+
+con = {
+	'command':'sendValue',
+	'type':'uint32',
+	'value':100.1234}
+c.sendCommand(con)
+
+c.receiveCommand()
+c.receiveCommand()
 """
 con = {
 	'command':'kill'

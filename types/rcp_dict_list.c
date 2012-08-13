@@ -16,7 +16,7 @@ struct rcp_dict_core{
 
 #define RCP_DICT_TEMPLATEA \
 	{\
-		sizeof(struct rcp_tree),\
+		sizeof(struct rcp_tree_core),\
 		0,\
 		NULL,\
 		rcp_dict_init,\

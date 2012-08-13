@@ -11,9 +11,13 @@ typeList = [
 	#'event', special case
 	'event_action',
 
+	'command',
+
 	'type',
 	'data',
 	'record',
+	
+	'tree',
 
 	'string',
 

@@ -7,7 +7,7 @@
 struct rcp_map_core{
 	rcp_type_ref key_type;
 	rcp_type_ref value_type;
-	struct rcp_tree t_core;
+	struct rcp_tree_core t_core;
 };
 #endif
 

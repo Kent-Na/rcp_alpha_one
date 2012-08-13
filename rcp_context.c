@@ -5,9 +5,9 @@
 
 #include "rcp_connection.h"
 
-#include "rcp_command_list.h"
 #include "rcp_command.h"
 
+#include "cmd_list.h"
 #include "cmd_types.h"
 
 #include "connections/con_file.h"
@@ -31,43 +31,20 @@
 #include "types/rcp_type_list.h"
 #include "types/rcp_alias.h"
 
-#include "rcp_context.h"
-
 #include "rcp_caster.h"
 
+#define RCP_INTERNAL_STRUCTURE
 
-struct rcp_context_core{
-	rcp_record_ref top_level_record;
-	rcp_tree_ref connections;
+#include "rcp_context.h"
 
-	//string - uint64
-	rcp_dict_ref permissions;
 
-	uint64_t base_permission;
-
-	//string - ptr
-	rcp_dict_ref types;
-
-	//connections that closed but not send "removeUser" command. 
-	rcp_array_ref dead;
-
-	//string - ptr
-	rcp_dict_ref sub_context;
-};
-
-size_t rcp_context_size = sizeof (struct rcp_context_core);
+//size_t rcp_context_size = sizeof (struct rcp_context_core);
 
 void rcp_context_send_record(rcp_context_ref ctx, rcp_record_ref cmd);
 void rcp_context_send_data(rcp_context_ref ctx, 
 		rcp_type_ref type, rcp_data_ref cmd);
 
 void rcp_context_clean_dead(rcp_context_ref ctx);
-void rcp_context_send_all_data(
-		rcp_context_ref ctx, rcp_connection_ref con);
-
-
-void rcp_context_page_in(rcp_context_ref ctx);
-void rcp_context_page_out(rcp_context_ref ctx);
 
 rcp_extern rcp_context_ref rcp_context_new()
 {
@@ -408,6 +385,27 @@ int64_t rcp_context_permission(rcp_context_ref ctx, rcp_string_ref username)
 	return pms;
 }
 
+void rcp_context_set_permission(
+		rcp_context_ref ctx, rcp_string_ref username, int64_t pms)
+{
+	if (!username){
+		return;
+	}
+	if (!rcp_user_exist(rcp_string_c_str(username))){
+		return;
+	}
+
+	rcp_dict_node_ref node;
+	node = rcp_dict_find(ctx->permissions, (rcp_data_ref)username);
+	if (!node){
+		return;
+	}
+
+	rcp_copy(rcp_uint64_type,
+			(rcp_data_ref)&pms,
+			rcp_dict_node_data(rcp_str_uint64_dict, node));
+}
+
 rcp_extern void rcp_login_root_context(
 		rcp_connection_ref con)
 {
@@ -445,403 +443,21 @@ rcp_extern void rcp_context_execute_command_rec(
 	}
 	rcp_string_ref cmd_name = (rcp_string_ref)rcp_record_data(cmd_name_rec);
 
-	rcp_command_type_t command_type = rcp_command_from_str(
+	rcp_command_ref cmd_info = rcp_command_from_str(
 			rcp_string_c_str(cmd_name));
 	
-	if (command_type == CMD_INVALID){
+	if (! cmd_info){
 		rcp_error(rcp_string_c_str(cmd_name));
 		rcp_error("^ invalid command");
 		return;
 	}
 
-	if (command_type == CMD_KILL){
-		rcp_listen_end();
-	}
-	if (0 && command_type == CMD_LOGIN_CONTEXT){
-		rcp_info("login ctx");
-		rcp_context_ref ctx = rcp_context_get(0);
-		if (!ctx){
-			rcp_context_send_caution(con, cmd_rec, 
-					"context not found");
-			return;
-		}
-		uint64_t permission = ctx->base_permission;
-		rcp_string_ref username = (rcp_string_ref)rcp_record_data(
-				rcp_connection_username(con));
-		if (username){
-			rcp_dict_node_ref node = 
-				rcp_dict_find(ctx->permissions, (rcp_data_ref)username);
-			if (node){
-				uint64_t user_permission;
-				rcp_copy(rcp_uint64_type,
-						rcp_dict_node_data(rcp_str_uint64_dict, node),
-						(rcp_data_ref)&user_permission);
-				permission |= user_permission;
-			}
-		}
-		if (! (permission & RCP_PMS_LOGIN)){
-			rcp_context_send_caution(con, cmd_rec, 
-					"not enough permission");
-			return;
-		}
-		
-		rcp_context_send_all_con(ctx, con);
-		rcp_context_send_all_data(ctx, con);	
-		rcp_context_add_connection(ctx, con);
-	}
+	rcp_type_ref cmd_type = cmd_info->cmd_type;
+	rcp_data_ref cmd_recv = rcp_new(cmd_type);
+	rcp_dict_to_struct(rcp_str_ref_dict, cmd,
+			cmd_type, (rcp_struct_ref)cmd_recv);
 
-	if (command_type == CMD_CREATE_USER){
-		struct cmd_create_user cmd_recv;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_CREATE_USER);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
-		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
-				cmd_type, (rcp_struct_ref)&cmd_recv);
+	cmd_info->cmd_impl(ctx, con, cmd_rec, cmd_type, cmd_recv);
 
-		rcp_string_ref username = 
-			(rcp_string_ref)rcp_record_data(cmd_recv.username);
-		rcp_string_ref password = 
-			(rcp_string_ref)rcp_record_data(cmd_recv.password);
-
-		int r = rcp_user_create(rcp_string_c_str(username),
-								rcp_string_c_str(password));
-
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_recv);
-	}
-	if (command_type == CMD_LOGIN_USER){
-		if (rcp_connection_username(con)){
-			rcp_context_send_caution(con, cmd_rec, 
-					"you are already user logined");
-			return;
-		}
-		struct cmd_login_user cmd_recv;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_LOGIN_USER);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
-		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
-				cmd_type, (rcp_struct_ref)&cmd_recv);
-
-		if (!(cmd_recv.username && cmd_recv.password)){
-			rcp_context_send_caution(con, cmd_rec, 
-					"Not enough parameters.");
-			return;
-		}
-
-		rcp_string_ref username = 
-			(rcp_string_ref)rcp_record_data(cmd_recv.username);
-		rcp_string_ref password = 
-			(rcp_string_ref)rcp_record_data(cmd_recv.password);
-
-		int r = rcp_user_autenticate(rcp_string_c_str(username),
-									rcp_string_c_str(password));
-		if (r != 1){
-			rcp_context_send_caution(con, cmd_rec, 
-					"Inncorrect username and password pair.");
-		}
-		else{
-			rcp_connection_set_username(con, cmd_recv.username);
-			rcp_context_send_info(con, 
-					cmd_rec, "Loggin succeed.");
-		}
-
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_recv);
-	}
-	if ( 0 && command_type == CMD_LOGIN_USER){
-		if (rcp_connection_username(con)){
-			rcp_context_send_caution(con, cmd_rec, 
-					"you are already user logined");
-			return;
-		}
-		struct cmd_login_user cmd_recv;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_LOGIN_USER);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
-		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
-				cmd_type, (rcp_struct_ref)&cmd_recv);
-
-		if (rcp_record_type(cmd_recv.username) != rcp_string_type){
-			rcp_context_send_caution(con, cmd_rec, 
-					"type of username must be string");
-			return;
-		}
-
-		if (rcp_record_type(cmd_recv.password) != rcp_string_type){
-			rcp_context_send_caution(con, cmd_rec, 
-					"type of username must be string");
-			return;
-		}
-
-		rcp_string_ref username = 
-			(rcp_string_ref)rcp_record_data(cmd_recv.username);
-		rcp_string_ref password = 
-			(rcp_string_ref)rcp_record_data(cmd_recv.password);
-
-		int result = rcp_user_autenticate(
-				rcp_string_c_str(username),
-				rcp_string_c_str(password));
-		if (result > 0){
-			rcp_connection_set_username(con, cmd_recv.username);
-		}
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_recv);
-	}
-
-	////////////////////////////////
-	// wall of context login
-	if (! ctx){
-		rcp_caution("missing context");
-		return;	
-	}
-	////////////////////////////////
-
-	if (command_type == CMD_ADD_CONTEXT){
-		struct cmd_add_context cmd_recv;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_ADD_CONTEXT);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
-		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
-				cmd_type, (rcp_struct_ref)&cmd_recv);
-
-		if (!cmd_recv.name){
-			rcp_context_send_caution(con, cmd_rec, 
-					"Not enough parameters.");
-		}
-
-		rcp_context_ref new_ctx = rcp_context_new();
-
-		rcp_dict_node_ref node;
-		node = rcp_dict_node_new(rcp_str_ptr_dict);
-		rcp_copy(rcp_string_type,
-				(rcp_data_ref)rcp_record_data(cmd_recv.name),
-				rcp_dict_node_key(rcp_str_ptr_dict, node));
-		rcp_copy(rcp_pointer_type,
-				(rcp_data_ref)&new_ctx,
-				rcp_dict_node_data(rcp_str_ptr_dict, node));
-
-		rcp_dict_set_node(ctx->sub_context, node);
-
-		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)&cmd_recv);
-
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_recv);
-	}
-
-	if (command_type == CMD_LOGIN_CONTEXT){
-		struct cmd_login_context cmd_recv;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_LOGIN_CONTEXT);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
-		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
-			cmd_type, (rcp_struct_ref)&cmd_recv);
-
-		if (!cmd_recv.name){
-			rcp_context_send_caution(con, cmd_rec, 
-					"Not enough parameters.");
-			return;
-		}
-
-		rcp_dict_node_ref node;
-		node = rcp_dict_find(ctx->sub_context, 
-				rcp_record_data(cmd_recv.name));
-
-		if (!node){
-			rcp_context_send_caution(con, cmd_rec, 
-					"context not found");
-			return;
-		}
-
-		rcp_data_ref ctx_ref = rcp_dict_node_data(
-				rcp_str_ptr_dict, node);
-		rcp_context_ref ctx = *(rcp_context_ref*)ctx_ref;
-
-		rcp_string_ref username = (rcp_string_ref)rcp_record_data(
-				rcp_connection_username(con));
-		uint64_t pms = rcp_context_permission(ctx, username);
-
-		if (! (pms & RCP_PMS_LOGIN)){
-			rcp_context_send_caution(con, cmd_rec, 
-					"not enough permission");
-			return;
-		}
-		rcp_context_send_info(con, 
-				cmd_rec, "Loggin succeed.");
-		
-		rcp_context_remove_connection(rcp_connection_context(con), con);
-
-		rcp_context_send_all_con(ctx, con);
-		rcp_context_send_all_data(ctx, con);	
-		rcp_context_send_all_sub_ctx(ctx, con);	
-		rcp_context_add_connection(ctx, con);
-	}
-
-	if (command_type == CMD_DUMP){
-		rcp_context_page_out(ctx);
-	}
-	if (command_type == CMD_ADD_PERMISSION ||
-			command_type == CMD_REMOVE_PERMISSION){
-		struct cmd_add_permission cmd_recv;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_ADD_PERMISSION);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_recv);
-		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
-			cmd_type, (rcp_struct_ref)&cmd_recv);
-
-		uint64_t old;
-		rcp_string_ref username = NULL;
-		if (cmd_recv.username)
-			username = (rcp_string_ref)rcp_record_data(cmd_recv.username);
-		rcp_dict_node_ref node = NULL;
-
-		if (username){
-			if (!rcp_user_exist(rcp_string_c_str(username))){
-				rcp_context_send_caution(con, cmd_rec, 
-						"a specified user is not existed");
-				return;
-			}
-		
-			node = rcp_dict_find(ctx->permissions, (rcp_data_ref)username);
-			if (!node){
-				node = rcp_dict_node_new(rcp_str_uint64_dict);
-				rcp_copy(rcp_string_type,
-						(rcp_data_ref)username,
-						rcp_dict_node_key(rcp_str_uint64_dict, node));
-				uint64_t initial = 0;
-				rcp_copy(rcp_uint64_type,
-						(rcp_data_ref)&initial,
-						rcp_dict_node_data(rcp_str_uint64_dict, node));
-				rcp_dict_set_node(ctx->permissions, node);
-			}
-
-			rcp_copy(rcp_uint64_type,
-					rcp_dict_node_data(rcp_str_uint64_dict, node),
-					(rcp_data_ref)&old);
-
-		}
-		else{
-			old = ctx->base_permission;
-		}
-
-		uint64_t new = old;
-
-		if (command_type == CMD_ADD_PERMISSION){
-			new |= RCP_PMS_LOGIN;
-			new |= RCP_PMS_READ;
-			new |= RCP_PMS_WRITE;
-		}
-		else if (command_type == CMD_REMOVE_PERMISSION){
-			new &= ~RCP_PMS_LOGIN;
-			new &= ~RCP_PMS_READ;
-			new &= ~RCP_PMS_WRITE;
-		}
-		else{
-			rcp_error("never reach this point");
-		}
-
-		if (username){
-			rcp_assert(node, "omg");
-			rcp_copy(rcp_uint64_type,
-					(rcp_data_ref)&new,
-					rcp_dict_node_data(rcp_str_uint64_dict, node));
-		}
-		else{
-			ctx->base_permission = new;
-		}
-	}
-	if (command_type == CMD_SEND_VALUE){
-		struct cmd_set_value cmd_st;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_SEND_VALUE);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_st);
-		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
-			cmd_type, (rcp_struct_ref)&cmd_st);
-		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)&cmd_st);
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
-	}
-	if (command_type == CMD_UNSET_VALUE){
-		rcp_record_release(ctx->top_level_record);
-		ctx->top_level_record = 
-			rcp_array_new_rec(rcp_ref_type);
-	}
-	/*
-	if (command_type == CMD_SET_VALUE){
-		struct cmd_set_value cmd_st;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_SET_VALUE);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_st);
-		rcp_map_to_struct(cmd, cmd_type, (rcp_struct_ref)&cmd_st);
-
-		if (! cmd_st.value)
-			return;
-
-		int64_t key = *(int64_t*)rcp_record_data(cmd_st.path);
-
-		rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
-		rcp_map_ref tlo = (rcp_map_ref)rcp_record_data(tlo_rec);
-		rcp_map_node_ref node = rcp_map_node_new(tlo);
-		*(int64_t*)rcp_map_node_key(tlo, node) = key; 
-		rcp_copy(rcp_ref_type, (rcp_data_ref)&cmd_st.value,
-				rcp_map_node_value(tlo, node));
-		rcp_map_node_ref old = rcp_map_set(tlo, node);
-		rcp_map_node_delete(tlo, old);
-
-		rcp_context_send_struct(ctx, cmd_type, (rcp_struct_ref)&cmd_st);
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
-	}
-	*/
-	if (command_type == CMD_APPEND_VALUE){
-		struct cmd_set_value cmd_st;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_APPEND_VALUE);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_st);
-		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
-			cmd_type, (rcp_struct_ref)&cmd_st);
-
-		if (! cmd_st.value)
-			return;
-
-		if (cmd_st.type && rcp_record_type(cmd_st.type) == rcp_string_type){
-			rcp_dict_node_ref node = rcp_dict_find(ctx->types,
-					rcp_record_data(cmd_st.type));
-
-			if (!node){
-				rcp_context_send_caution(con, cmd_rec, 
-						"No such type.");
-				return;
-			}
-
-			rcp_type_ref dst_type = *(rcp_type_ref*)
-				rcp_dict_node_data(rcp_str_ptr_dict, node);
-			
-			rcp_record_change_type(cmd_st.value, dst_type);
-			if (rcp_record_type(cmd_st.value) != dst_type){
-				rcp_context_send_caution(con, cmd_rec, 
-						"Can not cast.");
-				return;
-			}
-		}
-
-		rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
-		rcp_array_ref tlo = (rcp_array_ref)rcp_record_data(tlo_rec);
-		rcp_array_append(tlo, &cmd_st.value);
-
-		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)&cmd_st);
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
-	}
-	if (command_type == CMD_ADD_TYPE){
-		struct cmd_add_type cmd_st;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_ADD_TYPE);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_st);
-		rcp_dict_to_struct(rcp_str_ref_dict, cmd,
-			cmd_type, (rcp_struct_ref)&cmd_st);
-
-		if (cmd_st.name && rcp_record_type(cmd_st.name) != rcp_string_type)
-			return;
-
-		rcp_type_ref new_type = rcp_alias_type_new(rcp_str_ref_dict);
-		rcp_dict_node_ref node = rcp_dict_node_new(rcp_str_ptr_dict);
-		rcp_copy(rcp_string_type,
-				rcp_record_data(cmd_st.name),
-				rcp_dict_node_key(rcp_str_ptr_dict, node));
-		rcp_copy(rcp_pointer_type,
-				(rcp_data_ref)&new_type,
-				rcp_dict_node_data(rcp_str_ptr_dict, node));
-		rcp_dict_set_node(ctx->types, node);
-
-		rcp_data_ref name = rcp_new(rcp_string_type);
-		rcp_copy(rcp_string_type,
-				rcp_record_data(cmd_st.name),
-				name);
-		rcp_type_set_name(new_type, (rcp_string_ref)name);
-
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
-	}
+	rcp_delete(cmd_type, cmd_recv);
 }
