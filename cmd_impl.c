@@ -126,7 +126,7 @@ void cmd_impl_add_context(
 
 	rcp_dict_set_node(ctx->sub_context, node);
 
-	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)&cmd_recv);
+	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_recv);
 }
 void cmd_impl_create_user(
 		rcp_context_ref ctx,
