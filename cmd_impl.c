@@ -208,6 +208,16 @@ void cmd_impl_dump(
 	rcp_context_page_out(ctx);
 }
 
+void cmd_impl_load(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd)
+{
+	rcp_context_page_in(ctx);
+}
+
 void cmd_impl_add_permission(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,

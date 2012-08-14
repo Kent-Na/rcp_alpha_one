@@ -43,6 +43,12 @@ commandList.append({
 	})
 
 commandList.append({
+	"name":"load",
+	"shortDescription":"kill server process.",
+	"longDescription":"",
+	})
+
+commandList.append({
 	"name":"close",
 	"shortDescription":"",
 	"longDescription":"",

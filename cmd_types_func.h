@@ -3,6 +3,7 @@
 rcp_type_ref cmd_open_type();
 rcp_type_ref cmd_kill_type();
 rcp_type_ref cmd_dump_type();
+rcp_type_ref cmd_load_type();
 rcp_type_ref cmd_close_type();
 rcp_type_ref cmd_ping_type();
 rcp_type_ref cmd_pong_type();

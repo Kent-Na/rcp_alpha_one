@@ -42,7 +42,6 @@ rcp_context_ref rcp_context_create(uint32_t id)
 	*(rcp_context_ref*)rcp_dict_node_data(rcp_uint32_ptr_dict, node) = ctx;
 
 	rcp_dict_set_node(contexts, node);
-	rcp_context_page_in(ctx);
 	return ctx;
 }
 

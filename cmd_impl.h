@@ -25,6 +25,13 @@ void cmd_impl_dump(
 		rcp_type_ref cmd_type,
 		void* cmd);
 
+void cmd_impl_load(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd);
+
 void cmd_impl_close(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
@@ -186,7 +193,7 @@ void cmd_impl_caution(
 		rcp_type_ref cmd_type,
 		void* cmd);
 
-extern void cmd_impl_info(
+void cmd_impl_info(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
 		rcp_record_ref cmd_rec,

@@ -15,6 +15,10 @@ struct cmd_dump{
 	rcp_record_ref command;
 };
 
+struct cmd_load{
+	rcp_record_ref command;
+};
+
 struct cmd_close{
 	rcp_record_ref command;
 };

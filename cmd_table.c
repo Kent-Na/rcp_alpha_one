@@ -5,8 +5,7 @@
 #include "cmd_list.h"
 #include "cmd_types_func.h"
 #include "rcp_command.h"
-
-struct rcp_command_core rcp_command_table[27];
+struct rcp_command_core rcp_command_table[28];
 
 void rcp_command_table_init(){
 
@@ -36,6 +35,15 @@ void rcp_command_table_init(){
 		cmd_dump_type();
 	rcp_command_table[CMD_DUMP].cmd_impl= 
 		cmd_impl_dump;
+
+	rcp_command_table[CMD_LOAD].cmd = 
+		CMD_LOAD;
+	rcp_command_table[CMD_LOAD].cmd_str = 
+		"load";
+	rcp_command_table[CMD_LOAD].cmd_type= 
+		cmd_load_type();
+	rcp_command_table[CMD_LOAD].cmd_impl= 
+		cmd_impl_load;
 
 	rcp_command_table[CMD_CLOSE].cmd = 
 		CMD_CLOSE;
