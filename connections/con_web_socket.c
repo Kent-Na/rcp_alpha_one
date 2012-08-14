@@ -53,6 +53,7 @@ void con_web_socket_init(rcp_receiver_ref con){
 	struct con_web_socket *st = rcp_receiver_l2(con);
 	rcp_buffer_init(&st->buffer, RCP_PROTOCOL_JSON_BUFFER_SIZE);
 	st->http_state = http_request_receiving;	
+	st->ws_state = ws_not_yet;
 }
 void con_web_socket_deinit(rcp_receiver_ref con){
 	struct con_web_socket *st = rcp_receiver_l2(con);
@@ -205,6 +206,9 @@ rcp_err con_web_socket_next_command(
 {
 	struct con_web_socket *st = rcp_receiver_l2(con);
 
+	if (st->http_state == http_request_receiving){
+		return -1;
+	}
 	if (st->http_state == http_header_receiving){
 		return -1;
 	}
