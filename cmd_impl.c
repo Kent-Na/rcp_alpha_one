@@ -346,7 +346,7 @@ void cmd_impl_append_value(
 
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
 	rcp_array_ref tlo = (rcp_array_ref)rcp_record_data(tlo_rec);
-	rcp_array_append(tlo, cmd_st->value);
+	rcp_array_append(tlo, &cmd_st->value);
 
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 }
