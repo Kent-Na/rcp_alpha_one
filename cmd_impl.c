@@ -1,23 +1,6 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
-/*
 
-
-
-#include "connections/con_file.h"
-#include "rcp_receiver.h"
-#include "rcp_sender_classes.h"
-#include "rcp_receiver_classes.h"
-
-#include "rcp_tree.h"
-
-
-#include "rcp_type_utility.h"
-#include "types/rcp_struct.h"
-#include "types/rcp_number.h"
-
-
-*/
 #include "cmd_types.h"
 
 #include "rcp_server.h"
@@ -51,6 +34,9 @@ void cmd_impl_kill(
 	rcp_listen_end();
 }
 
+///
+//context
+//
 void cmd_impl_login_context(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
@@ -128,6 +114,10 @@ void cmd_impl_add_context(
 
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_recv);
 }
+
+///
+//user
+//
 void cmd_impl_create_user(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
@@ -195,9 +185,6 @@ void cmd_impl_login_user(
 	}
 }
 
-	////////////////////////////////
-	// wall of context login
-	////////////////
 void cmd_impl_dump(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
@@ -277,52 +264,9 @@ void cmd_impl_unset_value(
 		rcp_array_new_rec(rcp_ref_type);
 }
 
-void cmd_impl_set_value(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd)
+/*
+void rcp_cast_probably()
 {
-	/*
-	if (command_type == CMD_SET_VALUE){
-		struct cmd_set_value cmd_st;
-		rcp_type_ref cmd_type = rcp_command_type(CMD_SET_VALUE);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_st);
-		rcp_map_to_struct(cmd, cmd_type, (rcp_struct_ref)&cmd_st);
-
-		if (! cmd_st->value)
-			return;
-
-		int64_t key = *(int64_t*)rcp_record_data(cmd_st->path);
-
-		rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
-		rcp_map_ref tlo = (rcp_map_ref)rcp_record_data(tlo_rec);
-		rcp_map_node_ref node = rcp_map_node_new(tlo);
-		*(int64_t*)rcp_map_node_key(tlo, node) = key; 
-		rcp_copy(rcp_ref_type, (rcp_data_ref)&cmd_st->value,
-				rcp_map_node_value(tlo, node));
-		rcp_map_node_ref old = rcp_map_set(tlo, node);
-		rcp_map_node_delete(tlo, old);
-
-		rcp_context_send_struct(ctx, cmd_type, (rcp_struct_ref)&cmd_st);
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_st);
-	}
-	*/
-}
-
-void cmd_impl_append_value(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd)
-{
-	struct cmd_append_value *cmd_st = cmd;
-
-	if (! cmd_st->value)
-		return;
-
 	if (cmd_st->type && rcp_record_type(cmd_st->type) == rcp_string_type){
 		rcp_dict_node_ref node = rcp_dict_find(ctx->types,
 				rcp_record_data(cmd_st->type));
@@ -343,10 +287,46 @@ void cmd_impl_append_value(
 			return;
 		}
 	}
+}
+*/
+
+void cmd_impl_set_value(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd)
+{
+	struct cmd_set_value *cmd_st = cmd;
+
+	if (! cmd_st->value)
+		return;
 
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
-	rcp_array_ref tlo = (rcp_array_ref)rcp_record_data(tlo_rec);
-	rcp_array_append(tlo, &cmd_st->value);
+
+	rcp_set(rcp_record_type(tlo_rec), rcp_record_data(tlo_rec),
+			rcp_ref_type, (rcp_data_ref)&cmd_st->path,
+			rcp_ref_type, (rcp_data_ref)&cmd_st->value);
+
+	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
+}
+
+void cmd_impl_append_value(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd)
+{
+	struct cmd_append_value *cmd_st = cmd;
+
+	if (! cmd_st->value)
+		return;
+
+	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
+
+	rcp_append(rcp_record_type(tlo_rec), rcp_record_data(tlo_rec),
+			rcp_ref_type, (rcp_data_ref)&cmd_st->value);
 
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 }

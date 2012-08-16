@@ -19,7 +19,7 @@ int test_array(void){
 
 	for (unsigned int i= 0; i<num; i++){
 		uint32_t val = i;
-		rcp_array_append(array, &val);
+		rcp_array_append_data(array, &val);
 	}
 
 	if (rcp_array_count(array) != num)

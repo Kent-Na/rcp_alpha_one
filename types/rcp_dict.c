@@ -3,6 +3,7 @@
 #include "../rcp_defines.h"
 
 #include "../rcp_json_write.h"
+#include "../rcp_send_as_command.h"
 
 #define RCP_INTERNAL_STRUCTURE
 
@@ -24,6 +25,7 @@ struct rcp_type_core rcp_dict_type_def = {
 	NULL,//copy
 	NULL,//comp
 	rcp_dict_write_json,
+	rcp_dict_send_as_command,
 };
 
 rcp_type_ref rcp_dict_type_new(
@@ -71,6 +73,9 @@ void rcp_dict_delete(rcp_type_ref type, rcp_dict_ref data)
 	rcp_delete(type,(rcp_data_ref)data);
 }
 
+
+///
+// type class
 void rcp_dict_init(rcp_type_ref type, rcp_data_ref data)
 {
 	rcp_type_ref key_type = rcp_dict_type_key_type(type);
@@ -94,10 +99,44 @@ rcp_data_ref rcp_dict_at(rcp_type_ref type, rcp_data_ref data,
 	return rcp_dict_node_data(type, node);
 }
 
-rcp_data_ref rcp_dict_set(rcp_type_ref type, rcp_data_ref data,
-		rcp_record_ref rec);
-rcp_data_ref rcp_dict_unset(rcp_type_ref type, rcp_data_ref data,
-		rcp_record_ref rec);
+void rcp_dict_set(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref key_type, rcp_data_ref key_data,
+		rcp_type_ref data_type, rcp_data_ref data_data)
+{
+	if (key_type != rcp_dict_type_key_type(type))
+		return;
+	if (data_type != rcp_dict_type_data_type(type))
+		return;
+
+	rcp_dict_ref dict = (rcp_dict_ref)data;
+
+	rcp_dict_node_ref node = rcp_dict_node_new(type);
+	rcp_copy(key_type,
+			key_data,
+			rcp_dict_node_key(type, node));
+
+	rcp_copy(data_type,
+			data_data,
+			rcp_dict_node_data(type, node));
+
+	rcp_dict_node_ref old_node = rcp_dict_set_node(dict, node);
+	rcp_dict_node_delete(type, old_node);
+}
+
+void rcp_dict_unset(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref key_type, rcp_data_ref key_data)
+{
+	if (key_type != rcp_dict_type_key_type(type))
+		return;
+
+	rcp_dict_ref dict = (rcp_dict_ref)data;
+
+	rcp_dict_node_ref node = rcp_dict_find(dict, key_data);
+	if (node)
+		rcp_dict_unset_node(dict, node);
+}
+//type class end
+///
 
 rcp_extern 
 rcp_dict_node_ref rcp_dict_find(
@@ -117,7 +156,7 @@ rcp_dict_node_ref rcp_dict_set_node(
 rcp_extern 
 void rcp_dict_unset_node(rcp_dict_ref dict, rcp_dict_node_ref node)
 {
-	return rcp_tree_remove((rcp_tree_ref)dict, (rcp_tree_node_ref)node);
+	rcp_tree_remove((rcp_tree_ref)dict, (rcp_tree_node_ref)node);
 }
 
 ///

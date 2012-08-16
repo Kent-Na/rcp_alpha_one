@@ -99,6 +99,9 @@ size_t con_ssl_receive(
 		rcp_error("No connection");
 
 	ssize_t r_len;
+	r_len = SSL_pending(st->ssl);
+	if (! r_len)
+		rcp_error("I found bug here!!");
 	r_len = SSL_read(st->ssl, (void*)data, len);
 
 	if (r_len <= 0){

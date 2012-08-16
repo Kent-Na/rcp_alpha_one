@@ -51,13 +51,13 @@ void rcp_dict_send_as_command(
 		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 		cmd.command = rcp_string_new_rec(CMD_STR_SET_VALUE);
-		rcp_copy(rcp_ref_type, 
+
+		rcp_copy(rcp_dict_type_data_type(type), 
 				rcp_dict_node_data(type, node),
 				(rcp_data_ref)&cmd.value);
-		cmd.path = rcp_record_new(rcp_int64_type);
-		rcp_copy(rcp_int64_type, 
+		rcp_copy(rcp_dict_type_key_type(type), 
 				rcp_dict_node_key(type, node),
-				rcp_record_data(cmd.path));
+				(rcp_data_ref)&cmd.value);
 
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);

@@ -7,8 +7,9 @@ Determin release timing of rcp_connection.
 Write con_web_socket_deinit.
 apply new permission without relogin
 Swap is danger.
-fix memoly reak at execute command with error.
+ssl prepend test.
 
 ---wall of done------------
 Set timeout to connection.
 connect ssl port with non ssl connection cause "epoll ctl"
+fix memoly reak at execute command with error.

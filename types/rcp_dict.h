@@ -34,10 +34,12 @@ void rcp_dict_deinit(rcp_type_ref type, rcp_data_ref data);
 rcp_data_ref rcp_dict_at(rcp_type_ref type, rcp_data_ref data,
 		rcp_data_ref key);
 
-rcp_data_ref rcp_dict_set(rcp_type_ref type, rcp_data_ref data,
-		rcp_record_ref rec);
-rcp_data_ref rcp_dict_unset(rcp_type_ref type, rcp_data_ref data,
-		rcp_record_ref rec);
+void rcp_dict_set(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref key_type, rcp_data_ref key_data,
+		rcp_type_ref data_type, rcp_data_ref data_data);
+
+void rcp_dict_unset(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref key_type, rcp_data_ref key_data);
 
 rcp_extern 
 rcp_dict_node_ref rcp_dict_find(

@@ -49,6 +49,17 @@ void rcp_array_deinit(rcp_type_ref type, rcp_data_ref data)
 	free(core->data);
 }
 
+void rcp_array_append(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref data_type, rcp_data_ref data_data)
+{
+	rcp_array_ref array = (rcp_array_ref)data;
+
+	if (data_type != rcp_array_data_type(array))
+		return;
+
+	rcp_array_append_data(array, data_data);
+}
+
 rcp_extern rcp_array_ref rcp_array_new(rcp_type_ref type)
 {
 	rcp_array_ref ar = (rcp_array_ref)rcp_alloc(rcp_array_type);
@@ -91,7 +102,7 @@ rcp_extern rcp_data_ref rcp_array_data(rcp_array_ref array, size_t index){
 #endif
 	return (rcp_data_ref)(core->data + core->type->size * index);
 }
-rcp_extern void rcp_array_append(rcp_array_ref array, void *data)
+rcp_extern void rcp_array_append_data(rcp_array_ref array, void *data)
 {
 	rcp_array_ref core = array;
 #ifdef RCP_SELF_TEST

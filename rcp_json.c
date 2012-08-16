@@ -111,7 +111,7 @@ rcp_record_ref rcp_json_parse_array(const char **begin, const char *end)
 			break;
 		}
 
-		rcp_array_append(array, &rec);
+		rcp_array_append_data(array, &rec);
 		rcp_record_release(rec);
 		rec = NULL;
 

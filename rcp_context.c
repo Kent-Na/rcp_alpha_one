@@ -86,7 +86,7 @@ void rcp_context_test_and_kill(
 	rcp_assert(ctx, "test and kill, null ctx");
 	if (!rcp_connection_alive(con)){
 		rcp_info("dead");
-		rcp_array_append(ctx->dead, (rcp_data_ref)&con);
+		rcp_array_append_data(ctx->dead, (rcp_data_ref)&con);
 	}
 }
 
@@ -110,22 +110,7 @@ void rcp_context_send_data(rcp_context_ref ctx,
 	rcp_sender_cluster_clean_up(cls);
 	rcp_context_clean_dead(ctx);
 }
-/*
-void rcp_connection_send_data(
-		rcp_context_ref ctx, rcp_connection_ref con,
-		rcp_type_ref type, rcp_data_ref data)
-{
-	if (!con)
-		return;
 
-	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
-	rcp_sender_cluster_set_data(cls, type, data);
-	rcp_connection_send(con);
-	if (ctx)
-		rcp_context_test_and_kill(ctx, con);
-	rcp_sender_cluster_clean_up(cls);
-}
-*/
 void rcp_context_add_connection(rcp_context_ref ctx, 
 		rcp_connection_ref con)
 {
@@ -153,7 +138,7 @@ void rcp_context_remove_connection(rcp_context_ref ctx,
 		rcp_connection_ref con){
 	rcp_info("ctx:remove connection");
 	if (con)
-		rcp_array_append(ctx->dead, (rcp_data_ref)&con);
+		rcp_array_append_data(ctx->dead, (rcp_data_ref)&con);
 	rcp_context_clean_dead(ctx);
 }
 

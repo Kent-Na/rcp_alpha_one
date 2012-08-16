@@ -2,6 +2,7 @@
 #include "def/rcp_data.h"
 #include "def/rcp_string.h"
 #include "def/rcp_record.h"
+#include "def/rcp_connection.h"
 
 #ifdef RCP_INTERNAL_STRUCTURE
 struct rcp_type_core{
@@ -25,13 +26,19 @@ struct rcp_type_core{
 
 	void (*write_json)(
 			rcp_type_ref type, rcp_data_ref data, rcp_string_ref out);
+	void (*send_as_command)(rcp_type_ref type, rcp_data_ref data,
+			rcp_connection_ref con);
+
+	void (*set)(rcp_type_ref type, rcp_data_ref dst,
+			rcp_type_ref key_type, rcp_data_ref key_data,
+			rcp_type_ref data_type, rcp_data_ref data_data);
+	void (*append)(rcp_type_ref type, rcp_data_ref dst,
+			rcp_type_ref data_type, rcp_data_ref data_data);
+	void (*unset)(rcp_type_ref type, rcp_data_ref dst,
+			rcp_type_ref key_type, rcp_data_ref key_data);
 
 	void (*at)(rcp_type_ref type, rcp_data_ref dst,
 			rcp_type_ref *io_type, rcp_data_ref *io_data);
-
-	void (*set)(rcp_type_ref type, rcp_data_ref dst, rcp_record_ref src);
-	void (*append)(rcp_type_ref type, rcp_data_ref dst, rcp_record_ref src);
-	void (*unset)(rcp_type_ref type, rcp_data_ref dst, rcp_record_ref src);
 
 };
 #endif
@@ -73,3 +80,11 @@ rcp_extern int rcp_compare(rcp_type_ref type,
 
 rcp_extern void rcp_write_json(rcp_type_ref type, 
 		rcp_data_ref data, rcp_string_ref out);
+
+rcp_extern void rcp_set(rcp_type_ref type, rcp_data_ref dst,
+		rcp_type_ref key_type, rcp_data_ref key_data,
+		rcp_type_ref data_type, rcp_data_ref data_data);
+rcp_extern void rcp_append(rcp_type_ref type, rcp_data_ref dst,
+		rcp_type_ref data_type, rcp_data_ref data_data);
+rcp_extern void rcp_unset(rcp_type_ref type, rcp_data_ref dst,
+		rcp_type_ref key_type, rcp_data_ref key_data);
