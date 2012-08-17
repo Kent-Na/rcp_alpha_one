@@ -56,8 +56,10 @@ void rcp_context_init(rcp_context_ref ctx)
 {
 	//ctx->top_level_record = 
 	//	rcp_map_new_rec(rcp_int64_type, rcp_ref_type);
+	//ctx->top_level_record = 
+	//	rcp_array_new_rec(rcp_ref_type);
 	ctx->top_level_record = 
-		rcp_array_new_rec(rcp_ref_type);
+		rcp_record_new(rcp_int64_ref_dict);
 	ctx->connections = rcp_tree_new((void*)rcp_pointer_compare,NULL);
 	ctx->dead = rcp_array_new(rcp_pointer_type);
 	ctx->permissions = rcp_dict_new(rcp_str_uint64_dict);
@@ -71,7 +73,6 @@ void rcp_context_uninit(rcp_context_ref ctx)
 	rcp_tree_delete(ctx->connections);
 	rcp_array_delete(ctx->dead);
 	rcp_dict_delete(rcp_str_uint64_dict, ctx->permissions);
-	rcp_dict_delete(rcp_str_ptr_dict, ctx->permissions);
 	rcp_dict_delete(rcp_str_ptr_dict, ctx->sub_context);
 }
 
@@ -243,80 +244,13 @@ void rcp_context_send_all_sub_ctx(rcp_context_ref ctx,
 		node = rcp_dict_node_next(node);
 	}
 }
-void rcp_context_send_all_array_data(
-		rcp_context_ref ctx, rcp_connection_ref con)
-{
-	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
-	rcp_array_ref tlo = (rcp_array_ref)rcp_record_data(tlo_rec);
-	rcp_array_iterater_ref node = rcp_array_begin(tlo);
-
-	struct cmd_append_value cmd;
-	rcp_type_ref cmd_type=rcp_command_type(CMD_APPEND_VALUE);
-	rcp_init(cmd_type, (rcp_data_ref)&cmd);
-	cmd.command = rcp_string_new_rec(CMD_STR_APPEND_VALUE);
-
-	while (node){
-		rcp_record_ref rec = 
-			*(rcp_record_ref*)rcp_array_iterater_data(tlo, node);
-		
-		rcp_string_ref type_name = rcp_type_name(rcp_record_type(rec));
-		if (type_name){	
-			cmd.type = rcp_record_new(rcp_string_type);
-			rcp_copy(rcp_string_type,
-					(rcp_data_ref)type_name,
-					rcp_record_data(cmd.type));
-		}
-		else{
-			cmd.type = NULL;
-		}
-
-		cmd.value = rec;
-
-		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
-		rcp_record_release(cmd.type);	
-		node = rcp_array_iterater_next(tlo, node);
-	}
-
-	cmd.value = NULL;
-	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
-}
-
-/*
-void rcp_context_send_all_map_data(
-		rcp_context_ref ctx, rcp_connection_ref con)
-{
-	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
-	rcp_map_ref tlo = (rcp_map_ref)rcp_record_data(tlo_rec);
-	rcp_map_node_ref node = rcp_map_begin(tlo);
-
-	while (node){
-		struct cmd_set_value cmd;
-		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd);
-		cmd.command = rcp_string_new_rec(CMD_STR_SET_VALUE);
-		rcp_copy(rcp_ref_type, 
-				rcp_map_node_value(tlo, node),
-				(rcp_data_ref)&cmd.value);
-		cmd.path = rcp_record_new(rcp_int64_type);
-		rcp_copy(rcp_int64_type, 
-				rcp_map_node_key(tlo, node),
-				rcp_record_data(cmd.path));
-
-		rcp_context_send_struct_to(con, cmd_type, (rcp_struct_ref)&cmd);
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
-
-		node = rcp_map_node_next(node);
-	}
-}
-*/
 void rcp_context_send_all_data(rcp_context_ref ctx, rcp_connection_ref con)
 {
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
+
 	rcp_type_ref type = rcp_record_type(tlo_rec);
-	//if (type == rcp_map_type)
-	//	rcp_context_send_all_map_data(ctx, con);
-	if (type == rcp_array_type)
-		rcp_context_send_all_array_data(ctx, con);
+	rcp_data_ref data = rcp_record_data(tlo_rec);
+	rcp_send_as_command(type, data, con);
 }
 void rcp_context_send_caution(rcp_connection_ref con, 
 		rcp_record_ref cause, const char* reason)

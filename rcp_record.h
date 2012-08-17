@@ -16,6 +16,8 @@ struct rcp_record_core{
 #define RCP_REC_FRAG_OWNED (1<<1)
 
 rcp_extern rcp_record_ref rcp_record_new(rcp_type_ref type);
+rcp_extern rcp_record_ref rcp_record_new_with(
+		rcp_type_ref type, rcp_data_ref data);
 rcp_extern rcp_record_ref rcp_record_retain(rcp_record_ref rec);
 rcp_extern void rcp_record_release(rcp_record_ref rec);
 rcp_extern void rcp_record_init(rcp_record_ref type);

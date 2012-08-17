@@ -90,19 +90,30 @@ rcp_extern void rcp_write_json(rcp_type_ref type,
 {
 	type->write_json(type, data, str);	
 }
+rcp_extern void rcp_send_as_command(rcp_type_ref type, rcp_data_ref data,
+			rcp_connection_ref con)
+{
+	type->send_as_command(type, data, con);
+}
 rcp_extern void rcp_set(rcp_type_ref type, rcp_data_ref dst,
 		rcp_type_ref key_type, rcp_data_ref key_data,
 		rcp_type_ref data_type, rcp_data_ref data_data)
 {
+	if (! type->set)
+		return;
 	type->set(type, dst, key_type, key_data, data_type, data_data);
 }
 rcp_extern void rcp_append(rcp_type_ref type, rcp_data_ref dst,
 		rcp_type_ref data_type, rcp_data_ref data_data)
 {
+	if (! type->append)
+		return;
 	type->append(type, dst, data_type, data_data);
 }
 rcp_extern void rcp_unset(rcp_type_ref type, rcp_data_ref dst,
 		rcp_type_ref key_type, rcp_data_ref key_data)
 {
+	if (! type->unset)
+		return;
 	type->unset(type, dst, key_type, key_data);
 }

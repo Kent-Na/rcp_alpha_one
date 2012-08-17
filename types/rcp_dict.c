@@ -1,6 +1,7 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
 #include "../rcp_defines.h"
+#include "../rcp_caster.h"
 
 #include "../rcp_json_write.h"
 #include "../rcp_send_as_command.h"
@@ -26,6 +27,9 @@ struct rcp_type_core rcp_dict_type_def = {
 	NULL,//comp
 	rcp_dict_write_json,
 	rcp_dict_send_as_command,
+	rcp_dict_set,
+	NULL,
+	rcp_dict_unset
 };
 
 rcp_type_ref rcp_dict_type_new(
@@ -103,10 +107,24 @@ void rcp_dict_set(rcp_type_ref type, rcp_data_ref data,
 		rcp_type_ref key_type, rcp_data_ref key_data,
 		rcp_type_ref data_type, rcp_data_ref data_data)
 {
-	if (key_type != rcp_dict_type_key_type(type))
+	if (key_type != rcp_dict_type_key_type(type)){
+		rcp_type_ref tgt_key_type = rcp_dict_type_key_type(type);
+		rcp_data_ref tgt_key_data = rcp_cast_l1(
+				key_type, key_data, tgt_key_type);
+
+		rcp_dict_set(type, data, tgt_key_type, tgt_key_data,
+				data_type, data_data);
 		return;
-	if (data_type != rcp_dict_type_data_type(type))
+	}
+	if (data_type != rcp_dict_type_data_type(type)){
+		rcp_type_ref tgt_data_type = rcp_dict_type_data_type(type);
+		rcp_data_ref tgt_data_data = rcp_cast_l1(
+				data_type, data_data, tgt_data_type);
+
+		rcp_dict_set(type, data, key_type, key_data,
+				tgt_data_type, tgt_data_data);
 		return;
+	}
 
 	rcp_dict_ref dict = (rcp_dict_ref)data;
 
@@ -120,7 +138,8 @@ void rcp_dict_set(rcp_type_ref type, rcp_data_ref data,
 			rcp_dict_node_data(type, node));
 
 	rcp_dict_node_ref old_node = rcp_dict_set_node(dict, node);
-	rcp_dict_node_delete(type, old_node);
+	if (old_node)
+		rcp_dict_node_delete(type, old_node);
 }
 
 void rcp_dict_unset(rcp_type_ref type, rcp_data_ref data,

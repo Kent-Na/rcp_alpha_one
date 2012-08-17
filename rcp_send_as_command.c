@@ -43,8 +43,10 @@ void rcp_dict_send_as_command(
 		rcp_type_ref type, rcp_data_ref data,
 		rcp_connection_ref con)
 {
-	rcp_dict_ref dict = (rcp_dict_ref)dict;
+	rcp_dict_ref dict = (rcp_dict_ref)data;
 	rcp_dict_node_ref node = rcp_dict_begin(dict);
+	rcp_type_ref key_type = rcp_dict_type_key_type(type);
+	rcp_type_ref data_type = rcp_dict_type_data_type(type);
 
 	while (node){
 		struct cmd_set_value cmd;
@@ -52,12 +54,25 @@ void rcp_dict_send_as_command(
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 		cmd.command = rcp_string_new_rec(CMD_STR_SET_VALUE);
 
-		rcp_copy(rcp_dict_type_data_type(type), 
-				rcp_dict_node_data(type, node),
-				(rcp_data_ref)&cmd.value);
-		rcp_copy(rcp_dict_type_key_type(type), 
-				rcp_dict_node_key(type, node),
-				(rcp_data_ref)&cmd.value);
+		if (key_type == rcp_ref_type){
+			rcp_copy(rcp_dict_type_key_type(type), 
+					rcp_dict_node_key(type, node),
+					(rcp_data_ref)&cmd.path);
+		}
+		else{
+			cmd.path = rcp_record_new_with(key_type,
+					rcp_dict_node_key(type, node));
+		}
+
+		if (data_type == rcp_ref_type){
+			rcp_copy(rcp_dict_type_data_type(type), 
+					rcp_dict_node_data(type, node),
+					(rcp_data_ref)&cmd.value);
+		}
+		else{
+			cmd.value = rcp_record_new_with(data_type,
+					rcp_dict_node_data(type, node));
+		}
 
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);

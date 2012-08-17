@@ -111,7 +111,6 @@ rcp_extern rcp_tree_node_ref rcp_tree_begin(rcp_tree_ref tree)
 	while (node && node->l)
 		node = node->l;
 	return node;
-	return tree->root;
 }
 
 rcp_extern rcp_tree_node_ref rcp_tree_find(rcp_tree_ref tree, void *key)

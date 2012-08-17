@@ -19,6 +19,18 @@ rcp_record_ref rcp_record_new(rcp_type_ref type)
 	return rec;
 }
 
+rcp_extern rcp_record_ref rcp_record_new_with(
+		rcp_type_ref type, rcp_data_ref data)
+{
+	rcp_record_ref rec = malloc(type->size + sizeof *rec);
+	rec->type = type;
+	if (type->init)
+		type->init(type, rcp_record_data(rec));
+	rcp_copy(type, data, rcp_record_data(rec));
+	rec->ref_count = 1;
+	return rec;
+}
+
 rcp_record_ref rcp_record_retain(rcp_record_ref rec)
 {
 	if (!rec)

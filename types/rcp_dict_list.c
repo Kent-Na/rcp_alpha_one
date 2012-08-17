@@ -1,6 +1,7 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
 #include "../rcp_json_write.h"
+#include "../rcp_send_as_command.h"
 
 #define RCP_INTERNAL_STRUCTURE
 #include "../rcp_type.h"
@@ -24,6 +25,10 @@ struct rcp_dict_core{
 		NULL,\
 		NULL,\
 		rcp_dict_write_json,\
+		rcp_dict_send_as_command,\
+		rcp_dict_set,\
+		NULL,\
+		rcp_dict_unset,\
 	}
 
 #define RCP_DICT_TEMPLATEB(key,data) \
@@ -33,6 +38,8 @@ struct rcp_dict_core{
 	struct rcp_dict_core name = RCP_DICT_TEMPLATEB(key,data);
 
 
+RCP_DICT_TEMPLATE(rcp_int64_ref_dict_def, 
+		&rcp_int64_type_def, &rcp_ref_type_def);
 RCP_DICT_TEMPLATE(rcp_uint32_ptr_dict_def, 
 		&rcp_uint32_type_def, &rcp_pointer_type_def);
 RCP_DICT_TEMPLATE(rcp_str_ref_dict_def, 
@@ -42,6 +49,8 @@ RCP_DICT_TEMPLATE(rcp_str_uint64_dict_def,
 RCP_DICT_TEMPLATE(rcp_str_ptr_dict_def, 
 		&rcp_string_type_def, &rcp_pointer_type_def);
 
+const rcp_type_ref rcp_int64_ref_dict = 
+	&rcp_int64_ref_dict_def.core;
 const rcp_type_ref rcp_uint32_ptr_dict = 
 	&rcp_uint32_ptr_dict_def.core;
 const rcp_type_ref rcp_str_uint64_dict = 

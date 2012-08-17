@@ -81,6 +81,8 @@ rcp_extern int rcp_compare(rcp_type_ref type,
 rcp_extern void rcp_write_json(rcp_type_ref type, 
 		rcp_data_ref data, rcp_string_ref out);
 
+rcp_extern void rcp_send_as_command(rcp_type_ref type, rcp_data_ref data,
+			rcp_connection_ref con);
 rcp_extern void rcp_set(rcp_type_ref type, rcp_data_ref dst,
 		rcp_type_ref key_type, rcp_data_ref key_data,
 		rcp_type_ref data_type, rcp_data_ref data_data);
