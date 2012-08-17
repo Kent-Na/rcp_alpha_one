@@ -20,6 +20,10 @@ void rcp_event_run(int epfd)
 						maxEventsCount,
 						-1);
 		if (nfds<0){
+			if (errno == EINTR){
+				rcp_error("epoll intarrupted");
+				continue;
+			}
 			//printf("err : %s\n", strerror(errno));
 			return;
 		}
