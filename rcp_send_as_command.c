@@ -74,6 +74,13 @@ void rcp_dict_send_as_command(
 					rcp_dict_node_data(type, node));
 		}
 
+		if (data_type == rcp_ref_type){
+			cmd.type = rcp_record_new_with(rcp_string_type,(rcp_data_ref)
+					rcp_type_name(
+						rcp_record_type(*(rcp_record_ref*)
+							rcp_dict_node_data(type, node))));
+		}
+
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
 

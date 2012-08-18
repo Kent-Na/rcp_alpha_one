@@ -248,7 +248,7 @@ void cmd_impl_send_value(
 		rcp_type_ref cmd_type,
 		void* cmd)
 {
-	struct cmd_set_value *cmd_st = cmd;
+	struct cmd_send_value *cmd_st = cmd;
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 }
 
@@ -264,31 +264,33 @@ void cmd_impl_unset_value(
 		rcp_array_new_rec(rcp_ref_type);
 }
 
-/*
-void rcp_cast_probably()
+int rcp_record_cast(
+		rcp_context_ref ctx,
+		rcp_record_ref type_rec,
+		rcp_record_ref target_rec)
 {
-	if (cmd_st->type && rcp_record_type(cmd_st->type) == rcp_string_type){
-		rcp_dict_node_ref node = rcp_dict_find(ctx->types,
-				rcp_record_data(cmd_st->type));
+	if (! type_rec)
+		return 0;
 
-		if (!node){
-			rcp_context_send_caution(con, cmd_rec, 
-					"No such type.");
-			return;
-		}
+	if (rcp_record_type(type_rec) != rcp_string_type)
+		return -1;
 
-		rcp_type_ref dst_type = *(rcp_type_ref*)
-			rcp_dict_node_data(rcp_str_ptr_dict, node);
-		
-		rcp_record_change_type(cmd_st->value, dst_type);
-		if (rcp_record_type(cmd_st->value) != dst_type){
-			rcp_context_send_caution(con, cmd_rec, 
-					"Can not cast.");
-			return;
-		}
-	}
+	rcp_dict_node_ref node = rcp_dict_find(ctx->types,
+			rcp_record_data(type_rec));
+
+	if (!node)
+		return -1;
+
+	rcp_type_ref dst_type = *(rcp_type_ref*)
+		rcp_dict_node_data(rcp_str_ptr_dict, node);
+	
+	rcp_record_change_type(target_rec, dst_type);
+
+	if (rcp_record_type(target_rec) != dst_type)
+		return -1;
+
+	return 0;
 }
-*/
 
 void cmd_impl_set_value(
 		rcp_context_ref ctx,
@@ -301,6 +303,12 @@ void cmd_impl_set_value(
 
 	if (! cmd_st->value)
 		return;
+
+	if (rcp_record_cast(ctx, cmd_st->type, cmd_st->value)){
+		rcp_context_send_caution(con, cmd_rec, 
+				"type err.");
+		return;
+	}
 
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
 

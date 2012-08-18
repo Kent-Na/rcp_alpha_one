@@ -22,6 +22,8 @@ rcp_record_ref rcp_record_new(rcp_type_ref type)
 rcp_extern rcp_record_ref rcp_record_new_with(
 		rcp_type_ref type, rcp_data_ref data)
 {
+	if (!data)
+		return NULL;
 	rcp_record_ref rec = malloc(type->size + sizeof *rec);
 	rec->type = type;
 	if (type->init)
