@@ -56,10 +56,10 @@ void rcp_context_init(rcp_context_ref ctx)
 {
 	//ctx->top_level_record = 
 	//	rcp_map_new_rec(rcp_int64_type, rcp_ref_type);
-	//ctx->top_level_record = 
-	//	rcp_array_new_rec(rcp_ref_type);
 	ctx->top_level_record = 
-		rcp_record_new(rcp_int64_ref_dict);
+		rcp_array_new_rec(rcp_ref_type);
+	//ctx->top_level_record = 
+	//	rcp_record_new(rcp_int64_ref_dict);
 	ctx->connections = rcp_tree_new((void*)rcp_pointer_compare,NULL);
 	ctx->dead = rcp_array_new(rcp_pointer_type);
 	ctx->permissions = rcp_dict_new(rcp_str_uint64_dict);
@@ -193,6 +193,7 @@ void rcp_context_page_in(rcp_context_ref ctx)
 	rcp_connection_set_io(con, io);
 	rcp_receiver_ref receiver = rcp_receiver_new(&con_nt_json_class);
 	rcp_connection_set_receiver(con, receiver);
+	rcp_connection_set_context(con, ctx);
 
 	while (rcp_connection_alive(con)){
 		rcp_connection_on_receive(con);
