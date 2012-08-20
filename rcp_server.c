@@ -102,3 +102,38 @@ rcp_sender_cluster_ref rcp_shared_sender_cluster()
 {
 	return cluster;
 }
+
+///
+//database
+//
+
+static PGconn* con = NULL;
+
+void rcp_db_connect()
+{
+	const char* connectInfoKey[] = {
+		"user",
+		"password",
+		"dbname",
+		NULL
+	};
+
+	const char* connectInfoValue[] = {
+		RCP_DB_USER,
+		RCP_DB_PASSWORD,
+		RCP_DB_NAME,
+		NULL
+	};
+
+	con = PQconnectdbParams(connectInfoKey, connectInfoValue, 1);
+}
+
+void rcp_db_disconnect()
+{
+	PQfinish(con);
+}
+
+PGconn* rcp_db_connection()
+{
+	return con;
+}

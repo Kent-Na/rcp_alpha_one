@@ -33,6 +33,7 @@ connections = [
 	'connections/con_json.c',
 	'connections/con_plain.c',
 	'connections/con_web_socket.c',
+	'connections/con_pgsql_lo.c',
 	]
 
 commands = [
@@ -48,6 +49,7 @@ mainFiles = [
 	'rcp_command_type.c',
 	'rcp_connection.c',
 	'rcp_context.c',
+	'rcp_context_pgsql.c',
 	'rcp_event_epoll.c',
 	'rcp_event_kqueue.c',
 	'rcp_json.c',

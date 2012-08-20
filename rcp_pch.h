@@ -26,5 +26,10 @@
 #include <sys/event.h>
 #endif
 
+//openssl
 #include <openssl/ssl.h>
 #include <openssl/rand.h>
+
+//postgresql
+#include <libpq-fe.h>
+#include <libpq/libpq-fs.h>

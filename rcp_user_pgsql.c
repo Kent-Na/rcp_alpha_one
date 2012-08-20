@@ -3,37 +3,12 @@
 #include "rcp_utility.h"
 #include "types/rcp_string.h"
 #include "rcp_user.h"
-
-#include <libpq-fe.h>
-
-static PGconn* con = NULL;
-
-void rcp_db_connect()
-{
-	const char* connectInfoKey[] = {
-		"user",
-		"password",
-		"dbname",
-		NULL
-	};
-
-	const char* connectInfoValue[] = {
-		RCP_DB_USER,
-		RCP_DB_PASSWORD,
-		RCP_DB_NAME,
-		NULL
-	};
-
-	con = PQconnectdbParams(connectInfoKey, connectInfoValue, 1);
-}
-
-void rcp_db_disconnect()
-{
-	PQfinish(con);
-}
+#include "rcp_server.h"
 
 void rcp_user_store(struct rcp_user_record *u_rec)
 {
+	PGconn* con = rcp_db_connection();
+
 	if (! con){
 		rcp_error("connection to database");
 		return;
@@ -74,6 +49,8 @@ void rcp_user_store(struct rcp_user_record *u_rec)
 
 void rcp_user_load(const char* username, struct rcp_user_record *u_rec)
 {
+	PGconn* con = rcp_db_connection();
+
 	if (! con){
 		rcp_error("connection to database");
 		return;

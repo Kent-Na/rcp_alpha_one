@@ -66,6 +66,7 @@ void rcp_context_init(rcp_context_ref ctx)
 	ctx->base_permission = RCP_PMS_LOGIN | RCP_PMS_READ | RCP_PMS_WRITE;
 	ctx->types = rcp_dict_new(rcp_str_ptr_dict);
 	ctx->sub_context = rcp_dict_new(rcp_str_ptr_dict);
+	ctx->state = 0;
 }
 void rcp_context_uninit(rcp_context_ref ctx)
 {
@@ -171,7 +172,7 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 		//rcp_connection_free(con);
 	}
 }
-
+/*
 void rcp_context_page_out(rcp_context_ref ctx)
 {
 	rcp_connection_ref con = rcp_connection_new();
@@ -202,6 +203,7 @@ void rcp_context_page_in(rcp_context_ref ctx)
 	rcp_connection_delete(con);
 }
 
+*/
 void rcp_context_send_all_con(rcp_context_ref ctx, rcp_connection_ref con)
 {
 	rcp_tree_node_ref node = rcp_tree_begin(ctx->connections);

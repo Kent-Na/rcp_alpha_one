@@ -3,11 +3,22 @@
 #include "def/rcp_record.h"
 #include "def/rcp_string.h"
 #include "def/rcp_tree.h"
+#include "def/rcp_dict.h"
+#include "def/rcp_array.h"
+
+typedef uint64_t rcp_context_state_t;
+typedef uint64_t rcp_permission_t;
+
+#define RCP_CTX_PIRTIALY_LOADED	(1<<0)
+#define RCP_CTX_FULLY_LOADED	(1<<1)
+#define RCP_CTX_DIRTY			(1<<2)
 
 #ifdef RCP_INTERNAL_STRUCTURE
 struct rcp_context_core{
 	rcp_record_ref top_level_record;
 	rcp_tree_ref connections;
+
+	rcp_context_state_t state;
 
 	//string - uint64
 	rcp_dict_ref permissions;
