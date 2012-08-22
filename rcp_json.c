@@ -103,8 +103,17 @@ rcp_record_ref rcp_json_parse_array(const char **begin, const char *end)
 	rcp_array_ref array = (rcp_array_ref)rcp_record_data(array_rec);
 	rcp_record_ref rec = NULL;
 
+	rcp_json_skip_space(&ptr, end);
+	ch = rcp_json_get_next_char(ptr, end);
+
+	if (ch == ']'){
+		//end of empty array
+		*begin = ptr + 1;
+		return array_rec;
+	}
+
 	while (1){
-		rcp_json_skip_space(&ptr, end);
+
 		rec = rcp_json_parse(&ptr, end);
 		if (!rec){
 			rcp_caution("json:array value");
@@ -118,6 +127,7 @@ rcp_record_ref rcp_json_parse_array(const char **begin, const char *end)
 		rcp_json_skip_space(&ptr, end);
 		ch = rcp_json_get_next_char(ptr, end);
 		ptr ++;
+		rcp_json_skip_space(&ptr, end);
 
 		if (ch == ','){
 			//next element
@@ -126,9 +136,10 @@ rcp_record_ref rcp_json_parse_array(const char **begin, const char *end)
 
 		if (ch == ']'){
 			//end of array
-			*begin = ptr;
+			*begin = ptr + 1;
 			return array_rec;
 		}
+
 		break;
 	}
 	rcp_record_release(rec);
@@ -155,8 +166,17 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 	rcp_record_ref key = NULL;
 	rcp_record_ref value = NULL;
 
+	rcp_json_skip_space(&ptr, end);
+	ch = rcp_json_get_next_char(ptr, end);
+
+	if (ch == '}'){
+		//end of empty object
+		*begin = ptr + 1;
+		return dict_rec;
+	}
+
 	while (1){
-		rcp_json_skip_space(&ptr, end);
+
 		key = rcp_json_parse_string(&ptr, end);
 		if (!key){
 			rcp_caution("json:key");
@@ -177,7 +197,6 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 			rcp_caution("json:value");
 			break;
 		}
-		rcp_json_skip_space(&ptr, end);
 
 		rcp_dict_node_ref node = rcp_dict_node_new(dict_type);
 		rcp_move(rcp_string_type,
@@ -191,16 +210,18 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 		key = NULL;
 		value = NULL;
 
+		rcp_json_skip_space(&ptr, end);
 		ch = rcp_json_get_next_char(ptr, end);
 		ptr ++;
+		rcp_json_skip_space(&ptr, end);
 
 		if (ch == ','){
 			//next element
 			continue;
 		}
-
 		if (ch == '}'){
-			*begin = ptr;
+			//end of empty object
+			*begin = ptr + 1;
 			return dict_rec;
 		}
 
