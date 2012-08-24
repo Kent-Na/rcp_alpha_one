@@ -136,7 +136,7 @@ rcp_record_ref rcp_json_parse_array(const char **begin, const char *end)
 
 		if (ch == ']'){
 			//end of array
-			*begin = ptr + 1;
+			*begin = ptr;
 			return array_rec;
 		}
 
@@ -221,7 +221,7 @@ rcp_record_ref rcp_json_parse_object(const char **begin, const char *end)
 		}
 		if (ch == '}'){
 			//end of empty object
-			*begin = ptr + 1;
+			*begin = ptr;
 			return dict_rec;
 		}
 
