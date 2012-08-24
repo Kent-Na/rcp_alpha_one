@@ -75,10 +75,10 @@ void cmd_impl_login_context(
 				"not enough permission");
 		return;
 	}
-	rcp_context_send_info(con, cmd_rec, "Loggin succeed.");
-	
 	rcp_context_remove_connection(ctx, con);
 
+	rcp_context_send_info(con, cmd_rec, "Loggin succeed.");
+	
 	rcp_context_send_all_con(new_ctx, con);
 	rcp_context_send_all_data(new_ctx, con);	
 	rcp_context_send_all_sub_ctx(new_ctx, con);	
@@ -100,18 +100,14 @@ void cmd_impl_add_context(
 	}
 
 	rcp_context_ref new_ctx = rcp_context_new();
-
-	rcp_dict_node_ref node;
-	node = rcp_dict_node_new(rcp_str_ptr_dict);
-	rcp_copy(rcp_string_type,
-			(rcp_data_ref)rcp_record_data(cmd_recv->name),
-			rcp_dict_node_key(rcp_str_ptr_dict, node));
-	rcp_copy(rcp_pointer_type,
-			(rcp_data_ref)&new_ctx,
-			rcp_dict_node_data(rcp_str_ptr_dict, node));
-
-	rcp_dict_set_node(ctx->sub_context, node);
-
+	rcp_context_set_state_flag(new_ctx, RCP_CTX_PIRTIALY_LOADED);
+	rcp_context_set_state_flag(new_ctx, RCP_CTX_FULLY_LOADED);
+	rcp_context_add_context(ctx,
+			(rcp_string_ref)rcp_record_data(cmd_recv->name),
+			new_ctx);
+	rcp_context_create_db_info(ctx,
+			(rcp_string_ref)rcp_record_data(cmd_recv->name),
+			new_ctx);
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_recv);
 }
 
@@ -192,7 +188,8 @@ void cmd_impl_dump(
 		rcp_type_ref cmd_type,
 		void* cmd)
 {
-	rcp_context_page_out(ctx);
+	rcp_page_out_r(ctx);
+	//rcp_context_page_out(ctx);
 }
 
 void cmd_impl_load(
@@ -202,7 +199,8 @@ void cmd_impl_load(
 		rcp_type_ref cmd_type,
 		void* cmd)
 {
-	rcp_context_page_in(ctx);
+	rcp_page_in_r(ctx);
+	//rcp_context_page_in(ctx);
 }
 
 void cmd_impl_add_permission(
@@ -272,6 +270,9 @@ int rcp_record_cast(
 	if (! type_rec)
 		return 0;
 
+	if (rcp_record_type(type_rec) == rcp_null_type)
+		return 0;
+
 	if (rcp_record_type(type_rec) != rcp_string_type)
 		return -1;
 
@@ -307,6 +308,14 @@ void cmd_impl_set_value(
 	if (rcp_record_cast(ctx, cmd_st->type, cmd_st->value)){
 		rcp_context_send_caution(con, cmd_rec, 
 				"type err.");
+		return;
+	}
+
+	if ((!(cmd_st->path)) || 
+			rcp_record_type(cmd_st->path) == rcp_null_type ){
+		rcp_record_release(ctx->top_level_record);
+		ctx->top_level_record = 
+			rcp_record_retain(cmd_st->value);
 		return;
 	}
 

@@ -24,8 +24,7 @@ int main (int argc, const char** argv)
 	rcp_shared_sender_cluster_init();
 
 	rcp_command_table_init();
-	rcp_context_manager_init();
-	rcp_context_create(0);
+	rcp_root_context();
 
 	int e_queue= rcp_event_new();
 	rcp_listen_start(e_queue);

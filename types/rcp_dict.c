@@ -227,6 +227,19 @@ rcp_dict_node_ref rcp_dict_node_new(rcp_type_ref type)
 	return node;
 }
 
+rcp_dict_node_ref rcp_dict_node_new_with(rcp_type_ref type,
+		rcp_data_ref key, rcp_data_ref data)
+{
+	rcp_dict_node_ref node = rcp_dict_node_new(type);
+	rcp_copy(rcp_dict_type_key_type(type),
+			key,
+			rcp_dict_node_key(type, node));
+	rcp_copy(rcp_dict_type_data_type(type),
+			data,
+			rcp_dict_node_data(type, node));
+	return node;
+}
+
 rcp_extern 
 void rcp_dict_node_delete(rcp_type_ref type, rcp_dict_node_ref node)
 {

@@ -21,7 +21,7 @@ void rcp_ref_write_json(rcp_type_ref type,
 		rcp_data_ref data, rcp_string_ref out)
 {
 	rcp_record_ref rec = *(rcp_record_ref *)data;
-	if (!rcp_record_data(rec)){
+	if (!rec || !rcp_record_data(rec)){
 		rcp_null_write_json(rcp_null_type, NULL, out);
 		return;
 	}
@@ -267,7 +267,7 @@ void rcp_map_write_json(rcp_type_ref type,
 void rcp_array_write_json(rcp_type_ref type,
 		rcp_data_ref data, rcp_string_ref out)
 {
-	rcp_array_ref array = (rcp_array_ref)array;
+	rcp_array_ref array = (rcp_array_ref)data;
 	rcp_type_ref ary_type = rcp_array_data_type(array);
 
 	rcp_array_iterater_ref itr = rcp_array_begin(array);

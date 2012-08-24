@@ -6,6 +6,7 @@
 #include "def/rcp_dict.h"
 #include "def/rcp_array.h"
 
+typedef uint64_t rcp_context_id_t;
 typedef uint64_t rcp_context_state_t;
 typedef uint64_t rcp_permission_t;
 
@@ -15,10 +16,12 @@ typedef uint64_t rcp_permission_t;
 
 #ifdef RCP_INTERNAL_STRUCTURE
 struct rcp_context_core{
+	rcp_context_state_t state;
+	rcp_context_id_t id;
+	rcp_context_ref parent_context;
+
 	rcp_record_ref top_level_record;
 	rcp_tree_ref connections;
-
-	rcp_context_state_t state;
 
 	//string - uint64
 	rcp_dict_ref permissions;
@@ -50,14 +53,36 @@ void rcp_context_test_and_kill(
 		rcp_context_ref ctx, rcp_connection_ref con);
 
 //data management
+
+rcp_extern rcp_context_state_t rcp_context_state_flag(
+		rcp_context_ref ctx);
+rcp_extern void rcp_context_set_state_flag(
+		rcp_context_ref ctx,
+		rcp_context_state_t state);
+rcp_extern void rcp_context_unset_state_flag(
+		rcp_context_ref ctx,
+		rcp_context_state_t state);
+
 rcp_extern rcp_record_ref rcp_context_top_level_record(rcp_context_ref ctx);
 
+void rcp_context_add_context(rcp_context_ref ctx, 
+		rcp_string_ref name, rcp_context_ref new_ctx);
 rcp_extern void rcp_context_execute_command_rec(
 		rcp_context_ref ctx,
 		rcp_connection_ref con, rcp_record_ref cmd);
 
+//ext imp
+void rcp_context_load_sub_contexts(rcp_context_ref ctx);
 void rcp_context_page_in(rcp_context_ref ctx);
 void rcp_context_page_out(rcp_context_ref ctx);
+
+void rcp_page_out_r(rcp_context_ref ctx);
+
+void rcp_page_in_r(rcp_context_ref ctx);
+
+void rcp_context_create_db_info(
+		rcp_context_ref ctx,
+		rcp_string_ref name, rcp_context_ref new_ctx);
 
 rcp_extern void rcp_login_root_context(
 		rcp_connection_ref con);

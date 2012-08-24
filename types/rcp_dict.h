@@ -70,6 +70,9 @@ void rcp_dict_node_deinit(rcp_type_ref type, rcp_dict_node_ref node);
 rcp_extern 
 rcp_dict_node_ref rcp_dict_node_new(rcp_type_ref type);
 
+rcp_dict_node_ref rcp_dict_node_new_with(rcp_type_ref type,
+		rcp_data_ref key, rcp_data_ref data);
+
 rcp_extern 
 void rcp_dict_node_delete(rcp_type_ref type, rcp_dict_node_ref node);
 

@@ -54,12 +54,7 @@ rcp_extern rcp_context_ref rcp_context_new()
 }
 void rcp_context_init(rcp_context_ref ctx)
 {
-	//ctx->top_level_record = 
-	//	rcp_map_new_rec(rcp_int64_type, rcp_ref_type);
-	ctx->top_level_record = 
-		rcp_array_new_rec(rcp_ref_type);
-	//ctx->top_level_record = 
-	//	rcp_record_new(rcp_int64_ref_dict);
+	ctx->top_level_record = NULL;
 	ctx->connections = rcp_tree_new((void*)rcp_pointer_compare,NULL);
 	ctx->dead = rcp_array_new(rcp_pointer_type);
 	ctx->permissions = rcp_dict_new(rcp_str_uint64_dict);
@@ -67,10 +62,11 @@ void rcp_context_init(rcp_context_ref ctx)
 	ctx->types = rcp_dict_new(rcp_str_ptr_dict);
 	ctx->sub_context = rcp_dict_new(rcp_str_ptr_dict);
 	ctx->state = 0;
+	ctx->id = 0;
 }
 void rcp_context_uninit(rcp_context_ref ctx)
 {
-	//ctx->top_level_record
+	rcp_record_release(ctx->top_level_record);
 	rcp_tree_delete(ctx->connections);
 	rcp_array_delete(ctx->dead);
 	rcp_dict_delete(rcp_str_uint64_dict, ctx->permissions);
@@ -172,38 +168,52 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 		//rcp_connection_free(con);
 	}
 }
-/*
-void rcp_context_page_out(rcp_context_ref ctx)
+rcp_extern rcp_context_state_t rcp_context_state_flag(
+		rcp_context_ref ctx)
 {
-	rcp_connection_ref con = rcp_connection_new();
-	rcp_io_ref io = con_file_io_new_wr("contexts/file");
-	rcp_connection_set_io(con, io);
-	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
-	rcp_sender_l1_ref sender = rcp_sender_cluster_json_nt(cls);
-	rcp_connection_set_sender(con, sender);
-
-	rcp_context_send_all_data(ctx, con);	
-
-	rcp_connection_delete(con);
+	return ctx->state;
+}
+rcp_extern void rcp_context_set_state_flag(
+		rcp_context_ref ctx,
+		rcp_context_state_t state)
+{
+	ctx->state |= state;
+}
+rcp_extern void rcp_context_unset_state_flag(
+		rcp_context_ref ctx,
+		rcp_context_state_t state)
+{
+	ctx->state &= ~state;
 }
 
-void rcp_context_page_in(rcp_context_ref ctx)
+void rcp_page_out_r(rcp_context_ref ctx)
 {
-	rcp_connection_ref con = rcp_connection_new();
-	rcp_io_ref io = con_file_io_new_rd("contexts/file");
-	rcp_connection_set_io(con, io);
-	rcp_receiver_ref receiver = rcp_receiver_new(&con_nt_json_class);
-	rcp_connection_set_receiver(con, receiver);
-	rcp_connection_set_context(con, ctx);
-
-	while (rcp_connection_alive(con)){
-		rcp_connection_on_receive(con);
+	rcp_dict_node_ref node = rcp_dict_begin(ctx->sub_context);
+	while (node){
+		rcp_data_ref ctx_ref = rcp_dict_node_data(
+				rcp_str_ptr_dict, node);
+		rcp_context_ref new_ctx = *(rcp_context_ref*)ctx_ref;
+		rcp_page_out_r(new_ctx);
+		node = rcp_dict_node_next(node);
 	}
-
-	rcp_connection_delete(con);
+	rcp_context_page_out(ctx);
 }
 
-*/
+void rcp_page_in_r(rcp_context_ref ctx)
+{
+	rcp_context_load_sub_contexts(ctx);
+
+	rcp_dict_node_ref node = rcp_dict_begin(ctx->sub_context);
+	while (node){
+		rcp_data_ref ctx_ref = rcp_dict_node_data(
+				rcp_str_ptr_dict, node);
+		rcp_context_ref new_ctx = *(rcp_context_ref*)ctx_ref;
+		rcp_page_in_r(new_ctx);
+		node = rcp_dict_node_next(node);
+	}
+	rcp_context_page_in(ctx);
+}
+
 void rcp_context_send_all_con(rcp_context_ref ctx, rcp_connection_ref con)
 {
 	rcp_tree_node_ref node = rcp_tree_begin(ctx->connections);
@@ -250,6 +260,8 @@ void rcp_context_send_all_sub_ctx(rcp_context_ref ctx,
 void rcp_context_send_all_data(rcp_context_ref ctx, rcp_connection_ref con)
 {
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
+	if (!tlo_rec)
+		return;
 
 	rcp_type_ref type = rcp_record_type(tlo_rec);
 	rcp_data_ref data = rcp_record_data(tlo_rec);
@@ -331,13 +343,23 @@ void rcp_context_set_permission(
 rcp_extern void rcp_login_root_context(
 		rcp_connection_ref con)
 {
-	rcp_context_ref ctx = rcp_context_get(0);
+	rcp_context_ref ctx = rcp_root_context();
 
 	rcp_context_send_all_con(ctx, con);
 	rcp_context_send_all_data(ctx, con);	
 	rcp_context_send_all_sub_ctx(ctx, con);	
 
 	rcp_context_add_connection(ctx, con);
+}
+
+void rcp_context_add_context(rcp_context_ref ctx, 
+		rcp_string_ref name, rcp_context_ref new_ctx)
+{
+	rcp_dict_node_ref node;
+	node = rcp_dict_node_new_with(rcp_str_ptr_dict,
+			(rcp_data_ref)name,
+			(rcp_data_ref)&new_ctx);
+	node = rcp_dict_set_node(ctx->sub_context, node);
 }
 
 rcp_extern void rcp_context_execute_command_rec(
@@ -369,6 +391,8 @@ rcp_extern void rcp_context_execute_command_rec(
 			rcp_string_c_str(cmd_name));
 	
 	if (! cmd_info){
+		rcp_context_send_caution(con, cmd_rec, 
+				"invalid command");
 		rcp_error(rcp_string_c_str(cmd_name));
 		rcp_error("^ invalid command");
 		return;

@@ -1,18 +1,6 @@
 env = Environment()
 Import('env')
 
-#env.Append(CCFLAGS = ['-O3'])
-#env.Replace(CC = 'clang')
-#env.Replace(CXX = 'clang')
-env.Replace(CC = 'gcc-4.6')
-env.Replace(CXX = 'g++-4.6')
-env.Append(CCFLAGS = ['-Wall','-g'])
-env.Append(CFLAGS = ['-Wno-pointer-sign','-Wno-deprecated-declarations'])
-env.Append(CXXFLAGS = ['-xc++','-std=gnu++0x'])
-env.Append(LIBS = ['ssl','m','crypto','pq'])
-env.Append(LIBPATH = ['/usr/local/pgsql/lib'])
-env.Append(CPPPATH = ['/usr/local/pgsql/include'])
-
 types = [
 	'types/rcp_array.c',
 	'types/rcp_map.c',

@@ -32,7 +32,7 @@ rcp_extern size_t rcp_array_empty(rcp_array_ref array);
 rcp_extern rcp_data_ref rcp_array_data(rcp_array_ref array, size_t index);
 rcp_extern void rcp_array_append_data(rcp_array_ref array, void *data);
 
-//If an array has no data, [data] not modefied.
+//If an array has no data, [array->data] not modefied.
 rcp_extern void rcp_array_pop(rcp_array_ref array, void *data);
 
 rcp_extern rcp_array_iterater_ref rcp_array_begin(rcp_array_ref array);

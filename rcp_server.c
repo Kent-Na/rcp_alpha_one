@@ -18,31 +18,15 @@
 //context
 //
 
-rcp_dict_ref contexts = NULL;
+rcp_context_ref root_context = NULL;
 
-void rcp_context_manager_init()
+rcp_context_ref rcp_root_context()
 {
-	contexts = (rcp_dict_ref)rcp_new(rcp_uint32_ptr_dict); 
-}
-
-rcp_context_ref rcp_context_get(rcp_context_id_t id)
-{
-	rcp_dict_node_ref node = rcp_dict_find(contexts, (rcp_data_ref)&id);
-	if (node == NULL)
-		return NULL;
-	return *(rcp_context_ref*)rcp_dict_node_data(rcp_uint32_ptr_dict, node);
-}
-
-rcp_context_ref rcp_context_create(uint32_t id)
-{
-	rcp_context_ref ctx = rcp_context_new();
-
-	rcp_dict_node_ref node = rcp_dict_node_new(rcp_uint32_ptr_dict);
-	*(uint32_t*)rcp_dict_node_key(rcp_uint32_ptr_dict, node) = id;
-	*(rcp_context_ref*)rcp_dict_node_data(rcp_uint32_ptr_dict, node) = ctx;
-
-	rcp_dict_set_node(contexts, node);
-	return ctx;
+	if (root_context)
+		return root_context;
+	root_context = rcp_context_new();
+	rcp_page_in_r(root_context);
+	return root_context;
 }
 
 ///
