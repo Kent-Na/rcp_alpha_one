@@ -342,6 +342,9 @@ void cmd_impl_append_value(
 
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
 
+	if (! tlo_rec)
+		return;
+
 	rcp_append(rcp_record_type(tlo_rec), rcp_record_data(tlo_rec),
 			rcp_ref_type, (rcp_data_ref)&cmd_st->value);
 
