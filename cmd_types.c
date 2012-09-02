@@ -42,9 +42,9 @@ rcp_type_ref cmd_open_type(){
 	param->offset = offsetof(struct cmd_open, command);
 	param ++;
 
-	param->name = rcp_string_new("version");
+	param->name = rcp_string_new("protocol");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_open, version);
+	param->offset = offsetof(struct cmd_open, protocol);
 	param ++;
 
 	return s_type;

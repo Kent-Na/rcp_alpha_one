@@ -9,6 +9,8 @@ size_t con_file_send(
 		rcp_io_ref io, const void *data, size_t len);
 size_t con_file_receive(
 		rcp_io_ref io, void *data, size_t len);
+void con_file_close(
+		rcp_io_ref io);
 int con_file_alive(rcp_io_ref io);
 void con_file_on_close(
 		rcp_io_ref io);

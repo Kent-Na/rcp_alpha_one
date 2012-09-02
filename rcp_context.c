@@ -267,6 +267,22 @@ void rcp_context_send_all_data(rcp_context_ref ctx, rcp_connection_ref con)
 	rcp_data_ref data = rcp_record_data(tlo_rec);
 	rcp_send_as_command(type, data, con);
 }
+void rcp_context_send_error(rcp_connection_ref con, 
+		rcp_record_ref cause, const char* reason)
+{
+	struct cmd_error cmd;
+	rcp_type_ref cmd_type=rcp_command_type(CMD_ERROR);
+	rcp_init(cmd_type, (rcp_data_ref)&cmd);
+	cmd.command = rcp_string_new_rec(CMD_STR_ERROR);
+
+	cmd.cause = rcp_record_retain(cause);
+	cmd.reason = rcp_string_new_rec(reason);
+	
+	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
+	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+
+	rcp_connection_close(con);
+}
 void rcp_context_send_caution(rcp_connection_ref con, 
 		rcp_record_ref cause, const char* reason)
 {
@@ -389,6 +405,11 @@ rcp_extern void rcp_context_execute_command_rec(
 
 	rcp_command_ref cmd_info = rcp_command_from_str(
 			rcp_string_c_str(cmd_name));
+	if (cmd_info->cmd != CMD_OPEN && ! rcp_connection_is_open(con)){
+		rcp_context_send_error(con, cmd_rec, 
+				"must send open command.");
+		return;
+	}
 	
 	if (! cmd_info){
 		rcp_context_send_caution(con, cmd_rec, 

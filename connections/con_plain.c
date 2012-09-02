@@ -14,6 +14,7 @@ struct rcp_io_class con_plain_class = {
 	con_plain_release,
 	con_plain_send,
 	con_plain_receive,
+	con_plain_close,
 	con_plain_alive,
 	con_plain_on_close,
 };
@@ -84,6 +85,14 @@ size_t con_plain_receive(
 	}
 
 	return r_len;
+}
+
+void con_plain_close(
+		rcp_io_ref io)
+{
+	struct con_plain *st = rcp_io_data(io);
+	close(st->fd);
+	st->fd = -1;
 }
 
 int con_plain_alive(

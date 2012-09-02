@@ -25,7 +25,7 @@ command = {
 	"shortDescription":"",
 	"longDescription":"",
 	}
-addParameter(command, "string", "version")
+addParameter(command, "string", "protocol")
 addParameter(command, "string", "client")
 
 commandList.append(command)

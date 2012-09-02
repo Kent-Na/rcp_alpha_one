@@ -387,8 +387,22 @@ void cmd_impl_open(
 		rcp_type_ref cmd_type,
 		void* cmd)
 {
-	rcp_context_send_caution(con, cmd_rec, 
-			"Not yet implemented.");
+	struct cmd_open *cmd_st = cmd;
+
+	if (!(cmd_st->protocol)){
+		rcp_context_send_error(con, cmd_rec, 
+			"Invalid parameter.");
+		return;
+	}
+	rcp_string_ref protocol = (rcp_string_ref)rcp_record_data(
+			cmd_st->protocol);
+	if (strcmp(rcp_string_c_str(protocol), "alpha1")){
+		rcp_context_send_error(con, cmd_rec, 
+			"Invalid protocol.");
+		return;
+	}
+
+	rcp_connection_open(con, cmd_st->protocol, cmd_st->client);
 }
 
 void cmd_impl_close(

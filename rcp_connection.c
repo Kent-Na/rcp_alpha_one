@@ -19,6 +19,9 @@ struct rcp_connection_core{
 	rcp_receiver_ref receiver;
 
 	//statuses
+	rcp_record_ref protocol_version;
+	rcp_record_ref client_name;
+
 	rcp_record_ref username;
 	uint32_t login_id;
 	rcp_context_ref ctx;
@@ -33,6 +36,9 @@ rcp_connection_ref rcp_connection_new()
 	con->sender = NULL;
 	con->receiver = NULL;
 
+	con->protocol_version = NULL;
+	con->client_name = NULL;
+
 	con->username = NULL;
 	con->login_id = 0;
 	con->ctx = NULL;
@@ -45,6 +51,8 @@ void rcp_connection_delete(rcp_connection_ref con)
 	rcp_io_delete(con->io);
 	rcp_receiver_delete(con->receiver);
 
+	rcp_record_release(con->protocol_version);
+	rcp_record_release(con->client_name);
 	rcp_record_release(con->username);
 }
 void rcp_connection_set_io(
@@ -121,6 +129,29 @@ int rcp_connection_alive(rcp_connection_ref con)
 void rcp_connection_on_close(rcp_connection_ref con)
 {
 	rcp_io_on_close(con->io);
+}
+
+int rcp_connection_is_open(rcp_connection_ref con)
+{
+	return con->protocol_version != NULL;
+}
+
+void rcp_connection_open(rcp_connection_ref con,
+		rcp_record_ref protocol, rcp_record_ref client)
+{
+	if (rcp_connection_is_open(con))
+		return;
+
+	con->protocol_version = rcp_record_retain(protocol);
+	con->client_name = rcp_record_retain(client);
+
+	rcp_login_root_context(con);
+}
+void rcp_connection_close(rcp_connection_ref con)
+{
+	if (!rcp_connection_alive(con))
+		return;
+	rcp_io_close(con->io);
 }
 
 rcp_extern

@@ -10,6 +10,7 @@ struct rcp_io_class{
 	void (*deinit)(rcp_io_ref io);
 	size_t (*send)(rcp_io_ref io, const void *data, size_t len);
 	size_t (*receive)(rcp_io_ref io, void *data, size_t len);
+	void (*close)(rcp_io_ref io);
 	int (*alive)(rcp_io_ref io);
 	void (*on_close)(rcp_io_ref io);
 };
@@ -40,6 +41,11 @@ static __inline__ size_t rcp_io_send(rcp_io_ref io, const void *data, size_t len
 static __inline__ size_t rcp_io_receive(rcp_io_ref io, void *data, size_t len)
 {
 	return io->klass->receive(io, data, len);
+}
+
+static __inline__ void rcp_io_close(rcp_io_ref io)
+{
+	io->klass->close(io);
 }
 
 static __inline__ int rcp_io_alive(rcp_io_ref io)

@@ -12,6 +12,8 @@ size_t con_pgsql_lo_send(
 		rcp_io_ref io, const void *data, size_t len);
 size_t con_pgsql_lo_receive(
 		rcp_io_ref io, void *data, size_t len);
+void con_pgsql_lo_close(
+		rcp_io_ref io);
 int con_pgsql_lo_alive(rcp_io_ref io);
 void con_pgsql_lo_on_close(
 		rcp_io_ref io);

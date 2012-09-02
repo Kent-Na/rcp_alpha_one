@@ -2,7 +2,7 @@
 #include "def/rcp_record.h"
 
 struct cmd_open{
-	rcp_record_ref version;
+	rcp_record_ref protocol;
 	rcp_record_ref client;
 	rcp_record_ref command;
 };

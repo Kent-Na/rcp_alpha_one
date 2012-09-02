@@ -39,6 +39,11 @@ int rcp_connection_alive(rcp_connection_ref con);
 rcp_extern
 void rcp_connection_on_close(rcp_connection_ref con);
 
+rcp_extern void rcp_connection_close(rcp_connection_ref con);
+rcp_extern void rcp_connection_open(rcp_connection_ref con,
+		rcp_record_ref protocol, rcp_record_ref client);
+rcp_extern int rcp_connection_is_open(rcp_connection_ref con); 
+
 rcp_extern
 void rcp_connection_set_context(
 		rcp_connection_ref con, rcp_context_ref ctx);

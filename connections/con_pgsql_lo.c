@@ -14,6 +14,7 @@ struct rcp_io_class con_pgsql_lo_class = {
 	con_pgsql_lo_release,
 	con_pgsql_lo_send,
 	con_pgsql_lo_receive,
+	con_pgsql_lo_close,
 	con_pgsql_lo_alive,
 	con_pgsql_lo_on_close,
 };
@@ -85,6 +86,14 @@ size_t con_pgsql_lo_receive(
 	}
 
 	return r_len;
+}
+
+void con_pgsql_lo_close(
+		rcp_io_ref io)
+{
+	struct con_pgsql_lo *st = rcp_io_data(io);
+	lo_close(st->con, st->fd);
+	st->fd = -1;
 }
 
 int con_pgsql_lo_alive(

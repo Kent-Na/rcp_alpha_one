@@ -14,6 +14,7 @@ struct rcp_io_class con_file_class = {
 	con_file_release,
 	con_file_send,
 	con_file_receive,
+	con_file_close,
 	con_file_alive,
 	con_file_on_close,
 };
@@ -94,6 +95,13 @@ size_t con_file_receive(
 	return r_len;
 }
 
+void con_file_close(
+		rcp_io_ref io)
+{
+	struct con_file *st = rcp_io_data(io);
+	close(st->fd);
+	st->fd = -1;
+}
 int con_file_alive(
 		rcp_io_ref io)
 {

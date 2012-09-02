@@ -13,6 +13,7 @@ struct rcp_io_class con_ssl_class = {
 	con_ssl_release,
 	con_ssl_send,
 	con_ssl_receive,
+	con_ssl_close,
 	con_ssl_alive,
 	con_ssl_on_close,
 };
@@ -115,7 +116,10 @@ size_t con_ssl_receive(
 
 	return r_len;
 }
-
+void con_ssl_close(rcp_io_ref io)
+{
+	con_ssl_on_close(io);
+}
 int con_ssl_alive(
 		rcp_io_ref io)
 {

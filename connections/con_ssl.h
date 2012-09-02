@@ -14,6 +14,7 @@ size_t con_ssl_send(
 		rcp_io_ref io, const void *data, size_t len);
 size_t con_ssl_receive(
 		rcp_io_ref io, void *data, size_t len);
+void con_ssl_close(rcp_io_ref io);
 int con_ssl_alive(
 		rcp_io_ref io);
 void con_ssl_on_close(rcp_io_ref io);
