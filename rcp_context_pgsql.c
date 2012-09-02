@@ -235,10 +235,6 @@ void rcp_context_page_out(rcp_context_ref ctx)
 
 	rcp_connection_delete(con);
 	PQclear(PQexec(db_con, "end"));
-
-	rcp_context_unset_state_flag(ctx, RCP_CTX_FULLY_LOADED);
-	rcp_record_release(ctx->top_level_record);
-	ctx->top_level_record = NULL;
 }
 
 void rcp_context_page_in(rcp_context_ref ctx)
