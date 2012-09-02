@@ -144,8 +144,6 @@ void rcp_connection_open(rcp_connection_ref con,
 
 	con->protocol_version = rcp_record_retain(protocol);
 	con->client_name = rcp_record_retain(client);
-
-	rcp_login_root_context(con);
 }
 void rcp_connection_close(rcp_connection_ref con)
 {

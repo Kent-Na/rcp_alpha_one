@@ -260,6 +260,9 @@ void rcp_context_page_in(rcp_context_ref ctx)
 	rcp_receiver_ref receiver = rcp_receiver_new(&con_nt_json_class);
 	rcp_connection_set_receiver(con, receiver);
 	rcp_connection_set_context(con, ctx);
+	rcp_record_ref protocol_ver = rcp_string_new_rec("alpha1");
+	rcp_connection_open(con, protocol_ver, NULL);
+	rcp_record_release(protocol_ver);
 
 	while (rcp_connection_alive(con)){
 		rcp_connection_on_receive(con);

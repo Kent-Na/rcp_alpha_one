@@ -403,6 +403,7 @@ void cmd_impl_open(
 	}
 
 	rcp_connection_open(con, cmd_st->protocol, cmd_st->client);
+	rcp_login_root_context(con);
 }
 
 void cmd_impl_close(
