@@ -123,6 +123,13 @@ void cmd_impl_login_context(
 		rcp_type_ref cmd_type,
 		void* cmd);
 
+void cmd_impl_logout_context(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd);
+
 void cmd_impl_update_name(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,

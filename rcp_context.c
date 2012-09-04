@@ -60,6 +60,7 @@ void rcp_context_init(rcp_context_ref ctx)
 	ctx->permissions = rcp_dict_new(rcp_str_uint64_dict);
 	ctx->base_permission = RCP_PMS_LOGIN | RCP_PMS_READ | RCP_PMS_WRITE;
 	ctx->types = rcp_dict_new(rcp_str_ptr_dict);
+	ctx->parent_context = NULL;
 	ctx->sub_context = rcp_dict_new(rcp_str_ptr_dict);
 	ctx->state = 0;
 	ctx->id = 0;
@@ -371,6 +372,7 @@ rcp_extern void rcp_login_root_context(
 void rcp_context_add_context(rcp_context_ref ctx, 
 		rcp_string_ref name, rcp_context_ref new_ctx)
 {
+	new_ctx->parent_context = ctx;
 	rcp_dict_node_ref node;
 	node = rcp_dict_node_new_with(rcp_str_ptr_dict,
 			(rcp_data_ref)name,

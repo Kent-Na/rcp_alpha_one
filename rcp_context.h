@@ -26,7 +26,7 @@ struct rcp_context_core{
 	//string - uint64
 	rcp_dict_ref permissions;
 
-	uint64_t base_permission;
+	rcp_permission_t base_permission;
 
 	//string - ptr
 	rcp_dict_ref types;

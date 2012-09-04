@@ -179,6 +179,15 @@ command = {
 addParameter(command, "string", "name")
 commandList.append(command)
 
+command = {
+	"name":"logoutContext",
+	"shortDescription":"",
+	"longDescription":"",
+	"possibleErrors":["Context not found","Permission denied"],
+	}
+
+commandList.append(command)
+
 commandList.append({
 	"name":"*updateName",
 	"shortDescription":"",

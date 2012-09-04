@@ -86,6 +86,10 @@ struct cmd_login_context{
 	rcp_record_ref command;
 };
 
+struct cmd_logout_context{
+	rcp_record_ref command;
+};
+
 struct cmd_update_name{
 	rcp_record_ref command;
 };

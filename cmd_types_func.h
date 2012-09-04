@@ -17,6 +17,7 @@ rcp_type_ref cmd_remove_permission_type();
 rcp_type_ref cmd_add_context_type();
 rcp_type_ref cmd_remove_context_type();
 rcp_type_ref cmd_login_context_type();
+rcp_type_ref cmd_logout_context_type();
 rcp_type_ref cmd_update_name_type();
 rcp_type_ref cmd_send_value_type();
 rcp_type_ref cmd_set_value_type();

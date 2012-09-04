@@ -85,6 +85,41 @@ void cmd_impl_login_context(
 	rcp_context_add_connection(new_ctx, con);
 }
 
+void cmd_impl_logout_context(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd)
+{
+
+	if (!ctx->parent_context){
+		rcp_context_send_caution(con, cmd_rec, 
+				"You are in root context");
+		return;
+	}
+
+	rcp_context_ref new_ctx = ctx->parent_context;
+
+	rcp_string_ref username = (rcp_string_ref)rcp_record_data(
+			rcp_connection_username(con));
+	uint64_t pms = rcp_context_permission(new_ctx, username);
+
+	if (! (pms & RCP_PMS_LOGIN)){
+		rcp_context_send_caution(con, cmd_rec, 
+				"not enough permission");
+		return;
+	}
+	rcp_context_remove_connection(ctx, con);
+
+	rcp_context_send_info(con, cmd_rec, "Loggout succeed.");
+	
+	rcp_context_send_all_con(new_ctx, con);
+	rcp_context_send_all_data(new_ctx, con);	
+	rcp_context_send_all_sub_ctx(new_ctx, con);	
+	rcp_context_add_connection(new_ctx, con);
+}
+
 void cmd_impl_add_context(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
