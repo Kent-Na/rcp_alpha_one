@@ -1,6 +1,8 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
 
+#include "rcp_command.h"
+#include "cmd_list.h"
 #include "cmd_types.h"
 
 #include "rcp_server.h"
@@ -208,11 +210,38 @@ void cmd_impl_login_user(
 	if (r != 1){
 		rcp_context_send_caution(con, cmd_rec, 
 				"Inncorrect username and password pair.");
+		return;
 	}
-	else{
-		rcp_connection_set_username(con, cmd_recv->username);
-		rcp_context_send_info(con, 
-				cmd_rec, "Loggin succeed.");
+
+	uint64_t pms = rcp_context_permission(ctx, username);
+	if (! (pms & RCP_PMS_LOGIN)){
+		rcp_context_send_caution(con, cmd_rec, 
+				"not enough context login permission");
+		return;
+	}
+
+	rcp_connection_set_username(con, cmd_recv->username);
+	rcp_context_send_info(con, 
+			cmd_rec, "Loggin succeed.");
+
+	{
+		struct cmd_remove_user cmd;
+		rcp_type_ref type_cmd = rcp_command_type(CMD_REMOVE_USER);
+		rcp_init(type_cmd, (rcp_data_ref)&cmd);
+		cmd.command = rcp_string_new_rec(CMD_STR_REMOVE_USER);
+		rcp_context_send_data(ctx,
+				type_cmd, (rcp_data_ref)&cmd);
+		rcp_deinit(type_cmd, (rcp_data_ref)&cmd);
+	}
+	{
+		struct cmd_add_user cmd;
+		rcp_type_ref type_cmd = rcp_command_type(CMD_ADD_USER);
+		rcp_init(type_cmd, (rcp_data_ref)&cmd);
+		cmd.command = rcp_string_new_rec(CMD_STR_ADD_USER);
+		cmd.username = rcp_record_retain(cmd_recv->username);
+		rcp_context_send_data(ctx,
+				type_cmd, (rcp_data_ref)&cmd);
+		rcp_deinit(type_cmd, (rcp_data_ref)&cmd);
 	}
 }
 
