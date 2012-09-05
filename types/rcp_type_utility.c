@@ -1,15 +1,15 @@
-#include "rcp_pch.h"
-#include "rcp_utility.h"
-#include "rcp_defines.h"
+#include "../rcp_pch.h"
+#include "../rcp_utility.h"
+#include "../rcp_defines.h"
 
-#include "rcp_type.h"
-#include "rcp_record.h"
-#include "types/rcp_map.h"
-#include "types/rcp_struct.h"
-#include "types/rcp_string.h"
-#include "types/rcp_type_list.h"
-#include "types/rcp_dict.h"
-#include "types/rcp_dict_list.h"
+#include "../rcp_type.h"
+#include "../rcp_record.h"
+#include "rcp_map.h"
+#include "rcp_struct.h"
+#include "rcp_string.h"
+#include "rcp_type_list.h"
+#include "rcp_dict.h"
+#include "rcp_dict_list.h"
 
 rcp_extern rcp_record_ref rcp_map_find_c_str(
 		rcp_map_ref map, const char *key, rcp_type_ref type)
@@ -216,3 +216,56 @@ rcp_extern void rcp_dict_to_struct(
 		}
 	}
 }
+
+rcp_extern int rcp_type_is_int(rcp_type_ref type)
+{
+	if (type == rcp_int8_type)
+		return 1;
+	if (type == rcp_int16_type)
+		return 1;
+	if (type == rcp_int32_type)
+		return 1;
+	if (type == rcp_int64_type)
+		return 1;
+	return 0;
+}
+
+rcp_extern int rcp_type_is_uint(rcp_type_ref type)
+{
+	if (type == rcp_uint8_type)
+		return 1;
+	if (type == rcp_uint16_type)
+		return 1;
+	if (type == rcp_uint32_type)
+		return 1;
+	if (type == rcp_uint64_type)
+		return 1;
+	return 0;
+}
+
+rcp_extern int64_t rcp_int_as_int(rcp_type_ref type, rcp_data_ref data)
+{
+	if (type == rcp_int8_type)
+		return *(int8_t*)data;
+	if (type == rcp_int16_type)
+		return *(int16_t*)data;
+	if (type == rcp_int32_type)
+		return *(int32_t*)data;
+	if (type == rcp_int64_type)
+		return *(int64_t*)data;
+	return 0;
+}
+
+rcp_extern uint64_t rcp_uint_as_uint(rcp_type_ref type, rcp_data_ref data)
+{
+	if (type == rcp_uint8_type)
+		return *(uint8_t*)data;
+	if (type == rcp_uint16_type)
+		return *(uint16_t*)data;
+	if (type == rcp_uint32_type)
+		return *(uint32_t*)data;
+	if (type == rcp_uint64_type)
+		return *(uint64_t*)data;
+}
+
+

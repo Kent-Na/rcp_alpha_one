@@ -71,7 +71,7 @@ rcp_extern void rcp_move(rcp_type_ref type,
 rcp_extern void rcp_copy(rcp_type_ref type,
 		rcp_data_ref src, rcp_data_ref dst);
 
-//swap 2 values
+//swap 2 values. don't use this function. It have a bug.
 rcp_extern void rcp_swap(rcp_type_ref type,
 		rcp_data_ref src, rcp_data_ref dst);
 

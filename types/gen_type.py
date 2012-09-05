@@ -29,7 +29,7 @@ typeTable = [
 #	 False,	False,	False, False, True],
 	[18,	'array',	'rcp_record_ref',	'sizeof(struct rcp_array_core)',
 	  True,  True, False, False, True,  True,
-	 False,  True, False],
+	  True,  True, False],
 #	[19,	'struct',	None],
 #	 False,	False,	False, False, True],
 

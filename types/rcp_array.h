@@ -22,6 +22,10 @@ void rcp_array_init(rcp_type_ref type, rcp_data_ref data);
 void rcp_array_init_with_type(void *data, rcp_type_ref type);
 void rcp_array_deinit(rcp_type_ref type, rcp_data_ref data);
 
+void rcp_array_set(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref key_type, rcp_data_ref key_data,
+		rcp_type_ref data_type, rcp_data_ref data_data);
+
 void rcp_array_append(rcp_type_ref type, rcp_data_ref data,
 		rcp_type_ref data_type, rcp_data_ref data_data);
 

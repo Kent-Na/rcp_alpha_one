@@ -11,7 +11,7 @@
 //bool		<->		bool8
 //null		<->		null
 
-//map		<--		struct
+//object	<--		struct
 
 rcp_extern rcp_record_ref rcp_json_parse(
 		const char **begin, const char *end);

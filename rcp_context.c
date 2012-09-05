@@ -20,7 +20,7 @@
 #include "rcp_user.h"
 
 #include "rcp_type.h"
-#include "rcp_type_utility.h"
+#include "types/rcp_type_utility.h"
 #include "rcp_record.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_dict_list.h"

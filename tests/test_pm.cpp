@@ -3,11 +3,10 @@
 
 #include "../rcp_tree.h"
 
-#include "../rcp_type_utility.h"
+#include "../types/rcp_type_utility.h"
 #include "../rcp_record.h"
 #include "../types/rcp_type_list.h"
 #include "../types/rcp_string.h"
-#include "../rcp_type_utility.h"
 #include "../types/rcp_map.h"
 
 #define RCP_INTERNAL_STRUCTURE

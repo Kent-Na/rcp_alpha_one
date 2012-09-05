@@ -416,11 +416,20 @@ rcp_extern rcp_record_ref rcp_json_parse_number(
 		exponential_part_offset;
 
 	if (exponential_part == 0){
-		//int64_t
-		rcp_record_ref rec = rcp_record_new(rcp_int64_type);
-		int64_t *dat = (int64_t*)rcp_record_data(rec);
-		*dat = significand;
-		return rec;
+		if (sign == 1){
+			//int64_t
+			rcp_record_ref rec = rcp_record_new(rcp_uint64_type);
+			uint64_t *dat = (uint64_t*)rcp_record_data(rec);
+			*dat = significand;
+			return rec;
+		}
+		else{
+			//uint64_t
+			rcp_record_ref rec = rcp_record_new(rcp_int64_type);
+			int64_t *dat = (int64_t*)rcp_record_data(rec);
+			*dat = significand;
+			return rec;
+		}
 	}
 	else{
 		//double

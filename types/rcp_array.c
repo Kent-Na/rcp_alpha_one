@@ -8,6 +8,7 @@
 
 #include "../rcp_type.h"
 #include "rcp_array.h"
+#include "rcp_type_utility.h"
 
 
 rcp_extern rcp_record_ref rcp_array_new_rec(rcp_type_ref type)
@@ -58,6 +59,27 @@ void rcp_array_append(rcp_type_ref type, rcp_data_ref data,
 		return;
 
 	rcp_array_append_data(array, data_data);
+}
+
+void rcp_array_set(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref key_type, rcp_data_ref key_data,
+		rcp_type_ref data_type, rcp_data_ref data_data)
+{
+	rcp_array_ref array = (rcp_array_ref)data;
+	if (rcp_array_data_type(array) != data_type)
+		return;
+
+	if (!rcp_type_is_uint(key_type))
+		return;
+
+	uint64_t idx = rcp_uint_as_uint(key_type, key_data);
+	if (idx >= array->count)
+		return;
+
+	rcp_data_ref out = array->data + data_type->size*idx;
+		
+	rcp_deinit(data_type, out);
+	rcp_copy(data_type, data_data, out);
 }
 
 rcp_extern rcp_array_ref rcp_array_new(rcp_type_ref type)

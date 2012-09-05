@@ -1,9 +1,31 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
 #include "../rcp_json.h"
+#include "../types/rcp_type_list.h"
+#include "../rcp_record.h"
 
 
 int test_json(){
+	{
+		const char *in = "300";
+		rcp_record_ref out;
+		out = rcp_json_parse_number(&in, in+3);
+		if (rcp_record_type(out) != rcp_uint64_type)
+			rcp_error("test:err 012");
+		if (*(uint64_t*)rcp_record_data(out) != 300)
+			rcp_error("test:err 013");
+	}
+
+	{
+		const char *in = "-300";
+		rcp_record_ref out;
+		out = rcp_json_parse_number(&in, in+4);
+		if (rcp_record_type(out) != rcp_int64_type)
+			rcp_error("test:err 022");
+		if (*(int64_t*)rcp_record_data(out) != -300)
+			rcp_error("test:err 023");
+	}
+
 	/*
 	{
 		struct rcp_json_number num;
