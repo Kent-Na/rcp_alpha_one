@@ -69,6 +69,12 @@ void rcp_array_set(rcp_type_ref type, rcp_data_ref data,
 	if (rcp_array_data_type(array) != data_type)
 		return;
 
+	if (key_type == rcp_ref_type){
+		rcp_record_ref key_rec = *(rcp_record_ref*)key_data;
+		key_type = rcp_record_type(key_rec);
+		key_data = rcp_record_data(key_rec);
+	}
+
 	if (!rcp_type_is_uint(key_type))
 		return;
 
