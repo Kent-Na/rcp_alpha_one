@@ -31,8 +31,8 @@ void rcp_dict_delete(rcp_type_ref type, rcp_dict_ref data);
 void rcp_dict_init(rcp_type_ref type, rcp_data_ref data);
 void rcp_dict_deinit(rcp_type_ref type, rcp_data_ref data);
 
-rcp_data_ref rcp_dict_at(rcp_type_ref type, rcp_data_ref data,
-		rcp_data_ref key);
+void rcp_dict_at(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref *io_type, rcp_data_ref *io_data);
 
 void rcp_dict_set(rcp_type_ref type, rcp_data_ref data,
 		rcp_type_ref key_type, rcp_data_ref key_data,

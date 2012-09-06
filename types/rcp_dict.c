@@ -95,12 +95,31 @@ void rcp_dict_deinit(rcp_type_ref type, rcp_data_ref data)
 	}
 	rcp_tree_deinit((rcp_tree_ref)data);
 }
-
-rcp_data_ref rcp_dict_at(rcp_type_ref type, rcp_data_ref data,
-		rcp_data_ref key)
+void rcp_dict_at(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref *io_type, rcp_data_ref *io_data)
 {
-	rcp_dict_node_ref node = rcp_dict_find((rcp_dict_ref)data, key);
-	return rcp_dict_node_data(type, node);
+	rcp_dict_ref dict = (rcp_dict_ref)data;
+
+	rcp_assert(io_type!=NULL, "null_type");
+	rcp_assert(io_data!=NULL, "null_data");
+
+	rcp_type_ref key_type = *io_type;
+	rcp_data_ref key_data = *io_data;
+
+	if (key_type == rcp_ref_type){
+		rcp_record_ref key_rec = *(rcp_record_ref*)key_data;
+		key_type = rcp_record_type(key_rec);
+		key_data = rcp_record_data(key_rec);
+	}
+	
+	rcp_dict_node_ref node;
+	node = rcp_dict_find(dict, key_data);
+
+	if (!node)
+		return;
+
+	*io_type = rcp_dict_type_data_type(type);
+	*io_data = rcp_dict_node_data(type, node);
 }
 
 void rcp_dict_set(rcp_type_ref type, rcp_data_ref data,
