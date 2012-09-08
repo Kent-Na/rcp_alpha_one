@@ -266,6 +266,14 @@ rcp_extern uint64_t rcp_uint_as_uint(rcp_type_ref type, rcp_data_ref data)
 		return *(uint32_t*)data;
 	if (type == rcp_uint64_type)
 		return *(uint64_t*)data;
+	return 0;
 }
 
-
+rcp_extern int rcp_record_is_null(rcp_record_ref rec)
+{
+	if (! rec)
+		return 1;
+	if (rcp_record_type(rec) == rcp_null_type)
+		return 1;
+	return 0;
+}

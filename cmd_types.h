@@ -59,15 +59,14 @@ struct cmd_remove_user{
 	rcp_record_ref command;
 };
 
-struct cmd_add_permission{
+struct cmd_set_permission{
 	rcp_record_ref username;
 	rcp_record_ref mode;
 	rcp_record_ref command;
 };
 
-struct cmd_remove_permission{
+struct cmd_unset_permission{
 	rcp_record_ref username;
-	rcp_record_ref mode;
 	rcp_record_ref command;
 };
 
@@ -87,10 +86,6 @@ struct cmd_login_context{
 };
 
 struct cmd_logout_context{
-	rcp_record_ref command;
-};
-
-struct cmd_update_name{
 	rcp_record_ref command;
 };
 

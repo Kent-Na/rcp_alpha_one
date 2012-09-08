@@ -15,6 +15,7 @@
 #include "rcp_user.h"
 
 #include "types/rcp_type_list.h"
+#include "types/rcp_type_utility.h"
 
 #include "types/rcp_array.h"
 #include "types/rcp_dict.h"
@@ -70,7 +71,7 @@ void cmd_impl_login_context(
 
 	rcp_string_ref username = (rcp_string_ref)rcp_record_data(
 			rcp_connection_username(con));
-	uint64_t pms = rcp_context_permission(new_ctx, username);
+	rcp_permission_t pms = rcp_context_permission(new_ctx, username);
 
 	if (! (pms & RCP_PMS_LOGIN)){
 		rcp_context_send_caution(con, cmd_rec, 
@@ -79,6 +80,7 @@ void cmd_impl_login_context(
 	}
 	rcp_context_remove_connection(ctx, con);
 
+	rcp_connection_set_permission(con, pms);
 	rcp_context_send_info(con, cmd_rec, "Loggin succeed.");
 	
 	rcp_context_send_all_con(new_ctx, con);
@@ -105,7 +107,7 @@ void cmd_impl_logout_context(
 
 	rcp_string_ref username = (rcp_string_ref)rcp_record_data(
 			rcp_connection_username(con));
-	uint64_t pms = rcp_context_permission(new_ctx, username);
+	rcp_permission_t pms = rcp_context_permission(new_ctx, username);
 
 	if (! (pms & RCP_PMS_LOGIN)){
 		rcp_context_send_caution(con, cmd_rec, 
@@ -114,6 +116,7 @@ void cmd_impl_logout_context(
 	}
 	rcp_context_remove_connection(ctx, con);
 
+	rcp_connection_set_permission(con, pms);
 	rcp_context_send_info(con, cmd_rec, "Loggout succeed.");
 	
 	rcp_context_send_all_con(new_ctx, con);
@@ -213,13 +216,14 @@ void cmd_impl_login_user(
 		return;
 	}
 
-	uint64_t pms = rcp_context_permission(ctx, username);
+	rcp_permission_t pms = rcp_context_permission(ctx, username);
 	if (! (pms & RCP_PMS_LOGIN)){
 		rcp_context_send_caution(con, cmd_rec, 
 				"not enough context login permission");
 		return;
 	}
 
+	rcp_connection_set_permission(con, pms);
 	rcp_connection_set_username(con, cmd_recv->username);
 	rcp_context_send_info(con, 
 			cmd_rec, "Loggin succeed.");
@@ -267,40 +271,38 @@ void cmd_impl_load(
 	//rcp_context_page_in(ctx);
 }
 
-void cmd_impl_add_permission(
+
+void cmd_impl_set_permission(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
 		rcp_record_ref cmd_rec,
 		rcp_type_ref cmd_type,
 		void* cmd)
 {
-	struct cmd_add_permission *cmd_recv = cmd;
-	rcp_string_ref username = (rcp_string_ref)rcp_record_data(
-			cmd_recv->username);
-	uint64_t old = rcp_context_permission(ctx, username);
-	uint64_t new = old;
-		new |= RCP_PMS_LOGIN;
-		new |= RCP_PMS_READ;
-		new |= RCP_PMS_WRITE;
+	struct cmd_set_permission *cmd_recv = cmd;
+	rcp_string_ref username = NULL;
+	if (rcp_record_type(cmd_recv->username) == rcp_string_type)
+		username = (rcp_string_ref)rcp_record_data(cmd_recv->username);
+	else if (!rcp_record_is_null(cmd_recv->username))
+		return;
+	uint64_t new = rcp_permission_from_array(cmd_recv->mode);
 	rcp_context_set_permission(ctx, username, new);
 }
 
-void cmd_impl_remove_permission(
+void cmd_impl_unset_permission(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
 		rcp_record_ref cmd_rec,
 		rcp_type_ref cmd_type,
 		void* cmd)
 {
-	struct cmd_remove_permission *cmd_recv = cmd;
-	rcp_string_ref username = (rcp_string_ref)rcp_record_data(
-			cmd_recv->username);
-	uint64_t old = rcp_context_permission(ctx, username);
-	uint64_t new = old;
-	new &= ~RCP_PMS_LOGIN;
-	new &= ~RCP_PMS_READ;
-	new &= ~RCP_PMS_WRITE;
-	rcp_context_set_permission(ctx, username, new);
+	struct cmd_unset_permission *cmd_recv = cmd;
+	rcp_string_ref username = NULL;
+	if (rcp_record_type(cmd_recv->username) == rcp_string_type)
+		username = (rcp_string_ref)rcp_record_data(cmd_recv->username);
+	else if (!rcp_record_is_null(cmd_recv->username))
+		return;
+	rcp_context_unset_permission(ctx, username);
 }
 
 void cmd_impl_send_value(

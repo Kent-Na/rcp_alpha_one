@@ -67,7 +67,7 @@ struct rcp_type_core rcp_array_type_def = {
 	NULL,
 	rcp_array_write_json,
 	rcp_array_send_as_command,
-	NULL,
+	rcp_array_set,
 	rcp_array_append,
 	NULL,
 };

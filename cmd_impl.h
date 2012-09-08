@@ -88,14 +88,14 @@ void cmd_impl_remove_user(
 		rcp_type_ref cmd_type,
 		void* cmd);
 
-void cmd_impl_add_permission(
+void cmd_impl_set_permission(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
 		rcp_record_ref cmd_rec,
 		rcp_type_ref cmd_type,
 		void* cmd);
 
-void cmd_impl_remove_permission(
+void cmd_impl_unset_permission(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
 		rcp_record_ref cmd_rec,
@@ -124,13 +124,6 @@ void cmd_impl_login_context(
 		void* cmd);
 
 void cmd_impl_logout_context(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd);
-
-void cmd_impl_update_name(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
 		rcp_record_ref cmd_rec,

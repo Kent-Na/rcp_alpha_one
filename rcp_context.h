@@ -8,7 +8,6 @@
 
 typedef uint64_t rcp_context_id_t;
 typedef uint64_t rcp_context_state_t;
-typedef uint64_t rcp_permission_t;
 
 #define RCP_CTX_PIRTIALY_LOADED	(1<<0)
 #define RCP_CTX_FULLY_LOADED	(1<<1)
@@ -95,6 +94,8 @@ void rcp_context_send_all_data(
 		rcp_context_ref ctx, rcp_connection_ref con);
 void rcp_context_send_all_sub_ctx(
 		rcp_context_ref ctx, rcp_connection_ref con);
+void rcp_context_send_all_permission(
+		rcp_context_ref ctx, rcp_connection_ref con);
 void rcp_context_send_error(rcp_connection_ref con, 
 		rcp_record_ref cause, const char* reason);
 void rcp_context_send_caution(rcp_connection_ref con, 
@@ -107,3 +108,5 @@ int64_t rcp_context_permission(
 
 void rcp_context_set_permission(
 		rcp_context_ref ctx, rcp_string_ref username, int64_t pms);
+void rcp_context_unset_permission(
+		rcp_context_ref ctx, rcp_string_ref username);

@@ -10,6 +10,8 @@
 #include "def/rcp_type.h"
 #include "def/rcp_data.h"
 
+#include "def/rcp_permission.h"
+
 //rcp_connections
 
 rcp_extern
@@ -43,6 +45,13 @@ rcp_extern void rcp_connection_close(rcp_connection_ref con);
 rcp_extern void rcp_connection_open(rcp_connection_ref con,
 		rcp_record_ref protocol, rcp_record_ref client);
 rcp_extern int rcp_connection_is_open(rcp_connection_ref con); 
+
+rcp_extern
+rcp_permission_t rcp_connection_permission(rcp_connection_ref con);
+
+rcp_extern
+void rcp_connection_set_permission(
+		rcp_connection_ref con, rcp_permission_t pms);
 
 rcp_extern
 void rcp_connection_set_context(

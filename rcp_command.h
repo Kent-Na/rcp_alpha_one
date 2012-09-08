@@ -3,6 +3,7 @@
 #include "def/rcp_connection.h"
 #include "def/rcp_record.h"
 #include "def/rcp_command.h"
+#include "def/rcp_permission.h"
 
 typedef uint8_t rcp_command_id_t;
 
@@ -10,6 +11,7 @@ struct rcp_command_core{
 	rcp_command_id_t cmd;
 	const char* cmd_str;
 	rcp_type_ref cmd_type;
+	rcp_permission_t cmd_pms;
 
 	void(*cmd_impl)(
 			rcp_context_ref ctx,

@@ -1,7 +1,10 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
 #include "rcp_utility.h"
+#include "rcp_record.h"
+#include "types/rcp_type_list.h"
 #include "types/rcp_string.h"
+#include "types/rcp_array.h"
 
 #include "rcp_user.h"
 
@@ -165,3 +168,71 @@ int rcp_user_autenticate(const char* username, const char* password)
 	rcp_user_record_deinit(&u_rec);
 	return 0;
 }
+
+static const struct{
+	const char* name;
+	rcp_permission_t pms;
+} rcp_permission_table[] = {
+	{RCP_PMS_STR_CTX, RCP_PMS_CTX},
+	{RCP_PMS_STR_LOGIN, RCP_PMS_LOGIN},
+	{RCP_PMS_STR_PMS, RCP_PMS_PMS},
+	{RCP_PMS_STR_READ, RCP_PMS_READ},
+	{RCP_PMS_STR_WRITE, RCP_PMS_WRITE},
+};
+
+rcp_permission_t rcp_permission_from_array(rcp_record_ref rec){
+	if (rcp_record_type(rec) != rcp_array_type)
+		return 0;
+	rcp_array_ref array = (rcp_array_ref)rcp_record_data(rec);
+	if (rcp_array_data_type(array) != rcp_ref_type)
+		return 0;
+		
+
+	rcp_permission_t pms = 0;
+
+	rcp_array_iterater_ref itr = rcp_array_begin(array);
+	while (itr){
+		rcp_data_ref dat = rcp_array_iterater_data(array,itr);
+		rcp_record_ref rec = *(rcp_record_ref*)dat;
+		if (rcp_record_type(rec) != rcp_string_type)
+			continue;
+		rcp_string_ref str = (rcp_string_ref)rcp_record_data(rec);
+
+		//binaly serch
+		size_t min = 0; 
+		size_t max = 4;
+		while (max >= min){
+			size_t mid = (min+max)>>1;
+			int cmp = strcmp(rcp_permission_table[mid].name,
+					rcp_string_c_str(str));
+			if (cmp < 0) min = mid+1;
+			else if (cmp > 0) max = mid-1;
+			else {
+				//got it
+				pms |= rcp_permission_table[mid].pms;
+				break;
+			}
+		}
+
+		//incliment itr
+		itr = rcp_array_iterater_next(array, itr);
+	}
+	return pms;
+}
+
+rcp_extern
+rcp_record_ref rcp_permission_to_array(rcp_permission_t pms)
+{
+	int i;
+	rcp_record_ref rec = rcp_array_new_rec(rcp_ref_type);
+	rcp_array_ref array = (rcp_array_ref)rcp_record_data(rec);
+	for (i = 0; i<5; i++){
+		if (rcp_permission_table[i].pms & pms){
+			rcp_record_ref p_name = 
+				rcp_string_new_rec(rcp_permission_table[i].name);
+			rcp_array_append_data(array,(rcp_data_ref)&p_name);
+		}
+	}
+	return rec;
+}
+

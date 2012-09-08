@@ -12,6 +12,10 @@ def addParameter(command, cType, name, pType = "default"):
 	}
 	command["parameters"].append(parameter)
 
+def requirePermission(command, name):
+	if not "permission" in command:
+		command["permission"] = []
+	command["permission"].append(name)
 
 ###
 #command def
@@ -122,24 +126,25 @@ commandList.append(command)
 
 #Permission
 command = {
-	"name":"addPermission",
+	"name":"setPermission",
 	"shortDescription":"",
 	"parameters":[]
 	}
 
 addParameter(command, "string", "username")
-addParameter(command, "string", "mode")
+addParameter(command, "array", "mode")
+requirePermission(command, "permission")
 
 commandList.append(command)
 
 command = {
-	"name":"removePermission",
+	"name":"unsetPermission",
 	"shortDescription":"",
 	"parameters":[]
 	}
 
 addParameter(command, "string", "username")
-addParameter(command, "string", "mode")
+requirePermission(command, "permission")
 
 commandList.append(command)
 
@@ -157,6 +162,7 @@ command = {
 	}
 
 addParameter(command, "string", "name")
+requirePermission(command, "context")
 commandList.append(command)
 
 command = {
@@ -167,6 +173,7 @@ command = {
 	}
 
 addParameter(command, "string", "name")
+requirePermission(command, "context")
 commandList.append(command)
 
 command = {
@@ -177,6 +184,7 @@ command = {
 	}
 
 addParameter(command, "string", "name")
+#This command doesn't require "login" permission at current context.
 commandList.append(command)
 
 command = {
@@ -187,12 +195,6 @@ command = {
 	}
 
 commandList.append(command)
-
-commandList.append({
-	"name":"*updateName",
-	"shortDescription":"",
-	"longDescription":"",
-	})
 
 #Value
 command = {
@@ -214,6 +216,7 @@ command = {
 addParameter(command, "ref", "path")
 addParameter(command, "ref", "value")
 addParameter(command, "string", "type")
+requirePermission(command, "write")
 commandList.append(command)
 
 command = {
@@ -222,6 +225,7 @@ command = {
 	"longDescription":"",
 	}
 addParameter(command, "ref", "path")
+requirePermission(command, "write")
 commandList.append(command)
 
 command = {
@@ -233,6 +237,7 @@ command = {
 addParameter(command, "ref", "path")
 addParameter(command, "ref", "value")
 addParameter(command, "string", "type")
+requirePermission(command, "write")
 commandList.append(command)
 
 #Type

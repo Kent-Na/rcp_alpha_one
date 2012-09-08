@@ -36,20 +36,35 @@ template = """
 		CMD_{command_id};
 	rcp_command_table[CMD_{command_id}].cmd_str = 
 		"{name}";
+	rcp_command_table[CMD_{command_id}].cmd_pms = 
+		{pms};
 	rcp_command_table[CMD_{command_id}].cmd_type= 
 		cmd_{func_name}_type();
 	rcp_command_table[CMD_{command_id}].cmd_impl= 
 		cmd_impl_{func_name};
 """
 
+permissionNumDict = {
+	"login":1<<0,
+	"read":1<<1,
+	"write":1<<2,
+	"permission":1<<3,
+	"context":1<<4,
+}
+
 fragment = ""
 for info in commandList:
 	macroName = '_'.join(re.findall(r'[A-Z]*[a-z]+',info['name'])).upper()
 	command_name= re.findall(r'[A-Z]*[a-z]+',info['name'])
 	command_name= '_'.join(command_name).lower()
+	permissionNum = 0
+	if 'permission' in info:
+		permissionNum = sum(map(
+				lambda x:permissionNumDict[x],info['permission']))
 	fragment += template.format(
 			command_id = macroName,
 			func_name = command_name,
+			pms = permissionNum,
 			**info
 			)
 outPutCFile.write(commandTableTemplate.format(values = fragment))

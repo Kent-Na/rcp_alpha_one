@@ -58,7 +58,8 @@ void rcp_context_init(rcp_context_ref ctx)
 	ctx->connections = rcp_tree_new((void*)rcp_pointer_compare,NULL);
 	ctx->dead = rcp_array_new(rcp_pointer_type);
 	ctx->permissions = rcp_dict_new(rcp_str_uint64_dict);
-	ctx->base_permission = RCP_PMS_LOGIN | RCP_PMS_READ | RCP_PMS_WRITE;
+	ctx->base_permission = RCP_PMS_LOGIN | RCP_PMS_READ | RCP_PMS_WRITE
+		|RCP_PMS_PMS|RCP_PMS_CTX;
 	ctx->types = rcp_dict_new(rcp_str_ptr_dict);
 	ctx->parent_context = NULL;
 	ctx->sub_context = rcp_dict_new(rcp_str_ptr_dict);
@@ -246,11 +247,47 @@ void rcp_context_send_all_sub_ctx(rcp_context_ref ctx,
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 
 		cmd.command = rcp_string_new_rec(CMD_STR_ADD_CONTEXT);
-		cmd.name = rcp_string_new_rec(
-				rcp_string_c_str(
-					(rcp_string_ref)rcp_dict_node_key(
-						rcp_str_ptr_dict, node)));
-		rcp_record_retain(cmd.name);
+		cmd.name = rcp_record_new_with(
+				rcp_string_type,
+				rcp_dict_node_key(rcp_str_ptr_dict, node));
+
+		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
+		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+
+		node = rcp_dict_node_next(node);
+	}
+}
+void rcp_context_send_all_permission(rcp_context_ref ctx, 
+		rcp_connection_ref con)
+{
+	rcp_dict_node_ref node = rcp_dict_begin(ctx->permissions);
+
+	{
+		struct cmd_set_permission cmd;
+		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_PERMISSION);
+		rcp_init(cmd_type, (rcp_data_ref)&cmd);
+
+		cmd.command = rcp_string_new_rec(CMD_STR_SET_PERMISSION);
+		rcp_permission_t pms = ctx->base_permission;
+		cmd.mode = rcp_permission_to_array(pms); 
+
+		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
+		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+	}
+
+	while (node){
+		struct cmd_set_permission cmd;
+		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_PERMISSION);
+		rcp_init(cmd_type, (rcp_data_ref)&cmd);
+
+		cmd.command = rcp_string_new_rec(CMD_STR_SET_PERMISSION);
+		cmd.username = rcp_record_new_with(
+				rcp_string_type,
+				rcp_dict_node_key(rcp_str_uint64_dict, node));
+		rcp_permission_t pms;
+		pms = *(rcp_permission_t*)rcp_dict_node_data(
+				rcp_str_uint64_dict, node);
+		cmd.mode = rcp_permission_to_array(pms); 
 
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
@@ -340,6 +377,7 @@ void rcp_context_set_permission(
 		rcp_context_ref ctx, rcp_string_ref username, int64_t pms)
 {
 	if (!username){
+		ctx->base_permission = pms;
 		return;
 	}
 	if (!rcp_user_exist(rcp_string_c_str(username))){
@@ -348,13 +386,32 @@ void rcp_context_set_permission(
 
 	rcp_dict_node_ref node;
 	node = rcp_dict_find(ctx->permissions, (rcp_data_ref)username);
-	if (!node){
-		return;
+	if (node){
+		rcp_copy(rcp_uint64_type,
+				(rcp_data_ref)&pms,
+				rcp_dict_node_data(rcp_str_uint64_dict, node));
 	}
+	else{
+		node = rcp_dict_node_new_with(rcp_str_uint64_dict,
+				(rcp_data_ref)username,
+				(rcp_data_ref)&pms);
+		rcp_dict_set_node(ctx->permissions, node);
+		node = rcp_dict_find(ctx->permissions, (rcp_data_ref)username);
+		if (!node)
+			rcp_error("omg.");
+	}
+}
 
-	rcp_copy(rcp_uint64_type,
-			(rcp_data_ref)&pms,
-			rcp_dict_node_data(rcp_str_uint64_dict, node));
+void rcp_context_unset_permission(
+		rcp_context_ref ctx, rcp_string_ref username)
+{
+	if (!username)
+		return;
+	rcp_dict_node_ref node;
+	node = rcp_dict_find(ctx->permissions, (rcp_data_ref)username);
+	if (!node)
+		return;
+	rcp_dict_unset_node(ctx->permissions, node);
 }
 
 rcp_extern void rcp_login_root_context(
@@ -407,17 +464,25 @@ rcp_extern void rcp_context_execute_command_rec(
 
 	rcp_command_ref cmd_info = rcp_command_from_str(
 			rcp_string_c_str(cmd_name));
-	if (cmd_info->cmd != CMD_OPEN && ! rcp_connection_is_open(con)){
-		rcp_context_send_error(con, cmd_rec, 
-				"must send open command.");
-		return;
-	}
 	
 	if (! cmd_info){
 		rcp_context_send_caution(con, cmd_rec, 
 				"invalid command");
 		rcp_error(rcp_string_c_str(cmd_name));
 		rcp_error("^ invalid command");
+		return;
+	}
+
+	if (cmd_info->cmd != CMD_OPEN && ! rcp_connection_is_open(con)){
+		rcp_context_send_error(con, cmd_rec, 
+				"must send open command.");
+		return;
+	}
+
+	rcp_permission_t con_pms = rcp_connection_permission(con);
+	if ((cmd_info->cmd_pms & con_pms) != cmd_info->cmd_pms){
+		rcp_context_send_caution(con, cmd_rec, 
+				"not enough permission.");
 		return;
 	}
 

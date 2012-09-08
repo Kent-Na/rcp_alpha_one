@@ -26,7 +26,7 @@ struct rcp_connection_core{
 	uint32_t login_id;
 	rcp_context_ref ctx;
 
-	uint32_t permission;
+	rcp_permission_t permission;
 };
 
 rcp_connection_ref rcp_connection_new()
@@ -42,6 +42,7 @@ rcp_connection_ref rcp_connection_new()
 	con->username = NULL;
 	con->login_id = 0;
 	con->ctx = NULL;
+	con->permission = 0;
 	return con;
 }
 void rcp_connection_delete(rcp_connection_ref con)
@@ -150,6 +151,19 @@ void rcp_connection_close(rcp_connection_ref con)
 	if (!rcp_connection_alive(con))
 		return;
 	rcp_io_close(con->io);
+}
+
+rcp_extern
+rcp_permission_t rcp_connection_permission(rcp_connection_ref con)
+{
+	return con->permission;
+}
+
+rcp_extern
+void rcp_connection_set_permission(
+		rcp_connection_ref con, rcp_permission_t pms)
+{
+	con->permission = pms;
 }
 
 rcp_extern

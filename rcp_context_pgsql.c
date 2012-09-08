@@ -12,6 +12,7 @@
 #include "rcp_connection.h"
 #include "connections/con_pgsql_lo.h"
 #include "rcp_server.h"
+#include "rcp_user.h"
 
 #define RCP_INTERNAL_STRUCTURE
 #include "rcp_context.h"
@@ -232,6 +233,7 @@ void rcp_context_page_out(rcp_context_ref ctx)
 	rcp_connection_set_sender(con, sender);
 
 	rcp_context_send_all_data(ctx, con);
+	rcp_context_send_all_permission(ctx, con);
 
 	rcp_connection_delete(con);
 	PQclear(PQexec(db_con, "end"));
@@ -259,6 +261,7 @@ void rcp_context_page_in(rcp_context_ref ctx)
 	rcp_record_ref protocol_ver = rcp_string_new_rec("alpha1");
 	rcp_connection_open(con, protocol_ver, NULL);
 	rcp_record_release(protocol_ver);
+	rcp_connection_set_permission(con, RCP_PMS_WRITE|RCP_PMS_PMS);
 
 	while (rcp_connection_alive(con)){
 		rcp_connection_on_receive(con);

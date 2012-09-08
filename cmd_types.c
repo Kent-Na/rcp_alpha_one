@@ -409,11 +409,11 @@ rcp_type_ref cmd_remove_user_type(){
 	return s_type;
 }
 
-rcp_type_ref cmd_add_permission_type(){
+rcp_type_ref cmd_set_permission_type(){
 	
 	rcp_type_ref s_type = rcp_struct_type_new(3);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_add_permission);
+	t_core->size = sizeof (struct cmd_set_permission);
 	t_core->type_id = 0x100;
 	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
@@ -432,27 +432,27 @@ rcp_type_ref cmd_add_permission_type(){
 
 	param->name = rcp_string_new("command");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_add_permission, command);
+	param->offset = offsetof(struct cmd_set_permission, command);
 	param ++;
 
 	param->name = rcp_string_new("mode");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_add_permission, mode);
+	param->offset = offsetof(struct cmd_set_permission, mode);
 	param ++;
 
 	param->name = rcp_string_new("username");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_add_permission, username);
+	param->offset = offsetof(struct cmd_set_permission, username);
 	param ++;
 
 	return s_type;
 }
 
-rcp_type_ref cmd_remove_permission_type(){
+rcp_type_ref cmd_unset_permission_type(){
 	
-	rcp_type_ref s_type = rcp_struct_type_new(3);
+	rcp_type_ref s_type = rcp_struct_type_new(2);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_remove_permission);
+	t_core->size = sizeof (struct cmd_unset_permission);
 	t_core->type_id = 0x100;
 	t_core->type_name = NULL;
 	t_core->init = rcp_struct_init;
@@ -464,24 +464,19 @@ rcp_type_ref cmd_remove_permission_type(){
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
 	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 3;
+	s_core->param_count = 2;
 
 	struct rcp_struct_param_core *param = 
 		(struct rcp_struct_param_core*)(s_core+1);
 
 	param->name = rcp_string_new("command");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_remove_permission, command);
-	param ++;
-
-	param->name = rcp_string_new("mode");
-	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_remove_permission, mode);
+	param->offset = offsetof(struct cmd_unset_permission, command);
 	param ++;
 
 	param->name = rcp_string_new("username");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_remove_permission, username);
+	param->offset = offsetof(struct cmd_unset_permission, username);
 	param ++;
 
 	return s_type;
@@ -613,35 +608,6 @@ rcp_type_ref cmd_logout_context_type(){
 	param->name = rcp_string_new("command");
 	param->type = rcp_ref_type;
 	param->offset = offsetof(struct cmd_logout_context, command);
-	param ++;
-
-	return s_type;
-}
-
-rcp_type_ref cmd_update_name_type(){
-	
-	rcp_type_ref s_type = rcp_struct_type_new(1);
-	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
-	t_core->size = sizeof (struct cmd_update_name);
-	t_core->type_id = 0x100;
-	t_core->type_name = NULL;
-	t_core->init = rcp_struct_init;
-	t_core->deinit = rcp_struct_deinit;
-	t_core->copy = NULL;
-	t_core->compare = NULL;
-	t_core->write_json = rcp_struct_write_json;
-
-	struct rcp_type_struct_ext* s_core = 
-		(struct rcp_type_struct_ext*)(t_core+1);
-	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 1;
-
-	struct rcp_struct_param_core *param = 
-		(struct rcp_struct_param_core*)(s_core+1);
-
-	param->name = rcp_string_new("command");
-	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_update_name, command);
 	param ++;
 
 	return s_type;
