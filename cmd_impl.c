@@ -281,10 +281,12 @@ void cmd_impl_set_permission(
 {
 	struct cmd_set_permission *cmd_recv = cmd;
 	rcp_string_ref username = NULL;
-	if (rcp_record_type(cmd_recv->username) == rcp_string_type)
-		username = (rcp_string_ref)rcp_record_data(cmd_recv->username);
-	else if (!rcp_record_is_null(cmd_recv->username))
-		return;
+	if (!rcp_record_is_null(cmd_recv->username)){
+		if (rcp_record_type(cmd_recv->username) == rcp_string_type)
+			username = (rcp_string_ref)rcp_record_data(cmd_recv->username);
+		else
+			return;
+	}
 	uint64_t new = rcp_permission_from_array(cmd_recv->mode);
 	rcp_context_set_permission(ctx, username, new);
 }

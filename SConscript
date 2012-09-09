@@ -38,6 +38,7 @@ mainFiles = [
 	'rcp_command_type.c',
 	'rcp_connection.c',
 	'rcp_context.c',
+	'rcp_context_file.c',
 	'rcp_context_pgsql.c',
 	'rcp_event_epoll.c',
 	'rcp_event_kqueue.c',

@@ -79,6 +79,9 @@ void rcp_page_out_r(rcp_context_ref ctx);
 
 void rcp_page_in_r(rcp_context_ref ctx);
 
+void rcp_context_load_from_file(rcp_context_ref);
+void rcp_context_store_as_file(rcp_context_ref);
+
 void rcp_context_create_db_info(
 		rcp_context_ref ctx,
 		rcp_string_ref name, rcp_context_ref new_ctx);

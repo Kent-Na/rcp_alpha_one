@@ -25,6 +25,7 @@ rcp_context_ref rcp_root_context()
 	if (root_context)
 		return root_context;
 	root_context = rcp_context_new();
+	rcp_context_load_from_file(root_context);
 	rcp_page_in_r(root_context);
 	return root_context;
 }
