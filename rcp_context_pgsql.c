@@ -205,9 +205,6 @@ Oid rcp_context_contents_oid(rcp_context_ref ctx)
 	Oid oid = be32toh(*(Oid*)val);
 	PQclear(result);
 
-	if (oid == InvalidOid){
-		oid = rcp_context_assign_new_contents_oid(ctx);
-	}
 
 	return oid;	
 }
@@ -221,7 +218,8 @@ void rcp_context_page_out(rcp_context_ref ctx)
 
 	PGconn* db_con = rcp_db_connection();
 	Oid oid = rcp_context_contents_oid(ctx);
-		//lo_creat(db_con, INV_READ|INV_WRITE);
+	if (oid == InvalidOid)
+		oid = rcp_context_assign_new_contents_oid(ctx);
 	if (oid == InvalidOid)
 		return;
 	PQclear(PQexec(db_con, "begin"));
