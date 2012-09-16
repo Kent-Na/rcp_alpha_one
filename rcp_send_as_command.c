@@ -11,13 +11,13 @@
 
 #include "types/rcp_string.h"
 #include "types/rcp_map.h"
-#include "types/rcp_array.h"
+#include "types/rcp_old_array.h"
 #include "types/rcp_struct.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_type_list.h"
 
 
-void rcp_array_send_as_command(
+void rcp_old_array_send_as_command(
 		rcp_type_ref type, rcp_data_ref data,
 		rcp_connection_ref con)
 {
@@ -31,8 +31,8 @@ void rcp_array_send_as_command(
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_ini);
 	}
 
-	rcp_array_ref array = (rcp_array_ref)data;
-	rcp_array_iterater_ref node = rcp_array_begin(array);
+	rcp_old_array_ref array = (rcp_old_array_ref)data;
+	rcp_old_array_iterater_ref node = rcp_old_array_begin(array);
 	
 	struct cmd_append_value cmd;
 	rcp_type_ref cmd_type=rcp_command_type(CMD_APPEND_VALUE);
@@ -40,9 +40,9 @@ void rcp_array_send_as_command(
 	cmd.command = rcp_string_new_rec(CMD_STR_APPEND_VALUE);
 
 	while (node){
-		cmd.value = *(rcp_record_ref*)rcp_array_iterater_data(array, node);
+		cmd.value = *(rcp_record_ref*)rcp_old_array_iterater_data(array, node);
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
-		node = rcp_array_iterater_next(array, node);
+		node = rcp_old_array_iterater_next(array, node);
 	}
 
 	cmd.value = NULL;

@@ -17,7 +17,7 @@
 #include "types/rcp_type_list.h"
 #include "types/rcp_type_utility.h"
 
-#include "types/rcp_array.h"
+#include "types/rcp_old_array.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_dict_list.h"
 #include "types/rcp_string.h"
@@ -327,7 +327,7 @@ void cmd_impl_unset_value(
 {
 	rcp_record_release(ctx->top_level_record);
 	ctx->top_level_record = 
-		rcp_array_new_rec(rcp_ref_type);
+		rcp_old_array_new_rec(rcp_ref_type);
 }
 
 int rcp_record_cast(

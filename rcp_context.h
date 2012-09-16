@@ -4,7 +4,7 @@
 #include "def/rcp_string.h"
 #include "def/rcp_tree.h"
 #include "def/rcp_dict.h"
-#include "def/rcp_array.h"
+#include "def/rcp_old_array.h"
 #include "def/rcp_data.h"
 #include "def/rcp_type.h"
 
@@ -33,7 +33,7 @@ struct rcp_context_core{
 	rcp_dict_ref types;
 
 	//connections that closed but not send "removeUser" command. 
-	rcp_array_ref dead;
+	rcp_old_array_ref dead;
 
 	//string - ptr
 	rcp_dict_ref sub_context;
