@@ -66,6 +66,8 @@ void cmd_util_move_context(
 	rcp_context_send_all_data(new_ctx, con);	
 	rcp_context_send_all_sub_ctx(new_ctx, con);	
 
+	rcp_context_send_info(con, cmd_rec, "Context was initialized.");
+
 	rcp_context_add_connection(new_ctx, con);
 	rcp_connection_release(con);
 }
@@ -117,17 +119,6 @@ void cmd_impl_logout_context(
 	}
 
 	rcp_context_ref new_ctx = ctx->parent_context;
-
-	rcp_string_ref username = (rcp_string_ref)rcp_record_data(
-			rcp_connection_username(con));
-	rcp_permission_t pms = rcp_context_permission(new_ctx, username);
-
-	if (! (pms & RCP_PMS_LOGIN)){
-		rcp_context_send_caution(con, cmd_rec, 
-				"not enough permission");
-		return;
-	}
-
 	cmd_util_move_context(ctx, new_ctx, con, cmd_rec);
 }
 
@@ -155,6 +146,7 @@ void cmd_impl_add_context(
 			(rcp_string_ref)rcp_record_data(cmd_recv->name),
 			new_ctx);
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_recv);
+	rcp_context_send_info(con, cmd_rec, "Add context succeed.");
 }
 
 ///
@@ -185,7 +177,9 @@ void cmd_impl_create_user(
 	if (r != 0){
 		rcp_context_send_caution(con, cmd_rec, 
 				"fail!!");
+		return;
 	}
+	rcp_context_send_info(con, cmd_rec, "Succeed.");
 }
 
 void cmd_impl_login_user(
