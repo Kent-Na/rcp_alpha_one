@@ -196,7 +196,6 @@ Oid rcp_context_contents_oid(rcp_context_ref ctx)
 			1);
 
 	if (PQntuples(result) != 1){
-		rcp_error("context record is not found");
 		PQclear(result);
 		return InvalidOid;
 	}
@@ -209,64 +208,29 @@ Oid rcp_context_contents_oid(rcp_context_ref ctx)
 	return oid;	
 }
 
-void rcp_context_page_out(rcp_context_ref ctx)
+void rcp_context_store(rcp_context_ref ctx)
 {
-	if (! (ctx->state & RCP_CTX_FULLY_LOADED))
-		return;
-
-	rcp_connection_ref con = rcp_connection_new();
-
 	PGconn* db_con = rcp_db_connection();
 	Oid oid = rcp_context_contents_oid(ctx);
 	if (oid == InvalidOid)
 		oid = rcp_context_assign_new_contents_oid(ctx);
-	if (oid == InvalidOid)
+	if (oid == InvalidOid){
+		rcp_error("no oid");
 		return;
-	PQclear(PQexec(db_con, "begin"));
-	rcp_io_ref io = con_pgsql_lo_new(db_con, oid);
-
-	rcp_connection_set_io(con, io);
-	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
-	rcp_sender_l1_ref sender = rcp_sender_cluster_json_nt(cls);
-	rcp_connection_set_sender(con, sender);
-
-	rcp_context_send_all_data(ctx, con);
-	rcp_context_send_all_permission(ctx, con);
-
-	rcp_connection_delete(con);
-	PQclear(PQexec(db_con, "end"));
+	}
+	rcp_io_ref io = con_pgsql_lo_new_wr(db_con, oid);
+	rcp_context_store_into_io(ctx, io);
 }
 
-void rcp_context_page_in(rcp_context_ref ctx)
+void rcp_context_load(rcp_context_ref ctx)
 {
 	if (ctx->state & RCP_CTX_FULLY_LOADED)
 		return;
-
-	rcp_connection_ref con = rcp_connection_new();
 
 	PGconn* db_con = rcp_db_connection();
 	Oid oid = rcp_context_contents_oid(ctx);
 	if (oid == InvalidOid)
 		return;
-	//Oid oid = lo_creat(db_con, INV_READ|INV_WRITE);
-	PQclear(PQexec(db_con, "begin"));
-	rcp_io_ref io = con_pgsql_lo_new(db_con, oid);
-
-	rcp_connection_set_io(con, io);
-	rcp_receiver_ref receiver = rcp_receiver_new(&con_nt_json_class);
-	rcp_connection_set_receiver(con, receiver);
-	rcp_connection_set_context(con, ctx);
-	rcp_record_ref protocol_ver = rcp_string_new_rec("alpha1");
-	rcp_connection_open(con, protocol_ver, NULL);
-	rcp_record_release(protocol_ver);
-	rcp_connection_set_permission(con, RCP_PMS_WRITE|RCP_PMS_PMS);
-
-	while (rcp_connection_alive(con)){
-		rcp_connection_on_receive(con);
-	}
-	rcp_connection_delete(con);
-
-	PQclear(PQexec(db_con, "end"));
-
-	rcp_context_set_state_flag(ctx, RCP_CTX_FULLY_LOADED);
+	rcp_io_ref io = con_pgsql_lo_new_rd(db_con, oid);
+	rcp_context_load_from_io(ctx, io);
 }

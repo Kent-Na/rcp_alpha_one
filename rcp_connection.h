@@ -16,9 +16,14 @@
 
 rcp_extern
 rcp_connection_ref rcp_connection_new();
-rcp_extern
-void rcp_connection_delete(rcp_connection_ref con);
 
+rcp_extern
+rcp_connection_ref rcp_connection_retain(rcp_connection_ref con);
+rcp_extern
+void rcp_connection_release(rcp_connection_ref con);
+
+///
+//io set
 rcp_extern
 void rcp_connection_set_io(
 		rcp_connection_ref con, rcp_io_ref io);
@@ -29,6 +34,8 @@ rcp_extern
 void rcp_connection_set_receiver(
 		rcp_connection_ref con, rcp_receiver_ref receiver);
 
+///
+//io operation
 rcp_extern
 void rcp_connection_send(rcp_connection_ref con);
 rcp_extern
@@ -41,11 +48,16 @@ int rcp_connection_alive(rcp_connection_ref con);
 rcp_extern
 void rcp_connection_on_close(rcp_connection_ref con);
 
-rcp_extern void rcp_connection_close(rcp_connection_ref con);
-rcp_extern void rcp_connection_open(rcp_connection_ref con,
+rcp_extern 
+void rcp_connection_close(rcp_connection_ref con);
+rcp_extern 
+void rcp_connection_open(rcp_connection_ref con,
 		rcp_record_ref protocol, rcp_record_ref client);
-rcp_extern int rcp_connection_is_open(rcp_connection_ref con); 
+rcp_extern 
+int rcp_connection_is_open(rcp_connection_ref con); 
 
+///
+//info
 rcp_extern
 rcp_permission_t rcp_connection_permission(rcp_connection_ref con);
 
@@ -53,9 +65,6 @@ rcp_extern
 void rcp_connection_set_permission(
 		rcp_connection_ref con, rcp_permission_t pms);
 
-rcp_extern
-void rcp_connection_set_context(
-		rcp_connection_ref con, rcp_context_ref ctx);
 rcp_extern
 rcp_context_ref rcp_connection_context(
 		rcp_connection_ref con);

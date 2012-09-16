@@ -1,7 +1,5 @@
-
-struct con_file{
-	int fd;
-};
+//file io module.
+//write on read io and converse that will do nothing.
 
 void con_file_init(rcp_io_ref io);
 void con_file_release(rcp_io_ref io);

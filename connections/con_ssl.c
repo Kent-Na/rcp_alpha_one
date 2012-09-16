@@ -61,11 +61,7 @@ void con_ssl_set_fd(rcp_io_ref io, rcp_event_action_ref unit,
 void con_ssl_release(rcp_io_ref io)
 {
 	struct con_ssl *st = rcp_io_data(io);
-	int fd = st->fd;
-	SSL_free(st->ssl);
-	BIO_free(st->bio);
-	close(fd);
-	st->fd = -1;
+	rcp_io_close(io);
 	free(st->unit);
 }
 
@@ -80,11 +76,7 @@ size_t con_ssl_send(rcp_io_ref io, const void *data, size_t len)
 	r_len = SSL_write(st->ssl, data, len);
 
 	if (r_len <= 0){
-		rcp_error("Connection closed");
-		close(fd);
-		st->fd = -1;
-		if (con_ssl_alive(io))
-			rcp_error("zombe conn");
+		rcp_io_close(io);
 		return 0;
 	}
 
@@ -106,11 +98,7 @@ size_t con_ssl_receive(
 	r_len = SSL_read(st->ssl, (void*)data, len);
 
 	if (r_len <= 0){
-		rcp_info("Connection closed");
-		close(fd);
-		st->fd = -1;
-		if (con_ssl_alive(io))
-			rcp_error("zombe conn");
+		rcp_io_close(io);
 		return 0;
 	}
 
@@ -118,7 +106,23 @@ size_t con_ssl_receive(
 }
 void con_ssl_close(rcp_io_ref io)
 {
-	con_ssl_on_close(io);
+	struct con_ssl *st = rcp_io_data(io);
+	if (st->fd == -1){
+		rcp_error("No connection");
+		return;
+	}
+	int r_val;
+	r_val = SSL_shutdown(st->ssl);
+	if (r_val != 0)
+		rcp_error("ssl close err 1");
+	shutdown(st->fd, 1);
+	r_val = SSL_shutdown(st->ssl);
+	if (r_val != 1)
+		rcp_error("ssl close err 2");
+	SSL_free(st->ssl);
+	BIO_free(st->bio);
+	close(st->fd);
+	st->fd = -1;
 }
 int con_ssl_alive(
 		rcp_io_ref io)
@@ -129,17 +133,5 @@ int con_ssl_alive(
 }
 void con_ssl_on_close(rcp_io_ref io)
 {
-	struct con_ssl *st = rcp_io_data(io);
-	int r_val;
-	r_val = SSL_shutdown(st->ssl);
-	if (r_val != 0)
-		rcp_error("ssl close err 1");
-	shutdown(st->fd, 1);
-	r_val = SSL_shutdown(st->ssl);
-	if (r_val != 1)
-		rcp_error("ssl close err 2");
-	SSL_free(st->ssl);
-	close(st->fd);
-	st->fd = -1;
-	return;
+	rcp_io_close(io);
 }

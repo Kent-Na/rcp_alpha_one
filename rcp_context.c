@@ -87,6 +87,7 @@ void rcp_context_test_and_kill(
 	if (!rcp_connection_alive(con)){
 		rcp_info("dead");
 		rcp_array_append_data(ctx->dead, (rcp_data_ref)&con);
+		rcp_context_clean_dead(ctx);
 	}
 }
 
@@ -105,15 +106,22 @@ void rcp_context_send_data(rcp_context_ref ctx,
 			*(rcp_connection_ref*)rcp_tree_node_data(node);
 		rcp_connection_send(con);
 		node = rcp_tree_node_next(node);
-		rcp_context_test_and_kill(ctx, con);
 	}
 	rcp_sender_cluster_clean_up(cls);
 	rcp_context_clean_dead(ctx);
 }
 
+rcp_extern
+void rcp_connection_set_context(
+		rcp_connection_ref con, rcp_context_ref ctx);
+rcp_extern
+void rcp_connection_unset_context(
+		rcp_connection_ref con);
+
 void rcp_context_add_connection(rcp_context_ref ctx, 
 		rcp_connection_ref con)
 {
+	rcp_connection_retain(con);
 	rcp_connection_set_context(con, ctx);
 
 	//add connection to context
@@ -156,7 +164,9 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 		rcp_tree_remove(ctx->connections, node);
 		rcp_tree_node_delete(node);
 
-		
+		rcp_connection_unset_context(con);
+		rcp_connection_release(con);
+
 		struct cmd_remove_user cmd;
 		rcp_type_ref type_cmd = rcp_command_type(CMD_REMOVE_USER);
 		rcp_init(type_cmd, (rcp_data_ref)&cmd);
@@ -166,10 +176,33 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 
 		rcp_context_send_data(ctx,
 				type_cmd, (rcp_data_ref)&cmd);
-
-		//rcp_connection_free(con);
+		rcp_deinit(type_cmd, (rcp_data_ref)&cmd);
 	}
 }
+
+void rcp_context_disconnect_all(
+		rcp_context_ref ctx,
+		const char* reason)
+{
+	struct cmd_error cmd;
+	rcp_type_ref cmd_type=rcp_command_type(CMD_ERROR);
+	rcp_init(cmd_type, (rcp_data_ref)&cmd);
+	cmd.command = rcp_string_new_rec(CMD_STR_ERROR);
+	cmd.reason = rcp_string_new_rec(reason);
+	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)&cmd);
+
+	rcp_tree_node_ref node = rcp_tree_begin(ctx->connections);
+	//delete all connection
+	while (node){
+		rcp_connection_ref con;
+		con = *(rcp_connection_ref*)rcp_tree_node_data(node);
+		rcp_connection_release(con);		
+		node = rcp_tree_node_next(node);
+		rcp_array_append_data(ctx->dead, (rcp_data_ref)&con);
+	}
+	rcp_context_clean_dead(ctx);
+}
+
 rcp_extern rcp_context_state_t rcp_context_state_flag(
 		rcp_context_ref ctx)
 {
@@ -198,7 +231,7 @@ void rcp_page_out_r(rcp_context_ref ctx)
 		rcp_page_out_r(new_ctx);
 		node = rcp_dict_node_next(node);
 	}
-	rcp_context_page_out(ctx);
+	rcp_context_store(ctx);
 }
 
 void rcp_page_in_r(rcp_context_ref ctx)
@@ -213,7 +246,48 @@ void rcp_page_in_r(rcp_context_ref ctx)
 		rcp_page_in_r(new_ctx);
 		node = rcp_dict_node_next(node);
 	}
-	rcp_context_page_in(ctx);
+	rcp_context_load(ctx);
+}
+
+void rcp_context_store_into_io(rcp_context_ref ctx, rcp_io_ref io)
+{
+	rcp_connection_ref con = rcp_connection_new();
+	rcp_connection_set_io(con, io);
+	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
+	rcp_sender_l1_ref sender = rcp_sender_cluster_json_nt(cls);
+	rcp_connection_set_sender(con, sender);
+
+	rcp_context_send_all_data(ctx, con);	
+	rcp_context_send_all_permission(ctx, con);	
+
+	rcp_connection_release(con);
+}
+
+void rcp_context_load_from_io(rcp_context_ref ctx, rcp_io_ref io)
+{
+	rcp_connection_ref con = rcp_connection_new();
+	rcp_connection_set_io(con, io);
+
+	rcp_sender_cluster_ref cls = rcp_shared_sender_cluster();
+	rcp_sender_l1_ref sender = rcp_sender_cluster_dummy(cls);
+	rcp_connection_set_sender(con, sender);
+
+	rcp_receiver_ref receiver = rcp_receiver_new(&con_nt_json_class);
+	rcp_connection_set_receiver(con, receiver);
+
+	rcp_record_ref protocol_ver = rcp_string_new_rec("alpha1");
+	rcp_connection_open(con, protocol_ver, NULL);
+	rcp_record_release(protocol_ver);
+
+	rcp_connection_set_permission(con, 
+			RCP_PMS_WRITE|RCP_PMS_PMS|RCP_PMS_CTX);
+
+	rcp_context_add_connection(ctx, con);
+
+	while (rcp_connection_alive(con)){
+		rcp_connection_on_receive(con);
+	}
+	rcp_connection_release(con);
 }
 
 void rcp_context_send_all_con(rcp_context_ref ctx, rcp_connection_ref con)

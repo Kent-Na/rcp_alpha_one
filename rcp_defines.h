@@ -7,6 +7,7 @@
 #define RCP_SEND_TIMEOUT_SEC (2)
 
 #define RCP_INIT_FILE ("init_rcp")
+#define RCP_INTERNAL_CONNECTION_NAME ("tuna-cat")
 
 //ssl
 #define RCP_SSL_CERTIFICATE_FILE_PATH ("key/certificate.pem")

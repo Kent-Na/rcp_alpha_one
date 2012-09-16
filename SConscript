@@ -23,6 +23,7 @@ connections = [
 	'connections/con_plain.c',
 	'connections/con_web_socket.c',
 	'connections/con_pgsql_lo.c',
+	'connections/con_dummy.c',
 	]
 
 commands = [

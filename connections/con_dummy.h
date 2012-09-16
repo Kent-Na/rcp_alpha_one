@@ -1,0 +1,2 @@
+extern struct rcp_sender_l0_class cmp_dummy_l0_class;
+extern struct rcp_sender_l1_class cmp_dummy_l1_class;

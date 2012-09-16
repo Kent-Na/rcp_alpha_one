@@ -20,6 +20,7 @@ static __inline__ rcp_io_ref rcp_io_new(struct rcp_io_class *klass)
 	rcp_io_ref io = malloc(sizeof (struct rcp_io_core) + klass->size);
 	io->klass = klass;
 	io->klass->init(io);
+	rcp_info("new io");
 	return io;
 }
 
@@ -27,6 +28,7 @@ static __inline__ void rcp_io_delete(rcp_io_ref io)
 {
 	io->klass->deinit(io);
 	free(io);
+	rcp_info("del io");
 }
 
 static __inline__ void* rcp_io_data(rcp_io_ref io)

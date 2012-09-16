@@ -23,6 +23,8 @@ rcp_string_ref rcp_string_new(const char *c_str)
 }
 rcp_extern void rcp_string_delete(rcp_string_ref str)
 {
+	if (!str)
+		return;
 	rcp_deinit(rcp_string_type, (rcp_data_ref)str);
 	rcp_dealloc((rcp_data_ref)str);
 }

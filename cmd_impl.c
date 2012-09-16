@@ -78,6 +78,7 @@ void cmd_impl_login_context(
 				"not enough permission");
 		return;
 	}
+	rcp_connection_retain(con);
 	rcp_context_remove_connection(ctx, con);
 
 	rcp_connection_set_permission(con, pms);
@@ -86,7 +87,9 @@ void cmd_impl_login_context(
 	rcp_context_send_all_con(new_ctx, con);
 	rcp_context_send_all_data(new_ctx, con);	
 	rcp_context_send_all_sub_ctx(new_ctx, con);	
+
 	rcp_context_add_connection(new_ctx, con);
+	rcp_connection_release(con);
 }
 
 void cmd_impl_logout_context(
@@ -122,6 +125,7 @@ void cmd_impl_logout_context(
 	rcp_context_send_all_con(new_ctx, con);
 	rcp_context_send_all_data(new_ctx, con);	
 	rcp_context_send_all_sub_ctx(new_ctx, con);	
+
 	rcp_context_add_connection(new_ctx, con);
 }
 

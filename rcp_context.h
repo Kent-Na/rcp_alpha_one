@@ -5,6 +5,8 @@
 #include "def/rcp_tree.h"
 #include "def/rcp_dict.h"
 #include "def/rcp_array.h"
+#include "def/rcp_data.h"
+#include "def/rcp_type.h"
 
 typedef uint64_t rcp_context_id_t;
 typedef uint64_t rcp_context_state_t;
@@ -70,8 +72,12 @@ rcp_extern void rcp_context_execute_command_rec(
 		rcp_context_ref ctx,
 		rcp_connection_ref con, rcp_record_ref cmd);
 
+void rcp_context_load_from_io(rcp_context_ref ctx, rcp_io_ref io);
+void rcp_context_store_into_io(rcp_context_ref ctx, rcp_io_ref io);
 //ext imp
 void rcp_context_load_sub_contexts(rcp_context_ref ctx);
+void rcp_context_load(rcp_context_ref ctx);
+void rcp_context_store(rcp_context_ref ctx);
 void rcp_context_page_in(rcp_context_ref ctx);
 void rcp_context_page_out(rcp_context_ref ctx);
 

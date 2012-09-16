@@ -14,6 +14,8 @@
 #include "rcp_record.h"
 
 struct rcp_connection_core{
+	int ref_count;
+
 	rcp_io_ref io;
 	rcp_sender_l1_ref sender;
 	rcp_receiver_ref receiver;
@@ -32,6 +34,8 @@ struct rcp_connection_core{
 rcp_connection_ref rcp_connection_new()
 {
 	rcp_connection_ref con = malloc(sizeof *con);	
+	con->ref_count = 1;
+
 	con->io = NULL;
 	con->sender = NULL;
 	con->receiver = NULL;
@@ -56,6 +60,21 @@ void rcp_connection_delete(rcp_connection_ref con)
 	rcp_record_release(con->client_name);
 	rcp_record_release(con->username);
 }
+rcp_extern
+rcp_connection_ref rcp_connection_retain(rcp_connection_ref con)
+{
+	con->ref_count ++;
+	return con;
+}
+
+rcp_extern
+void rcp_connection_release(rcp_connection_ref con)
+{
+	con->ref_count --;
+	if (! con->ref_count)
+		rcp_connection_delete(con);
+}
+
 void rcp_connection_set_io(
 		rcp_connection_ref con, rcp_io_ref io)
 {
@@ -119,9 +138,8 @@ void rcp_connection_on_receive(rcp_connection_ref con)
 		rcp_context_execute_command_rec(con->ctx, con, rec);
 		rec = rcp_receiver_next_command(con->receiver);
 	}
-
-	if (con->ctx && !rcp_io_alive(con->io))
-		rcp_context_remove_connection(con->ctx, con);
+	if (con->ctx)
+		rcp_context_test_and_kill(con->ctx, con);
 }
 int rcp_connection_alive(rcp_connection_ref con)
 {
@@ -130,6 +148,8 @@ int rcp_connection_alive(rcp_connection_ref con)
 void rcp_connection_on_close(rcp_connection_ref con)
 {
 	rcp_io_on_close(con->io);
+	rcp_assert(!rcp_io_alive(con->io), "zombie anyware.");
+	rcp_context_remove_connection(con->ctx, con);
 }
 
 int rcp_connection_is_open(rcp_connection_ref con)
@@ -170,8 +190,15 @@ rcp_extern
 void rcp_connection_set_context(
 		rcp_connection_ref con, rcp_context_ref ctx)
 {
-	//rcp_assert(con->ctx == NULL,"double ctx login");
+	rcp_assert(con->ctx == NULL,"double ctx login");
 	con->ctx = ctx;
+}
+rcp_extern
+void rcp_connection_unset_context(
+		rcp_connection_ref con)
+{
+	rcp_assert(con->ctx,"no ctx login");
+	con->ctx = NULL;
 }
 rcp_extern
 rcp_context_ref rcp_connection_context(

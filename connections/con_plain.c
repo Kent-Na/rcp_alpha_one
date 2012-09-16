@@ -28,9 +28,7 @@ void con_plain_init(rcp_io_ref io){
 void con_plain_release(rcp_io_ref io)
 {
 	struct con_plain *st = rcp_io_data(io);
-	int fd = st->fd;
-	close(fd);
-	st->fd = -1;
+	rcp_io_close(io);
 	free(st->unit);
 }
 
@@ -39,7 +37,7 @@ size_t con_plain_send(rcp_io_ref io, const void *data, size_t len)
 	struct con_plain *st= rcp_io_data(io);
 	int fd = st->fd;
 	if (fd == -1)
-		rcp_error("No connection");
+		rcp_info("No connection");
 	
 	ssize_t r_len;
 #ifdef MSG_NOSIGNAL
@@ -49,11 +47,7 @@ size_t con_plain_send(rcp_io_ref io, const void *data, size_t len)
 #endif
 
 	if (r_len <= 0){
-		rcp_error("Connection closed");
-		close(fd);
-		st->fd = -1;
-		if (con_plain_alive(io))
-			rcp_error("zombie conn");
+		rcp_io_close(io);
 		return 0;
 	}
 
@@ -66,7 +60,7 @@ size_t con_plain_receive(
 	struct con_plain *st = rcp_io_data(io);
 	int fd = st->fd;
 	if (fd == -1)
-		rcp_error("No connection");
+		rcp_error("No connection on receive");
 
 	ssize_t r_len;
 #ifdef MSG_NOSIGNAL
@@ -76,11 +70,7 @@ size_t con_plain_receive(
 #endif
 
 	if (r_len <= 0){
-		rcp_info("Connection closed");
-		close(fd);
-		st->fd = -1;
-		if (con_plain_alive(io))
-			rcp_error("zombie conn");
+		rcp_io_close(io);
 		return 0;
 	}
 
@@ -106,9 +96,7 @@ int con_plain_alive(
 void con_plain_on_close(
 		rcp_io_ref io)
 {
-	struct con_plain *st = rcp_io_data(io);
-	close(st->fd);
-	st->fd = -1;
+	rcp_io_close(io);
 }
 
 void con_plain_set_fd(rcp_io_ref io, rcp_event_action_ref unit,
