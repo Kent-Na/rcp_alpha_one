@@ -149,7 +149,8 @@ void rcp_connection_on_close(rcp_connection_ref con)
 {
 	rcp_io_on_close(con->io);
 	rcp_assert(!rcp_io_alive(con->io), "zombie anyware.");
-	rcp_context_remove_connection(con->ctx, con);
+	if (con->ctx)
+		rcp_context_remove_connection(con->ctx, con);
 }
 
 int rcp_connection_is_open(rcp_connection_ref con)
