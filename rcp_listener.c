@@ -164,6 +164,14 @@ rcp_event_action_ref rcp_listener_new(
 
 	int err;
 
+	int val = 1;
+	err = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof val);
+	if (err){
+		rcp_error("sockopt");
+		rcp_listener_delete(unit);
+		return NULL;
+	}
+
 	err = bind(fd, (struct sockaddr*)&sockadd, sizeof sockadd);
 	if (err){
 		rcp_error("bind");
