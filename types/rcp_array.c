@@ -1,7 +1,5 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
-#include "../def/rcp_array_iterater.h"
-#include "../def/rcp_array.h"
 
 #define RCP_INTERNAL_STRUCTURE
 #include "../rcp_type.h"
@@ -25,11 +23,11 @@ struct rcp_type_core rcp_array_type_def = {
 	rcp_array_deinit,
 	rcp_array_copy,
 	NULL,//compare
-	//rcp_array_write_json,
-	//rcp_array_send_as_command,
-	//rcp_array_set,
-	//rcp_array_append,
-	//rcp_dict_unset,
+	NULL,//rcp_array_write_json,
+	NULL,//rcp_array_send_as_command,
+	NULL,//rcp_array_set,
+	NULL,//rcp_array_append,
+	NULL,//rcp_dict_unset,
 	NULL,//at
 };
 	
@@ -134,8 +132,7 @@ rcp_extern void rcp_array_append_data(
 	array->data_count++;
 }
 
-rcp_array_iterater_ref rcp_array_begin(
-		rcp_type_ref array_type, rcp_array_ref array){
+rcp_array_iterater_ref rcp_array_begin(rcp_array_ref array){
 	if (array->data_count)
 		return array->array;
 	return NULL;
