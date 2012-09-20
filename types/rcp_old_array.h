@@ -1,3 +1,8 @@
+////
+// rcp_old_array is an array stores type infomation in data region.
+// don't use this.
+//
+
 #include "../def/rcp_type.h"
 #include "../def/rcp_data.h"
 #include "../def/rcp_record.h"
