@@ -59,13 +59,8 @@ void rcp_array_deinit(rcp_type_ref type, rcp_data_ref data)
 	rcp_array_ref core = (rcp_array_ref)data;
 	if (!rcp_array_owning_data(core))
 		return;
-	rcp_type_ref data_type = rcp_array_type_data_type(type);
-	void* end = core->array+core->data_count*data_type->size;
-	void* ptr = core->array;
-	for ( ; ptr<end; ptr += data_type->size)
-		rcp_deinit(data_type, ptr);
-	if (core->capacity)
-		free(core->array);
+	rcp_array_clear_data(type, core);
+	free(core->array);
 }
 void rcp_array_copy(
 		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst)
@@ -90,11 +85,9 @@ void rcp_array_copy(
 
 rcp_extern int rcp_array_owning_data(rcp_array_ref array)
 {
-	if (! array->array)
-		return 1;
-	if (array->capacity)
+	if (array->array && array->capacity == 0 && array->data_count != 0)
 		return 0;
-	return 0;
+	return 1;
 }
 
 void* rcp_array_raw_data(rcp_array_ref array)
@@ -118,21 +111,35 @@ rcp_extern void rcp_array_append_data(
 	}
 	if (array->capacity == array->data_count){
 		size_t storage_size = 16;
-		size_t block_size = (1<<12);
+		size_t block_size = (1<<8);//256 data/block
 		if (array->capacity>=block_size){
-			storage_size = (array->capacity&(~4095))+block_size;
+			storage_size = (array->capacity+block_size)&(~block_size);
 		}
 		else if (array->capacity){
 			storage_size *= 2;
 		}
-		array->array = realloc(array->array, storage_size);
+		array->array = realloc(array->array, storage_size*data_type->size);
+		array->capacity = storage_size;
 	}
 	void* dst = array->array+array->data_count*data_type->size;
 	rcp_copy(data_type, data, dst);
 	array->data_count++;
 }
 
-rcp_array_iterater_ref rcp_array_begin(rcp_array_ref array){
+rcp_extern void rcp_array_clear_data(
+		rcp_type_ref array_type, rcp_array_ref array)
+{
+	if (!rcp_array_owning_data(array))
+		return;
+	rcp_type_ref data_type = rcp_array_type_data_type(array_type);
+	void* end = array->array+array->data_count*data_type->size;
+	void* ptr = array->array;
+	for ( ; ptr<end; ptr += data_type->size)
+		rcp_deinit(data_type, ptr);
+	array->data_count = 0;
+}
+rcp_array_iterater_ref rcp_array_begin(rcp_array_ref array)
+{
 	if (array->data_count)
 		return array->array;
 	return NULL;

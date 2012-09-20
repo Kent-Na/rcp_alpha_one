@@ -38,6 +38,9 @@ rcp_extern void rcp_array_append_data(
 		rcp_type_ref array_type, rcp_array_ref array,
 		rcp_data_ref data);
 
+rcp_extern void rcp_array_clear_data(
+		rcp_type_ref array_type, rcp_array_ref array);
+
 //array iterater
 rcp_extern rcp_array_iterater_ref rcp_array_begin(rcp_array_ref array);
 rcp_extern rcp_array_iterater_ref rcp_array_iterater_next(

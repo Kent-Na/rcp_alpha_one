@@ -44,7 +44,7 @@ int test_array(void){
 	if (rcp_array_type_data_type(array_type) != rcp_uint32_type)
 		rcp_error("array type");
 
-	const uint32_t num = 1;
+	const uint32_t num = 100;
 
 	for (unsigned int i= 0; i<num; i++){
 		uint32_t val = i;
@@ -69,6 +69,10 @@ int test_array(void){
 	}
 	if (itr)
 		rcp_error("array itr end");
+
+	rcp_array_clear_data(array_type, array);
+	if (rcp_array_begin(array))
+		rcp_error("array clear");
 
 	rcp_info("array done");
 
