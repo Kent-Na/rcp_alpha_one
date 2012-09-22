@@ -10,8 +10,18 @@ struct rcp_type_array_ext{
 };
 
 struct rcp_array_type{
-	struct rcp_type_array_ext ext;
 	struct rcp_type_core core;
+	struct rcp_type_array_ext ext;
+};
+
+struct rcp_array_core{
+	void* array;
+	size_t data_count;
+
+	//Allocated memory size.
+	//If capacity = 0 and array = not NULL, array was externaly allocated.
+	//Don't modefy and release array in this case.
+	size_t capacity;
 };
 
 #endif

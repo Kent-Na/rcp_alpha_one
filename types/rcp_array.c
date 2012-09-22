@@ -5,16 +5,6 @@
 #include "../rcp_type.h"
 #include "rcp_array.h"
 
-struct rcp_array_core{
-	void* array;
-	size_t data_count;
-
-	//Allocated memory size.
-	//If capacity = 0 and array = not NULL, array was externaly allocated.
-	//Don't modefy and release array in this case.
-	size_t capacity;
-};
-
 struct rcp_type_core rcp_array_type_def = {
 	sizeof(struct rcp_array_core),
 	0, //type_id
