@@ -8,6 +8,8 @@ typeList = [
 	'receiver',
 	'io',
 
+	'open_timeout',
+
 	#'event', special case
 	'event_action',
 

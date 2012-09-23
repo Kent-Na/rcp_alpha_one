@@ -49,6 +49,7 @@ mainFiles = [
 	'rcp_json_write.c',
 	'rcp_send_as_command.c',
 	'rcp_listener.c',
+	'rcp_timeout.c',
 	'rcp_receiver.c',
 	'rcp_receiver_classes.c',
 	'rcp_sender.c',
