@@ -5,6 +5,7 @@
 #define RCP_LISTEN_SOCKET_NUMBER (10)
 #define RCP_PROTOCOL_JSON_BUFFER_SIZE (4096)
 #define RCP_SEND_TIMEOUT_SEC (2)
+#define RCP_OPEN_TIMEOUT_SEC (10)
 
 #define RCP_INIT_FILE ("init_rcp")
 #define RCP_INTERNAL_CONNECTION_NAME ("tuna-cat")

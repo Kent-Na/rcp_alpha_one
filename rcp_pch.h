@@ -26,6 +26,8 @@
 #include <sys/event.h>
 #endif
 
+#include <sys/timerfd.h>
+
 //openssl
 #include <openssl/ssl.h>
 #include <openssl/rand.h>

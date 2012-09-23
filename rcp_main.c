@@ -27,6 +27,7 @@ int main (int argc, const char** argv)
 	rcp_root_context();
 
 	int e_queue= rcp_event_new();
+	rcp_open_timeout_setup(e_queue);
 	rcp_listen_start(e_queue);
 	rcp_event_run(e_queue);
 

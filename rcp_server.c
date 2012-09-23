@@ -7,6 +7,7 @@
 #include "rcp_context.h"
 #include "rcp_sender_classes.h"
 #include "rcp_server.h"
+#include "rcp_timeout.h"
 
 #include "rcp_type.h"
 #include "types/rcp_type_list.h"
@@ -72,6 +73,15 @@ void rcp_listen_end()
 		rcp_listener_delete(plain_wss_json);
 }
 
+rcp_open_timeout_ref open_timeout = NULL;
+rcp_extern rcp_open_timeout_ref rcp_open_timeout()
+{
+	return open_timeout;
+}
+rcp_extern void rcp_open_timeout_setup(int epfd)
+{
+	open_timeout = rcp_timeout_setup_timer(epfd);
+}
 
 ///
 //shared sender

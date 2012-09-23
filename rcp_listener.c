@@ -8,6 +8,7 @@
 #include "rcp_receiver.h"
 #include "rcp_connection.h"
 #include "rcp_context.h"
+#include "rcp_timeout.h"
 
 #include "rcp_listener.h"
 
@@ -70,6 +71,7 @@ void rcp_connection_event_action(int epfd, rcp_event_ref ev,
 		void *userdata)
 {
 	rcp_connection_ref con = userdata;
+	rcp_connection_retain(con);
 #ifdef RCP_USE_EPOLL
 	if (ev->events & EPOLLIN){
 		rcp_connection_on_receive(con);
@@ -85,6 +87,7 @@ void rcp_connection_event_action(int epfd, rcp_event_ref ev,
 		rcp_connection_on_close(con);
 	}
 #endif
+	rcp_connection_release(con);
 }
 
 
@@ -126,7 +129,9 @@ rcp_connection_ref rcp_listener_connection_new(
 
 	rcp_receiver_ref receiver = rcp_receiver_new(klass->receiver_klass);
 	rcp_connection_set_receiver(con, receiver);
-
+	
+	rcp_open_timeout_add(rcp_open_timeout(), con);
+	rcp_connection_release(con);
 	return con;
 }
 

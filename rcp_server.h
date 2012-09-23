@@ -1,5 +1,6 @@
 #include "def/rcp_context.h"
 #include "def/rcp_sender_cluster.h"
+#include "def/rcp_open_timeout.h"
 
 ///
 //server grobal resources
@@ -12,6 +13,10 @@ rcp_extern void rcp_listen_end();
 
 rcp_extern PGconn* rcp_db_connection();
 rcp_extern void rcp_db_connect();
+
+rcp_extern rcp_open_timeout_ref rcp_open_timeout();
+rcp_extern void rcp_open_timeout_setup(int epfd);
+
 
 ///
 //should be thread local resources
