@@ -130,7 +130,7 @@ command = {
 	}
 
 addParameter(command, "string", "username")
-addParameter(command, "array", "mode")
+addParameter(command, "ref", "mode")
 requirePermission(command, "permission")
 
 commandList.append(command)

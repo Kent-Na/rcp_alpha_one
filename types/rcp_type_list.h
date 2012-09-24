@@ -10,7 +10,7 @@ extern const rcp_type_ref rcp_ref_type;
 #define RCP_TYPE_MAP ((rcp_type_id_t)16)
 extern const rcp_type_ref rcp_map_type;
 
-#define RCP_TYPE_ARRAY ((rcp_type_id_t)18)
+#define RCP_TYPE_OLD_ARRAY ((rcp_type_id_t)18)
 extern const rcp_type_ref rcp_old_array_type;
 
 #define RCP_TYPE_STRING ((rcp_type_id_t)20)
