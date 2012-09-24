@@ -408,8 +408,6 @@ void rcp_context_send_error(rcp_connection_ref con,
 	
 	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
-
-	rcp_connection_close(con);
 }
 void rcp_context_send_caution(rcp_connection_ref con, 
 		rcp_record_ref cause, const char* reason)
@@ -541,12 +539,12 @@ rcp_extern void rcp_context_execute_command_rec(
 	rcp_record_ref cmd_name_rec = rcp_dict_find_c_str(
 			rcp_str_ref_dict, cmd, "command", rcp_string_type);
 	if (!cmd_name_rec){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"missing command element");
 		return;
 	}
 	if (rcp_record_type(cmd_name_rec) != rcp_string_type){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"type : command element");
 		return;
 	}
@@ -556,7 +554,7 @@ rcp_extern void rcp_context_execute_command_rec(
 			rcp_string_c_str(cmd_name));
 	
 	if (! cmd_info){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"invalid command");
 		rcp_error(rcp_string_c_str(cmd_name));
 		rcp_error("^ invalid command");
@@ -564,20 +562,20 @@ rcp_extern void rcp_context_execute_command_rec(
 	}
 
 	if (cmd_info->cmd != CMD_OPEN && ! rcp_connection_is_open(con)){
-		rcp_context_send_error(con, cmd_rec, 
+		rcp_context_send_fatal(con, cmd_rec, 
 				"must send open command.");
 		return;
 	}
 
 	if (cmd_info->cmd_pms & (1<<31)){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"Client shouldn't send this command.");
 		return;
 	}
 
 	rcp_permission_t con_pms = rcp_connection_permission(con);
 	if ((cmd_info->cmd_pms & con_pms) != cmd_info->cmd_pms){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"not enough permission.");
 		return;
 	}

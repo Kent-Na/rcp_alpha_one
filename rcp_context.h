@@ -105,6 +105,9 @@ void rcp_context_send_all_sub_ctx(
 		rcp_context_ref ctx, rcp_connection_ref con);
 void rcp_context_send_all_permission(
 		rcp_context_ref ctx, rcp_connection_ref con);
+
+void rcp_context_send_fatal(rcp_connection_ref con, 
+		rcp_record_ref cause, const char* reason);
 void rcp_context_send_error(rcp_connection_ref con, 
 		rcp_record_ref cause, const char* reason);
 void rcp_context_send_caution(rcp_connection_ref con, 

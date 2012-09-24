@@ -52,7 +52,7 @@ void cmd_util_move_context(
 	rcp_permission_t pms = rcp_context_permission(new_ctx, username);
 
 	if (! (pms & RCP_PMS_LOGIN)){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"not enough permission");
 		return;
 	}
@@ -82,7 +82,7 @@ void cmd_impl_login_context(
 	struct cmd_login_context *cmd_recv = cmd;
 
 	if (!cmd_recv->name){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"Not enough parameters.");
 		return;
 	}
@@ -92,7 +92,7 @@ void cmd_impl_login_context(
 			rcp_record_data(cmd_recv->name));
 
 	if (!node){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"context not found");
 		return;
 	}
@@ -113,7 +113,7 @@ void cmd_impl_logout_context(
 {
 
 	if (!ctx->parent_context){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"You are in root context");
 		return;
 	}
@@ -132,7 +132,7 @@ void cmd_impl_add_context(
 	struct cmd_add_context *cmd_recv = cmd;
 
 	if (!cmd_recv->name){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"Not enough parameters.");
 	}
 
@@ -162,7 +162,7 @@ void cmd_impl_create_user(
 	struct cmd_create_user *cmd_recv = cmd;
 
 	if (!(cmd_recv->username && cmd_recv->password)){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"Not enough parameters.");
 		return;
 	}
@@ -175,7 +175,7 @@ void cmd_impl_create_user(
 	int r = rcp_user_create(rcp_string_c_str(username),
 							rcp_string_c_str(password));
 	if (r != 0){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"fail!!");
 		return;
 	}
@@ -192,13 +192,13 @@ void cmd_impl_login_user(
 	struct cmd_login_user *cmd_recv = cmd;
 
 	if (rcp_connection_username(con)){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"you are already user logined");
 		return;
 	}
 
 	if (!(cmd_recv->username && cmd_recv->password)){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"Not enough parameters.");
 		return;
 	}
@@ -211,14 +211,14 @@ void cmd_impl_login_user(
 	int r = rcp_user_autenticate(rcp_string_c_str(username),
 								rcp_string_c_str(password));
 	if (r != 1){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"Inncorrect username and password pair.");
 		return;
 	}
 
 	rcp_permission_t pms = rcp_context_permission(ctx, username);
 	if (! (pms & RCP_PMS_LOGIN)){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"not enough context login permission");
 		return;
 	}
@@ -374,7 +374,7 @@ void cmd_impl_set_value(
 		return;
 
 	if (rcp_record_cast(ctx, cmd_st->type, cmd_st->value)){
-		rcp_context_send_caution(con, cmd_rec, 
+		rcp_context_send_error(con, cmd_rec, 
 				"type err.");
 		return;
 	}
@@ -458,14 +458,14 @@ void cmd_impl_open(
 	struct cmd_open *cmd_st = cmd;
 
 	if (!(cmd_st->protocol)){
-		rcp_context_send_error(con, cmd_rec, 
+		rcp_context_send_fatal(con, cmd_rec, 
 			"Invalid parameter.");
 		return;
 	}
 	rcp_string_ref protocol = (rcp_string_ref)rcp_record_data(
 			cmd_st->protocol);
 	if (strcmp(rcp_string_c_str(protocol), "alpha1")){
-		rcp_context_send_error(con, cmd_rec, 
+		rcp_context_send_fatal(con, cmd_rec, 
 			"Invalid protocol.");
 		return;
 	}
