@@ -66,7 +66,7 @@ void cmd_util_move_context(
 	rcp_context_send_all_data(new_ctx, con);	
 	rcp_context_send_all_sub_ctx(new_ctx, con);	
 
-	rcp_context_send_info(con, cmd_rec, "Context was initialized.");
+	//rcp_context_send_info(con, cmd_rec, "Context was initialized.");
 
 	rcp_context_add_connection(new_ctx, con);
 	rcp_connection_release(con);
