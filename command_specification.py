@@ -26,7 +26,7 @@ commandList = []
 
 command = {
 	"name":"open",
-	"shortDescription":"",
+	"shortDescription":"Client must send this when connect to server.",
 	"longDescription":"",
 	}
 addParameter(command, "string", "protocol")
@@ -36,25 +36,25 @@ commandList.append(command)
 
 commandList.append({
 	"name":"kill",
-	"shortDescription":"kill server process.",
+	"shortDescription":"Stop listening new connection.",
 	"longDescription":"",
 	})
 
 commandList.append({
 	"name":"dump",
-	"shortDescription":"kill server process.",
+	"shortDescription":"Backup all context's data to database.",
 	"longDescription":"",
 	})
 
 commandList.append({
 	"name":"load",
-	"shortDescription":"kill server process.",
+	"shortDescription":"Don't use this.",
 	"longDescription":"",
 	})
 
 commandList.append({
 	"name":"close",
-	"shortDescription":"",
+	"shortDescription":"Request server to close connection.",
 	"longDescription":"",
 	})
 
@@ -73,9 +73,8 @@ commandList.append({
 #User
 command = {
 	"name":"createUser",
-	"shortDescription":"",
+	"shortDescription":"Create new user account.",
 	"longDescription":"",
-	"returnParameters":["userID"],
 	}
 addParameter(command, "string", "username")
 addParameter(command, "string", "password")
@@ -84,7 +83,7 @@ commandList.append(command)
 
 command = {
 	"name":"deleteUser",
-	"shortDescription":"",
+	"shortDescription":"Not yet implement.",
 	"longDescription":"",
 	}
 
@@ -97,8 +96,6 @@ command = {
 	"name":"loginUser",
 	"shortDescription":"Login as specified username/password pair.",
 	"longDescription":"",
-	"possibleErrors":["Incorrect name or password"],
-	"returnParameters":["userID","loginID"],
 	}
 
 addParameter(command, "string", "username")
@@ -107,28 +104,29 @@ commandList.append(command)
 
 command = {
 	"name":"addUser",
-	"shortDescription":"Add specified user to loged in document.",
+	"shortDescription":"Send from server when new user are logged in.",
 	"longDescription":"",
 	}
 
 addParameter(command, "string", "username")
+requirePermission(command, "server")
 commandList.append(command)
 
-#removeUser
 command = {
 	"name":"removeUser",
-	"shortDescription":"",
+	"shortDescription":"Send from server when new user are logged out.",
 	"longDescription":"",
 	}
 
 addParameter(command, "string", "username")
+requirePermission(command, "server")
 commandList.append(command)
 
 #Permission
 command = {
 	"name":"setPermission",
-	"shortDescription":"",
-	"parameters":[]
+	"shortDescription":"Set users permission to specified mode list.",
+	"longDescription":"",
 	}
 
 addParameter(command, "string", "username")
@@ -139,8 +137,8 @@ commandList.append(command)
 
 command = {
 	"name":"unsetPermission",
-	"shortDescription":"",
-	"parameters":[]
+	"shortDescription":"Make user to use default permission.",
+	"longDescription":"",
 	}
 
 addParameter(command, "string", "username")
@@ -155,10 +153,8 @@ commandList.append(command)
 ##createContext
 command = {
 	"name":"addContext",
-	"shortDescription":"",
+	"shortDescription":"Add new sub context to current context.",
 	"longDescription":"",
-	"possibleErrors":["Permission denied"],
-	"returnParameters":["contextID"],
 	}
 
 addParameter(command, "string", "name")
@@ -167,9 +163,8 @@ commandList.append(command)
 
 command = {
 	"name":"removeContext",
-	"shortDescription":"",
+	"shortDescription":"Not yet implemented.",
 	"longDescription":"",
-	"possibleErrors":["Permission denied"],
 	}
 
 addParameter(command, "string", "name")
@@ -178,9 +173,8 @@ commandList.append(command)
 
 command = {
 	"name":"loginContext",
-	"shortDescription":"",
+	"shortDescription":"Login to specified sub context.",
 	"longDescription":"",
-	"possibleErrors":["Context not found","Permission denied"],
 	}
 
 addParameter(command, "string", "name")
@@ -189,9 +183,8 @@ commandList.append(command)
 
 command = {
 	"name":"logoutContext",
-	"shortDescription":"",
+	"shortDescription":"Login to parent context.",
 	"longDescription":"",
-	"possibleErrors":["Context not found","Permission denied"],
 	}
 
 commandList.append(command)
@@ -221,7 +214,7 @@ commandList.append(command)
 
 command = {
 	"name":"unsetValue",
-	"shortDescription":"Delete value from container like an array or a map",
+	"shortDescription":"Delete value from container like a dict",
 	"longDescription":"",
 	}
 addParameter(command, "ref", "path")
@@ -243,13 +236,13 @@ commandList.append(command)
 #Type
 commandList.append({
 	"name":"createStruct",
-	"shortDescription":"",
+	"shortDescription":"Not yet implemented.",
 	"longDescription":"",
 	})
 
 commandList.append({
 	"name":"addStruct",
-	"shortDescription":"",
+	"shortDescription":"Not yet implemented.",
 	"longDescription":"",
 	})
 
@@ -264,29 +257,43 @@ commandList.append(command)
 
 #Error
 command = {
-	"name":"error",
-	"shortDescription":"Send from server when fail to execute command.",
+	"name":"fatal",
+	"shortDescription":"Sent from server when unable to continue.",
 	"longDescription":"",
 	}
 
 addParameter(command, "string", "cause")
-addParameter(command, "string", "reason")
+addParameter(command, "string", "description")
+requirePermission(command, "server")
+commandList.append(command)
+
+command = {
+	"name":"error",
+	"shortDescription":"Sent from server when fail to execute command.",
+	"longDescription":"",
+	}
+
+addParameter(command, "string", "cause")
+addParameter(command, "string", "description")
+requirePermission(command, "server")
 commandList.append(command)
 
 command = {
 	"name":"caution",
-	"shortDescription":"",
+	"shortDescription":"Sent from server when some probrem happend.",
 	"longDescription":"",
 	}
 addParameter(command, "string", "cause")
-addParameter(command, "string", "reason")
+addParameter(command, "string", "description")
+requirePermission(command, "server")
 commandList.append(command)
 
 command = {
 	"name":"info",
-	"shortDescription":"",
-	"longDescription":"Send from server when someting important but not faital thing happened.",
+	"shortDescription":"Sent from server when someting happened.",
+	"longDescription":"",
 	}
-addParameter(command, "string", "info")
 addParameter(command, "string", "cause")
+addParameter(command, "string", "description")
+requirePermission(command, "server")
 commandList.append(command)

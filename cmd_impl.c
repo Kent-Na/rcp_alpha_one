@@ -588,6 +588,17 @@ void cmd_impl_add_struct(
 			"Not yet implemented.");
 }
 
+void cmd_impl_fatal(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd)
+{
+	rcp_context_send_caution(con, cmd_rec, 
+			"Not yet implemented.");
+}
+
 void cmd_impl_error(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,

@@ -127,20 +127,26 @@ struct cmd_add_type{
 	rcp_record_ref command;
 };
 
+struct cmd_fatal{
+	rcp_record_ref cause;
+	rcp_record_ref description;
+	rcp_record_ref command;
+};
+
 struct cmd_error{
 	rcp_record_ref cause;
-	rcp_record_ref reason;
+	rcp_record_ref description;
 	rcp_record_ref command;
 };
 
 struct cmd_caution{
 	rcp_record_ref cause;
-	rcp_record_ref reason;
+	rcp_record_ref description;
 	rcp_record_ref command;
 };
 
 struct cmd_info{
-	rcp_record_ref info;
 	rcp_record_ref cause;
+	rcp_record_ref description;
 	rcp_record_ref command;
 };

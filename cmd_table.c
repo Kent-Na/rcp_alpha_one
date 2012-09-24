@@ -5,7 +5,7 @@
 #include "cmd_list.h"
 #include "cmd_types_func.h"
 #include "rcp_command.h"
-struct rcp_command_core rcp_command_table[28];
+struct rcp_command_core rcp_command_table[29];
 
 void rcp_command_table_init(){
 
@@ -124,7 +124,7 @@ void rcp_command_table_init(){
 	rcp_command_table[CMD_ADD_USER].cmd_str = 
 		"addUser";
 	rcp_command_table[CMD_ADD_USER].cmd_pms = 
-		0;
+		2147483648;
 	rcp_command_table[CMD_ADD_USER].cmd_type= 
 		cmd_add_user_type();
 	rcp_command_table[CMD_ADD_USER].cmd_impl= 
@@ -135,7 +135,7 @@ void rcp_command_table_init(){
 	rcp_command_table[CMD_REMOVE_USER].cmd_str = 
 		"removeUser";
 	rcp_command_table[CMD_REMOVE_USER].cmd_pms = 
-		0;
+		2147483648;
 	rcp_command_table[CMD_REMOVE_USER].cmd_type= 
 		cmd_remove_user_type();
 	rcp_command_table[CMD_REMOVE_USER].cmd_impl= 
@@ -284,12 +284,23 @@ void rcp_command_table_init(){
 	rcp_command_table[CMD_ADD_TYPE].cmd_impl= 
 		cmd_impl_add_type;
 
+	rcp_command_table[CMD_FATAL].cmd = 
+		CMD_FATAL;
+	rcp_command_table[CMD_FATAL].cmd_str = 
+		"fatal";
+	rcp_command_table[CMD_FATAL].cmd_pms = 
+		2147483648;
+	rcp_command_table[CMD_FATAL].cmd_type= 
+		cmd_fatal_type();
+	rcp_command_table[CMD_FATAL].cmd_impl= 
+		cmd_impl_fatal;
+
 	rcp_command_table[CMD_ERROR].cmd = 
 		CMD_ERROR;
 	rcp_command_table[CMD_ERROR].cmd_str = 
 		"error";
 	rcp_command_table[CMD_ERROR].cmd_pms = 
-		0;
+		2147483648;
 	rcp_command_table[CMD_ERROR].cmd_type= 
 		cmd_error_type();
 	rcp_command_table[CMD_ERROR].cmd_impl= 
@@ -300,7 +311,7 @@ void rcp_command_table_init(){
 	rcp_command_table[CMD_CAUTION].cmd_str = 
 		"caution";
 	rcp_command_table[CMD_CAUTION].cmd_pms = 
-		0;
+		2147483648;
 	rcp_command_table[CMD_CAUTION].cmd_type= 
 		cmd_caution_type();
 	rcp_command_table[CMD_CAUTION].cmd_impl= 
@@ -311,7 +322,7 @@ void rcp_command_table_init(){
 	rcp_command_table[CMD_INFO].cmd_str = 
 		"info";
 	rcp_command_table[CMD_INFO].cmd_pms = 
-		0;
+		2147483648;
 	rcp_command_table[CMD_INFO].cmd_type= 
 		cmd_info_type();
 	rcp_command_table[CMD_INFO].cmd_impl= 

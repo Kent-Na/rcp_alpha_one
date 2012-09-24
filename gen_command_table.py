@@ -50,6 +50,7 @@ permissionNumDict = {
 	"write":1<<2,
 	"permission":1<<3,
 	"context":1<<4,
+	"server":1<<31,
 }
 
 fragment = ""

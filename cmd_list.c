@@ -14,6 +14,7 @@ const char* rcp_command_str_table[]={
 	CMD_STR_DELETE_USER,
 	CMD_STR_DUMP,
 	CMD_STR_ERROR,
+	CMD_STR_FATAL,
 	CMD_STR_INFO,
 	CMD_STR_KILL,
 	CMD_STR_LOAD,

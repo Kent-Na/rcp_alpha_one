@@ -188,7 +188,7 @@ void rcp_context_disconnect_all(
 	rcp_type_ref cmd_type=rcp_command_type(CMD_ERROR);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
 	cmd.command = rcp_string_new_rec(CMD_STR_ERROR);
-	cmd.reason = rcp_string_new_rec(reason);
+	cmd.description = rcp_string_new_rec(reason);
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)&cmd);
 
 	rcp_tree_node_ref node = rcp_tree_begin(ctx->connections);
@@ -379,6 +379,22 @@ void rcp_context_send_all_data(rcp_context_ref ctx, rcp_connection_ref con)
 	rcp_data_ref data = rcp_record_data(tlo_rec);
 	rcp_send_as_command(type, data, con);
 }
+void rcp_context_send_fatal(rcp_connection_ref con, 
+		rcp_record_ref cause, const char* reason)
+{
+	struct cmd_error cmd;
+	rcp_type_ref cmd_type=rcp_command_type(CMD_FATAL);
+	rcp_init(cmd_type, (rcp_data_ref)&cmd);
+	cmd.command = rcp_string_new_rec(CMD_STR_FATAL);
+
+	cmd.cause = rcp_record_retain(cause);
+	cmd.description= rcp_string_new_rec(reason);
+	
+	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
+	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+
+	rcp_connection_close(con);
+}
 void rcp_context_send_error(rcp_connection_ref con, 
 		rcp_record_ref cause, const char* reason)
 {
@@ -388,7 +404,7 @@ void rcp_context_send_error(rcp_connection_ref con,
 	cmd.command = rcp_string_new_rec(CMD_STR_ERROR);
 
 	cmd.cause = rcp_record_retain(cause);
-	cmd.reason = rcp_string_new_rec(reason);
+	cmd.description= rcp_string_new_rec(reason);
 	
 	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
@@ -404,7 +420,7 @@ void rcp_context_send_caution(rcp_connection_ref con,
 	cmd.command = rcp_string_new_rec(CMD_STR_CAUTION);
 
 	cmd.cause = rcp_record_retain(cause);
-	cmd.reason = rcp_string_new_rec(reason);
+	cmd.description = rcp_string_new_rec(reason);
 	
 	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
@@ -419,7 +435,7 @@ void rcp_context_send_info(rcp_connection_ref con,
 	cmd.command = rcp_string_new_rec(CMD_STR_INFO);
 
 	cmd.cause = rcp_record_retain(cause);
-	cmd.info= rcp_string_new_rec(info);
+	cmd.description = rcp_string_new_rec(info);
 	
 	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
@@ -550,6 +566,12 @@ rcp_extern void rcp_context_execute_command_rec(
 	if (cmd_info->cmd != CMD_OPEN && ! rcp_connection_is_open(con)){
 		rcp_context_send_error(con, cmd_rec, 
 				"must send open command.");
+		return;
+	}
+
+	if (cmd_info->cmd_pms & (1<<31)){
+		rcp_context_send_caution(con, cmd_rec, 
+				"Client shouldn't send this command.");
 		return;
 	}
 

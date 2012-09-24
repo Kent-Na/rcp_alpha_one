@@ -866,6 +866,45 @@ rcp_type_ref cmd_add_type_type(){
 	return s_type;
 }
 
+rcp_type_ref cmd_fatal_type(){
+	
+	rcp_type_ref s_type = rcp_struct_type_new(3);
+	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
+	t_core->size = sizeof (struct cmd_fatal);
+	t_core->type_id = 0x100;
+	t_core->type_name = NULL;
+	t_core->init = rcp_struct_init;
+	t_core->deinit = rcp_struct_deinit;
+	t_core->copy = NULL;
+	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
+
+	struct rcp_type_struct_ext* s_core = 
+		(struct rcp_type_struct_ext*)(t_core+1);
+	s_core->name = rcp_string_new("ttt");
+	s_core->param_count = 3;
+
+	struct rcp_struct_param_core *param = 
+		(struct rcp_struct_param_core*)(s_core+1);
+
+	param->name = rcp_string_new("cause");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_fatal, cause);
+	param ++;
+
+	param->name = rcp_string_new("command");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_fatal, command);
+	param ++;
+
+	param->name = rcp_string_new("description");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_fatal, description);
+	param ++;
+
+	return s_type;
+}
+
 rcp_type_ref cmd_error_type(){
 	
 	rcp_type_ref s_type = rcp_struct_type_new(3);
@@ -897,9 +936,9 @@ rcp_type_ref cmd_error_type(){
 	param->offset = offsetof(struct cmd_error, command);
 	param ++;
 
-	param->name = rcp_string_new("reason");
+	param->name = rcp_string_new("description");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_error, reason);
+	param->offset = offsetof(struct cmd_error, description);
 	param ++;
 
 	return s_type;
@@ -936,9 +975,9 @@ rcp_type_ref cmd_caution_type(){
 	param->offset = offsetof(struct cmd_caution, command);
 	param ++;
 
-	param->name = rcp_string_new("reason");
+	param->name = rcp_string_new("description");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_caution, reason);
+	param->offset = offsetof(struct cmd_caution, description);
 	param ++;
 
 	return s_type;
@@ -975,9 +1014,9 @@ rcp_type_ref cmd_info_type(){
 	param->offset = offsetof(struct cmd_info, command);
 	param ++;
 
-	param->name = rcp_string_new("info");
+	param->name = rcp_string_new("description");
 	param->type = rcp_ref_type;
-	param->offset = offsetof(struct cmd_info, info);
+	param->offset = offsetof(struct cmd_info, description);
 	param ++;
 
 	return s_type;

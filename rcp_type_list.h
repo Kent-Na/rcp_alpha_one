@@ -11,7 +11,7 @@ extern const rcp_type_ref rcp_ref_type;
 extern const rcp_type_ref rcp_map_type;
 
 #define RCP_TYPE_ARRAY ((rcp_type_id_t)18)
-extern const rcp_type_ref rcp_old_array_type;
+extern const rcp_type_ref rcp_array_type;
 
 #define RCP_TYPE_STRING ((rcp_type_id_t)20)
 extern const rcp_type_ref rcp_string_type;
@@ -62,7 +62,7 @@ extern struct rcp_type_core rcp_ref_type_def;
 
 extern struct rcp_type_core rcp_map_type_def;
 
-extern struct rcp_type_core rcp_old_array_type_def;
+extern struct rcp_type_core rcp_array_type_def;
 
 extern struct rcp_type_core rcp_string_type_def;
 
