@@ -1,0 +1,202 @@
+
+<html>
+<head>
+<title>rcp_docs</title>
+<link rel="stylesheet" href="main.css">
+</head>
+<body>
+
+<h1>RCP project</h1>
+
+<table>
+<tr>
+<td>open</td>
+<td>kill</td>
+<td>dump</td>
+<td>load</td>
+<td>close</td>
+<td>ping</td>
+</tr>
+<tr>
+<td>pong</td>
+<td>createUser</td>
+<td>deleteUser</td>
+<td>loginUser</td>
+<td>addUser</td>
+<td>removeUser</td>
+</tr>
+<tr>
+<td>setPermission</td>
+<td>unsetPermission</td>
+<td>addContext</td>
+<td>removeContext</td>
+<td>loginContext</td>
+<td>logoutContext</td>
+</tr>
+<tr>
+<td>sendValue</td>
+<td>setValue</td>
+<td>unsetValue</td>
+<td>appendValue</td>
+<td>createStruct</td>
+<td>addStruct</td>
+</tr>
+<tr>
+<td>addType</td>
+<td>fatal</td>
+<td>error</td>
+<td>caution</td>
+<td>info</td>
+</tr>
+</table>
+
+
+
+<div>
+<b>open</b> [protocol,client] </br>
+Client must send this when connect to server.
+<div/>
+
+<div>
+<b>kill</b> [protocol,client] </br>
+Stop listening new connection.
+<div/>
+
+<div>
+<b>dump</b> [protocol,client] </br>
+Backup all context's data to database.
+<div/>
+
+<div>
+<b>load</b> [protocol,client] </br>
+Don't use this.
+<div/>
+
+<div>
+<b>close</b> [protocol,client] </br>
+Request server to close connection.
+<div/>
+
+<div>
+<b>ping</b> [protocol,client] </br>
+Test the connection is alive or not
+<div/>
+
+<div>
+<b>pong</b> [protocol,client] </br>
+Responce of command "ping"
+<div/>
+
+<div>
+<b>createUser</b> [username,password] </br>
+Create new user account.
+<div/>
+
+<div>
+<b>deleteUser</b> [username,password] </br>
+Not yet implement.
+<div/>
+
+<div>
+<b>loginUser</b> [username,password] </br>
+Login as specified username/password pair.
+<div/>
+
+<div>
+<b>addUser</b> [username] </br>
+Send from server when new user are logged in.
+<div/>
+
+<div>
+<b>removeUser</b> [username] </br>
+Send from server when new user are logged out.
+<div/>
+
+<div>
+<b>setPermission</b> [username,mode] </br>
+Set users permission to specified mode list.
+<div/>
+
+<div>
+<b>unsetPermission</b> [username] </br>
+Make user to use default permission.
+<div/>
+
+<div>
+<b>addContext</b> [name] </br>
+Add new sub context to current context.
+<div/>
+
+<div>
+<b>removeContext</b> [name] </br>
+Not yet implemented.
+<div/>
+
+<div>
+<b>loginContext</b> [name] </br>
+Login to specified sub context.
+<div/>
+
+<div>
+<b>logoutContext</b> [name] </br>
+Login to parent context.
+<div/>
+
+<div>
+<b>sendValue</b> [value,type] </br>
+Send value to all users in the context.
+<div/>
+
+<div>
+<b>setValue</b> [path,value,type] </br>
+Set value to specified variable.
+<div/>
+
+<div>
+<b>unsetValue</b> [path] </br>
+Delete value from container like a dict
+<div/>
+
+<div>
+<b>appendValue</b> [path,value,type] </br>
+Add value into container like an array or a map
+<div/>
+
+<div>
+<b>createStruct</b> [path,value,type] </br>
+Not yet implemented.
+<div/>
+
+<div>
+<b>addStruct</b> [path,value,type] </br>
+Not yet implemented.
+<div/>
+
+<div>
+<b>addType</b> [name] </br>
+create new type and add to current context
+<div/>
+
+<div>
+<b>fatal</b> [cause,description] </br>
+Sent from server when unable to continue.
+<div/>
+
+<div>
+<b>error</b> [cause,description] </br>
+Sent from server when fail to execute command.
+<div/>
+
+<div>
+<b>caution</b> [cause,description] </br>
+Sent from server when some probrem happend.
+<div/>
+
+<div>
+<b>info</b> [cause,description] </br>
+Sent from server when someting happened.
+<div/>
+
+
+</body>
+</html>

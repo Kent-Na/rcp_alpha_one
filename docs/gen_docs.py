@@ -6,8 +6,11 @@ base_template = """
 <html>
 <head>
 <title>rcp_docs</title>
+<link rel="stylesheet" href="main.css">
 </head>
 <body>
+
+<h1>RCP project</h1>
 
 {command_name_list}
 
@@ -56,7 +59,7 @@ for cmd in commandList:
 
 command_list = segment
 
-with open('index.html','w') as f:
+with open('command.html','w') as f:
 	f.write(base_template.format(
 				command_name_list = command_name_list,
 				command_list = command_list))
