@@ -20,3 +20,16 @@ CREATE TABLE IF NOT EXISTS contexts(
 		parent_id bigint);
 
 ALTER SEQUENCE contexts_id OWNED BY contexts.id;
+
+--logs
+
+CREATE TABLE IF NOT EXISTS access_log(
+		time timestamp DEFAULT current_timestamp,
+		address inet
+		);
+
+CREATE TABLE IF NOT EXISTS login_log(
+		time timestamp DEFAULT current_timestamp,
+		name text,
+		address inet 
+		);
