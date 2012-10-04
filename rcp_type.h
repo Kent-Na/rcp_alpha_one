@@ -37,8 +37,8 @@ struct rcp_type_core{
 	void (*unset)(rcp_type_ref type, rcp_data_ref dst,
 			rcp_type_ref key_type, rcp_data_ref key_data);
 
-	void (*at)(rcp_type_ref type, rcp_data_ref dst,
-			rcp_type_ref *io_type, rcp_data_ref *io_data);
+	void (*at)(rcp_type_ref *io_type, rcp_data_ref *io_data,
+			rcp_type_ref key_type, rcp_data_ref key_data);
 
 };
 #endif
@@ -72,8 +72,8 @@ rcp_extern void rcp_copy(rcp_type_ref type,
 		rcp_data_ref src, rcp_data_ref dst);
 
 //swap 2 values. don't use this function. It have a bug.
-rcp_extern void rcp_swap(rcp_type_ref type,
-		rcp_data_ref src, rcp_data_ref dst);
+//rcp_extern void rcp_swap(rcp_type_ref type,
+//		rcp_data_ref src, rcp_data_ref dst);
 
 rcp_extern int rcp_compare(rcp_type_ref type, 
 		rcp_data_ref l, rcp_data_ref r);
@@ -90,3 +90,5 @@ rcp_extern void rcp_append(rcp_type_ref type, rcp_data_ref dst,
 		rcp_type_ref data_type, rcp_data_ref data_data);
 rcp_extern void rcp_unset(rcp_type_ref type, rcp_data_ref dst,
 		rcp_type_ref key_type, rcp_data_ref key_data);
+rcp_extern void rcp_at(rcp_type_ref *io_type, rcp_data_ref *io_data,
+			rcp_type_ref key_type, rcp_data_ref key_data);

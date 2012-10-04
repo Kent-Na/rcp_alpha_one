@@ -20,13 +20,14 @@ struct rcp_connection_core{
 	rcp_sender_l1_ref sender;
 	rcp_receiver_ref receiver;
 
-	//statuses
+	//connection info
 	rcp_record_ref protocol_version;
 	rcp_record_ref client_name;
 
+	//status
 	rcp_record_ref username;
 	uint32_t login_id;
-	rcp_context_ref ctx;
+	rcp_context_ref ctx;//weak ref
 
 	rcp_permission_t permission;
 };

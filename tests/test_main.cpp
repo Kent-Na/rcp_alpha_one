@@ -9,6 +9,7 @@ int test_map(void);
 int test_array(void);
 int test_struct(void);
 int test_user(void);
+int test_at(void);
 
 int main (int argc, const char** argv){
 
@@ -18,4 +19,5 @@ int main (int argc, const char** argv){
 	test_array();
 	test_struct();
 	test_user();
+	test_at();
 }

@@ -77,6 +77,7 @@ tests = [
 	'tests/test_array.cpp',
 	'tests/test_pm.cpp',
 	'tests/test_user.cpp',
+	'tests/test_at.cpp',
 ]
 
 main = ['rcp_main.c']

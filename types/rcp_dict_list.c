@@ -29,6 +29,7 @@ struct rcp_dict_core{
 		rcp_dict_set,\
 		NULL,\
 		rcp_dict_unset,\
+		rcp_dict_at,\
 	}
 
 #define RCP_DICT_TEMPLATEB(key,data) \

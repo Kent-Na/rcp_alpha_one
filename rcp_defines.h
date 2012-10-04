@@ -19,8 +19,8 @@
 
 //database
 #define RCP_DB_USER ("czel")
-#define RCP_DB_PASSWORD ("construct")
-#define RCP_DB_NAME ("rcp_test")
+#define RCP_DB_PASSWORD ("")
+#define RCP_DB_NAME ("rcp")
 
 //if defined this macro, run time self test will be execute.
 #define RCP_SELF_TEST (1)

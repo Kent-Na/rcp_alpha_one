@@ -10,6 +10,8 @@
 #include "rcp_type_list.h"
 #include "rcp_dict.h"
 #include "rcp_dict_list.h"
+#include "rcp_array.h"
+#include "rcp_array_list.h"
 
 rcp_extern rcp_record_ref rcp_map_find_c_str(
 		rcp_map_ref map, const char *key, rcp_type_ref type)
@@ -276,4 +278,18 @@ rcp_extern int rcp_record_is_null(rcp_record_ref rec)
 	if (rcp_record_type(rec) == rcp_null_type)
 		return 1;
 	return 0;
+}
+
+void rcp_data_at(rcp_type_ref *io_type, rcp_data_ref *io_data, 
+		rcp_array_ref path)
+{
+	rcp_type_ref path_type = rcp_ref_array;
+	rcp_array_iterater_ref itr = rcp_array_begin(path);
+	while (itr){
+		rcp_record_ref path_seg = 
+			*(rcp_record_ref*)rcp_array_iterater_data(itr);
+		rcp_at(io_type, io_data, 
+				rcp_record_type(path_seg), rcp_record_data(path_seg));
+		itr = rcp_array_iterater_next(path_type, path, itr);
+	}
 }

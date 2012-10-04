@@ -25,6 +25,7 @@ struct rcp_type_core rcp_null_type_def = {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 };
 
 struct rcp_type_core rcp_ref_type_def = {
@@ -40,6 +41,7 @@ struct rcp_type_core rcp_ref_type_def = {
 	NULL,
 	NULL,
 	NULL,
+	rcp_ref_at,
 };
 
 struct rcp_type_core rcp_map_type_def = {
@@ -51,6 +53,7 @@ struct rcp_type_core rcp_map_type_def = {
 	NULL,
 	NULL,
 	rcp_map_write_json,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -70,6 +73,7 @@ struct rcp_type_core rcp_old_array_type_def = {
 	rcp_old_array_set,
 	rcp_old_array_append,
 	NULL,
+	NULL,
 };
 
 struct rcp_type_core rcp_string_type_def = {
@@ -81,6 +85,7 @@ struct rcp_type_core rcp_string_type_def = {
 	rcp_string_copy,
 	rcp_string_compare,
 	rcp_string_write_json,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -100,6 +105,7 @@ struct rcp_type_core rcp_bool8_type_def = {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 };
 
 struct rcp_type_core rcp_bool32_type_def = {
@@ -111,6 +117,7 @@ struct rcp_type_core rcp_bool32_type_def = {
 	rcp_bool32_copy,
 	NULL,
 	rcp_bool32_write_json,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -130,6 +137,7 @@ struct rcp_type_core rcp_uint8_type_def = {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 };
 
 struct rcp_type_core rcp_uint16_type_def = {
@@ -141,6 +149,7 @@ struct rcp_type_core rcp_uint16_type_def = {
 	rcp_uint16_copy,
 	rcp_uint16_compare,
 	rcp_uint16_write_json,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -160,6 +169,7 @@ struct rcp_type_core rcp_uint32_type_def = {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 };
 
 struct rcp_type_core rcp_uint64_type_def = {
@@ -171,6 +181,7 @@ struct rcp_type_core rcp_uint64_type_def = {
 	rcp_uint64_copy,
 	rcp_uint64_compare,
 	rcp_uint64_write_json,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -190,6 +201,7 @@ struct rcp_type_core rcp_int8_type_def = {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 };
 
 struct rcp_type_core rcp_int16_type_def = {
@@ -201,6 +213,7 @@ struct rcp_type_core rcp_int16_type_def = {
 	rcp_int16_copy,
 	rcp_int16_compare,
 	rcp_int16_write_json,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -220,6 +233,7 @@ struct rcp_type_core rcp_int32_type_def = {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 };
 
 struct rcp_type_core rcp_int64_type_def = {
@@ -231,6 +245,7 @@ struct rcp_type_core rcp_int64_type_def = {
 	rcp_int64_copy,
 	rcp_int64_compare,
 	rcp_int64_write_json,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -250,6 +265,7 @@ struct rcp_type_core rcp_float_type_def = {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 };
 
 struct rcp_type_core rcp_double_type_def = {
@@ -265,6 +281,7 @@ struct rcp_type_core rcp_double_type_def = {
 	NULL,
 	NULL,
 	NULL,
+	NULL,
 };
 
 struct rcp_type_core rcp_pointer_type_def = {
@@ -275,6 +292,7 @@ struct rcp_type_core rcp_pointer_type_def = {
 	NULL,
 	rcp_pointer_copy,
 	rcp_pointer_compare,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
