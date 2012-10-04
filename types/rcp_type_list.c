@@ -73,7 +73,7 @@ struct rcp_type_core rcp_old_array_type_def = {
 	rcp_old_array_set,
 	rcp_old_array_append,
 	NULL,
-	NULL,
+	rcp_old_array_at,
 };
 
 struct rcp_type_core rcp_string_type_def = {

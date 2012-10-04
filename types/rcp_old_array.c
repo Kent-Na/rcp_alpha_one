@@ -88,6 +88,42 @@ void rcp_old_array_set(rcp_type_ref type, rcp_data_ref data,
 	rcp_copy(data_type, data_data, out);
 }
 
+void rcp_old_array_at(
+		rcp_type_ref *io_type, rcp_data_ref *io_data,
+		rcp_type_ref key_type, rcp_data_ref key_data)
+{
+	rcp_old_array_ref array= (rcp_old_array_ref)*io_data;
+
+	*io_data = NULL;
+	*io_type = NULL;
+
+	rcp_assert(array, "null_data");
+
+	if (key_type == rcp_ref_type){
+		rcp_record_ref key_rec = *(rcp_record_ref*)key_data;
+		key_type = rcp_record_type(key_rec);
+		key_data = rcp_record_data(key_rec);
+	}
+
+	if (rcp_type_is_int(key_type)){
+		int64_t idx = rcp_int_as_int(key_type, key_data);
+		rcp_assert(idx<0, "idx error");
+
+		*io_data = rcp_old_array_data(array, idx);
+		*io_type = rcp_old_array_data_type(array);
+
+		return;
+	}
+
+	else if (rcp_type_is_uint(key_type)){
+		uint64_t idx = rcp_uint_as_uint(key_type, key_data);
+
+		*io_data = rcp_old_array_data(array, idx);
+		*io_type = rcp_old_array_data_type(array);
+
+		return;
+	}
+}
 rcp_extern rcp_old_array_ref rcp_old_array_new(rcp_type_ref type)
 {
 	rcp_old_array_ref ar = (rcp_old_array_ref)rcp_alloc(rcp_old_array_type);

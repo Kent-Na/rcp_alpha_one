@@ -18,7 +18,7 @@ struct rcp_type_core{
 	//Don't release data itself.
 	void (*deinit)(rcp_type_ref type, rcp_data_ref data);
 
-	//deap copy
+	//deap copy(may be... except ref type.)
 	//Before call it, src must be inited and dst must be deinited state.
 	void (*copy)(rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);
 
@@ -37,6 +37,7 @@ struct rcp_type_core{
 	void (*unset)(rcp_type_ref type, rcp_data_ref dst,
 			rcp_type_ref key_type, rcp_data_ref key_data);
 
+	//Member access. *io_data will be null when value is missing.
 	void (*at)(rcp_type_ref *io_type, rcp_data_ref *io_data,
 			rcp_type_ref key_type, rcp_data_ref key_data);
 
