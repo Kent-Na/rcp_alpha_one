@@ -37,6 +37,7 @@ void rcp_old_array_append(rcp_type_ref type, rcp_data_ref data,
 void rcp_old_array_at(
 		rcp_type_ref *io_type, rcp_data_ref *io_data,
 		rcp_type_ref key_type, rcp_data_ref key_data);
+
 rcp_extern rcp_type_ref rcp_old_array_data_type(rcp_old_array_ref array);
 
 rcp_extern size_t rcp_old_array_count(rcp_old_array_ref array);

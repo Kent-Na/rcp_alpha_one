@@ -18,10 +18,10 @@
 		rcp_array_deinit,\
 		rcp_array_copy,\
 		/*compare*/		NULL,\
-		/*w_json*/ 		NULL,\
-		/*send_as_cmd*/	NULL,\
-		/*set*/ 		NULL,\
-		/*append*/ 		NULL,\
+		rcp_array_write_json,\
+		rcp_array_send_as_command,\
+		rcp_array_set,\
+		rcp_array_append,\
 		/*unset*/ 		NULL,\
 		rcp_array_at,\
 	}

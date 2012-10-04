@@ -41,6 +41,8 @@ void rcp_map_write_json(rcp_type_ref type,
 		rcp_data_ref data, rcp_string_ref out);
 void rcp_old_array_write_json(rcp_type_ref type,
 		rcp_data_ref data, rcp_string_ref out);
+void rcp_array_write_json(rcp_type_ref type,
+		rcp_data_ref data, rcp_string_ref out);
 void rcp_string_write_json(rcp_type_ref type,
 		rcp_data_ref data, rcp_string_ref out);
 

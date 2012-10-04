@@ -5,7 +5,8 @@
 #include "rcp_record.h"
 #include "rcp_type.h"
 #include "types/rcp_string.h"
-#include "types/rcp_old_array.h"
+#include "types/rcp_array.h"
+#include "types/rcp_array_list.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_dict_list.h"
 #include "types/rcp_type_list.h"
@@ -99,8 +100,8 @@ rcp_record_ref rcp_json_parse_array(const char **begin, const char *end)
 
 	ptr ++;
 
-	rcp_record_ref array_rec = rcp_old_array_new_rec(rcp_ref_type);
-	rcp_old_array_ref array = (rcp_old_array_ref)rcp_record_data(array_rec);
+	rcp_record_ref array_rec = rcp_record_new(rcp_ref_array);
+	rcp_array_ref array = (rcp_array_ref)rcp_record_data(array_rec);
 	rcp_record_ref rec = NULL;
 
 	rcp_json_skip_space(&ptr, end);
@@ -120,7 +121,7 @@ rcp_record_ref rcp_json_parse_array(const char **begin, const char *end)
 			break;
 		}
 
-		rcp_old_array_append_data(array, &rec);
+		rcp_array_append_data(rcp_ref_array, array, (rcp_data_ref)&rec);
 		rcp_record_release(rec);
 		rec = NULL;
 

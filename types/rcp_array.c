@@ -77,6 +77,42 @@ void rcp_array_copy(
 	}
 }
 
+void rcp_array_set(rcp_type_ref type, rcp_data_ref data,
+		rcp_type_ref key_type, rcp_data_ref key_data,
+		rcp_type_ref data_type, rcp_data_ref data_data)
+{
+	rcp_array_ref array = (rcp_array_ref)data;
+	if (rcp_array_type_data_type(type)!= data_type)
+		return;
+
+	if (key_type == rcp_ref_type){
+		rcp_record_ref key_rec = *(rcp_record_ref*)key_data;
+		key_type = rcp_record_type(key_rec);
+		key_data = rcp_record_data(key_rec);
+	}
+
+	if (!rcp_type_is_uint(key_type))
+		return;
+
+	uint64_t idx = rcp_uint_as_uint(key_type, key_data);
+
+	rcp_data_ref out = rcp_array_data_at(type, array, idx);
+	if (!out)
+		return;
+		
+	rcp_deinit(data_type, out);
+	rcp_copy(data_type, data_data, out);
+}
+
+rcp_extern void rcp_array_append(
+		rcp_type_ref array_type, rcp_data_ref array,
+		rcp_type_ref data_type, rcp_data_ref data)
+{
+	if (rcp_array_type_data_type(array_type)!= data_type)
+		return;
+	rcp_array_append_data(array_type, (rcp_array_ref)array, data);
+}
+
 void rcp_array_at(
 		rcp_type_ref *io_type, rcp_data_ref *io_data,
 		rcp_type_ref key_type, rcp_data_ref key_data)
