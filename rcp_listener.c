@@ -18,6 +18,7 @@
 #include "connections/con_plain.h"
 #include "connections/con_ssl.h"
 
+#include "rcp_logger.h"
 #include "rcp_server.h"
 
 ///
@@ -205,9 +206,9 @@ void rcp_listener_event_event(
 	int listener_fd = lis->fd;
 	
 	//connect
-	struct sockaddr_in client_address;
+	struct sockaddr client_address;
 	size_t client_address_size = sizeof client_address;
-	int fd = accept(listener_fd, (struct sockaddr*)&client_address,
+	int fd = accept(listener_fd, &client_address,
 			(socklen_t*)&client_address_size);
 	
 	//printf("accept_done\n");
@@ -223,7 +224,7 @@ void rcp_listener_event_event(
 		return;
 	}
 
-	//log
+	rcp_log_access(&client_address);
 
 	//make new connection
 	rcp_listener_connection_new(lis->klass, epfd, fd);

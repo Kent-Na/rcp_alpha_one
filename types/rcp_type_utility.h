@@ -4,6 +4,7 @@
 #include "../def/rcp_struct.h"
 #include "../def/rcp_record.h"
 #include "../def/rcp_dict.h"
+#include "../def/rcp_array.h"
 rcp_extern rcp_record_ref rcp_map_find_c_str(
 		rcp_map_ref map, const char *key, rcp_type_ref type);
 
@@ -27,3 +28,6 @@ rcp_extern int64_t rcp_int_as_int(rcp_type_ref type, rcp_data_ref data);
 rcp_extern uint64_t rcp_uint_as_uint(rcp_type_ref type, rcp_data_ref data);
 
 rcp_extern int rcp_record_is_null(rcp_record_ref rec);
+
+rcp_extern void rcp_data_at(rcp_type_ref *io_type, rcp_data_ref *io_data, 
+		rcp_array_ref path);

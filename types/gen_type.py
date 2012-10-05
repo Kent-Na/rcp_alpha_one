@@ -3,80 +3,80 @@ import re
 typeTable = [
 #	[id,	name,		c_type
 #	 init, 	deinit,	copy, 	compare, write_json, send_as_command,
-#	 set,	append,	unset]
+#	 set,	append,	unset, at]
 #someting special
 	[0,		'null',		None,				'0',
 	 False,	False, False, False,  True, False,
-	 False, False, False],
+	 False, False, False, False],
 	[1,		'ref',		'rcp_record_ref',	'sizeof(rcp_record_ref*)',
 	  True,  True,  True, False,  True, False,
-	 False, False, False],
+	 False, False, False,  True],
 #	[2,		used in internal],
 
 #16-24 container
 	[16,	'map',		'rcp_record_ref',	'sizeof(struct rcp_map_core)',
 	  True,  True, False, False,  True, False,
-	 False, False, False],
+	 False, False, False, False],
 #	[17,	'set',		None],
 #	 False,	False,	False, False, True],
 	[18,	'old_array',
 		'rcp_record_ref',	'sizeof(struct rcp_old_array_core)',
 	  True,  True, False, False, True,  True,
-	  True,  True, False],
+	  True,  True, False, False],
 #	[19,	'struct',	None],
 #	 False,	False,	False, False, True],
 
 	[20,	'string',	'rcp_record_ref', 'sizeof(struct rcp_string_core)',
 	 True,	True,	True, True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 #	[21,	'binaly',	None],
 #	 False,	False,	False, False, True],
 
 #25-31 bool
 	[25,	'bool8',	'uint8_t',	'1',
 	 False,	False,	True, False, True, False,
-	 False, False, False],
+	 False, False, False, False],
 	[26,	'bool32',	'uint32_t',	'4',
 	 False,	False,	True, False, True, False,
-	 False, False, False],
+	 False, False, False, False],
 
 #32-63 number
 #32-39 uint
 	[32,	'uint8',	'uint8_t',	'1',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 	[33,	'uint16',	'uint16_t',	'2',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 	[34,	'uint32',	'uint32_t',	'4',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 	[35,	'uint64',	'uint64_t',	'8',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 
 #40-47 int
 	[40,	'int8',		'int8_t',	'1',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 	[41,	'int16',	'int16_t',	'2',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 	[42,	'int32',	'int32_t',	'4',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 	[43,	'int64',	'int64_t',	'8',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 
 #48-55 float
 #	[48,	'half',		'half'],
 	[49,	'float',	'float',	'4',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 	[50,	'double',	'double',	'8',
 	 False,	False,	True,  True, True, False,
-	 False, False, False],
+	 False, False, False, False],
 
 #	[id,	name,		c_type
 #	 init, 	deinit,		copy, 	compare, write_json]
@@ -87,7 +87,7 @@ exTypeTable = [
 #	[id,	name,		c_type]
 	[2,		'pointer',	'void*',	'sizeof(void*)',
 	 False,	False,	True,  True, False, False,
-	 False, False, False],
+	 False, False, False, False],
 ]
 
 
@@ -108,7 +108,7 @@ def tableToDict(info):
 
 	funcList = [
 		'init', 'deinit', 'copy', 'compare', 'writeJson', 
-		'sendAsCommand', 'set', 'append', 'unset']
+		'sendAsCommand', 'set', 'append', 'unset', 'at']
 
 	idx = 4
 	for func in funcList:

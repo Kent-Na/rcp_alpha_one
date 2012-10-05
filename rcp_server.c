@@ -123,6 +123,8 @@ void rcp_db_connect()
 	con = PQconnectdbParams(connectInfoKey, connectInfoValue, 1);
 	if (!con)
 		rcp_error("db connect fail");
+	if (PQstatus(con) != CONNECTION_OK)
+		rcp_error("db connect fail");
 }
 
 void rcp_db_disconnect()

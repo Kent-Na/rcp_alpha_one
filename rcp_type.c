@@ -117,3 +117,11 @@ rcp_extern void rcp_unset(rcp_type_ref type, rcp_data_ref dst,
 		return;
 	type->unset(type, dst, key_type, key_data);
 }
+rcp_extern void rcp_at(rcp_type_ref *io_type, rcp_data_ref *io_data,
+			rcp_type_ref key_type, rcp_data_ref key_data)
+{
+	if ((! (*io_type)->at) || (! *io_data)){
+		return;
+	}
+	(*io_type)->at(io_type, io_data, key_type, key_data);
+}

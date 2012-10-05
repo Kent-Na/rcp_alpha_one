@@ -17,12 +17,13 @@
 		rcp_array_init,\
 		rcp_array_deinit,\
 		rcp_array_copy,\
-		NULL,\
-		NULL,\
-		NULL,\
-		NULL,\
-		NULL,\
-		NULL,\
+		/*compare*/		NULL,\
+		/*w_json*/ 		NULL,\
+		/*send_as_cmd*/	NULL,\
+		/*set*/ 		NULL,\
+		/*append*/ 		NULL,\
+		/*unset*/ 		NULL,\
+		rcp_array_at,\
 	}
 
 #define RCP_ARRAY_TEMPLATE_A(def_name, param_name) \

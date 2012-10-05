@@ -18,6 +18,7 @@
 //type dict
 //
 
+//unused
 struct rcp_type_core rcp_dict_type_def = {
 	sizeof(struct rcp_tree_core),
 	0,
@@ -96,31 +97,33 @@ void rcp_dict_deinit(rcp_type_ref type, rcp_data_ref data)
 	}
 	rcp_tree_deinit((rcp_tree_ref)data);
 }
-void rcp_dict_at(rcp_type_ref type, rcp_data_ref data,
-		rcp_type_ref *io_type, rcp_data_ref *io_data)
+void rcp_dict_at(
+		rcp_type_ref *io_type, rcp_data_ref *io_data,
+		rcp_type_ref key_type, rcp_data_ref key_data)
 {
-	rcp_dict_ref dict = (rcp_dict_ref)data;
+	rcp_type_ref dict_type = *io_type;
+	rcp_dict_ref dict = (rcp_dict_ref)*io_data;
 
-	rcp_assert(io_type!=NULL, "null_type");
-	rcp_assert(io_data!=NULL, "null_data");
-
-	rcp_type_ref key_type = *io_type;
-	rcp_data_ref key_data = *io_data;
+	*io_type = NULL;
+	*io_data = NULL;
 
 	if (key_type == rcp_ref_type){
 		rcp_record_ref key_rec = *(rcp_record_ref*)key_data;
 		key_type = rcp_record_type(key_rec);
 		key_data = rcp_record_data(key_rec);
 	}
-	
+
+	rcp_assert(key_type == rcp_dict_type_key_type(dict_type),
+			"bad key type");
+
 	rcp_dict_node_ref node;
 	node = rcp_dict_find(dict, key_data);
 
 	if (!node)
 		return;
 
-	*io_type = rcp_dict_type_data_type(type);
-	*io_data = rcp_dict_node_data(type, node);
+	*io_type = rcp_dict_type_data_type(dict_type);
+	*io_data = rcp_dict_node_data(dict_type, node);
 }
 
 void rcp_dict_set(rcp_type_ref type, rcp_data_ref data,

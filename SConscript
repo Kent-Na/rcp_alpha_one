@@ -43,6 +43,7 @@ mainFiles = [
 	'rcp_context.c',
 	'rcp_context_file.c',
 	'rcp_context_pgsql.c',
+	'rcp_logger_pgsql.c',
 	'rcp_event_epoll.c',
 	'rcp_event_kqueue.c',
 	'rcp_json.c',
@@ -76,6 +77,7 @@ tests = [
 	'tests/test_array.cpp',
 	'tests/test_pm.cpp',
 	'tests/test_user.cpp',
+	'tests/test_at.cpp',
 ]
 
 main = ['rcp_main.c']

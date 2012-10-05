@@ -70,6 +70,7 @@ struct rcp_type_core rcp_{typeName}_type_def = {{
 	{setFunc},
 	{appendFunc},
 	{unsetFunc},
+	{atFunc},
 }};
 """
 

@@ -38,3 +38,12 @@ void rcp_ref_copy(
 	rcp_record_retain(*src_rec);
 	*dst_rec = *src_rec;
 }
+
+void rcp_ref_at(rcp_type_ref *io_type, rcp_data_ref *io_data,
+		rcp_type_ref key_type, rcp_data_ref key_data)
+{
+	rcp_record_ref rec = *(rcp_record_ref*)*io_data;
+	*io_type = rcp_record_type(rec);
+	*io_data = rcp_record_data(rec);
+	rcp_at(io_type, io_data, key_type, key_data);
+}

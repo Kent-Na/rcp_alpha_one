@@ -34,15 +34,24 @@ rcp_extern rcp_array_ref rcp_array_new(rcp_type_ref array_type);
 rcp_extern void rcp_array_delete(
 		rcp_type_ref rcp_array_type, rcp_array_ref array);
 
-rcp_extern void rcp_array_init(rcp_type_ref type, rcp_data_ref data);
-rcp_extern void rcp_array_deinit(rcp_type_ref type, rcp_data_ref data);
+rcp_extern void rcp_array_init(
+		rcp_type_ref type, rcp_data_ref data);
+rcp_extern void rcp_array_deinit(
+		rcp_type_ref type, rcp_data_ref data);
 rcp_extern void rcp_array_copy(
 		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);
+rcp_extern void rcp_array_at(
+		rcp_type_ref *io_type, rcp_data_ref *io_data,
+		rcp_type_ref key_type, rcp_data_ref key_data);
 
 rcp_extern int rcp_array_owning_data(rcp_array_ref array);
 
 rcp_extern void* rcp_array_raw_data(rcp_array_ref array);
 rcp_extern size_t rcp_array_len(rcp_array_ref array);
+
+rcp_extern rcp_data_ref rcp_array_data_at(
+		rcp_type_ref array_type, rcp_array_ref array,
+		uint64_t idx);
 
 rcp_extern void rcp_array_append_data(
 		rcp_type_ref array_type, rcp_array_ref array,
