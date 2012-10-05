@@ -20,6 +20,8 @@
 #include "types/rcp_old_array.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_dict_list.h"
+#include "types/rcp_array.h"
+#include "types/rcp_array_list.h"
 #include "types/rcp_string.h"
 #include "types/rcp_alias.h"
 
@@ -317,19 +319,6 @@ void cmd_impl_send_value(
 	struct cmd_send_value *cmd_st = cmd;
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 }
-
-void cmd_impl_unset_value(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd)
-{
-	rcp_record_release(ctx->top_level_record);
-	ctx->top_level_record = 
-		rcp_old_array_new_rec(rcp_ref_type);
-}
-
 int rcp_record_cast(
 		rcp_context_ref ctx,
 		rcp_record_ref type_rec,
@@ -374,8 +363,7 @@ void cmd_impl_set_value(
 		return;
 
 	if (rcp_record_cast(ctx, cmd_st->type, cmd_st->value)){
-		rcp_context_send_error(con, cmd_rec, 
-				"type err.");
+		rcp_context_send_error(con, cmd_rec, "type err.");
 		return;
 	}
 
@@ -384,16 +372,44 @@ void cmd_impl_set_value(
 		rcp_record_release(ctx->top_level_record);
 		ctx->top_level_record = 
 			rcp_record_retain(cmd_st->value);
+		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 		return;
 	}
 
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
+
+	if (rcp_record_type(tlo_rec) == rcp_ref_array){
+		rcp_type_ref type = rcp_record_type(tlo_rec);
+		rcp_data_ref data = rcp_record_data(tlo_rec);
+		rcp_data_at(&type, &data, 
+				(rcp_array_ref)rcp_record_data(cmd_st->path));
+		if (!data){
+			rcp_context_send_error(con, cmd_rec, "path err.");
+			return;
+		}
+
+		rcp_set(rcp_record_type(tlo_rec), rcp_record_data(tlo_rec),
+				rcp_ref_type, (rcp_data_ref)&cmd_st->path,
+				rcp_ref_type, (rcp_data_ref)&cmd_st->value);
+		return;
+	}
 
 	rcp_set(rcp_record_type(tlo_rec), rcp_record_data(tlo_rec),
 			rcp_ref_type, (rcp_data_ref)&cmd_st->path,
 			rcp_ref_type, (rcp_data_ref)&cmd_st->value);
 
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
+}
+
+void cmd_impl_unset_value(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd)
+{
+	rcp_context_send_caution(con, cmd_rec, 
+			"Not yet implemented.");
 }
 
 void cmd_impl_append_value(
