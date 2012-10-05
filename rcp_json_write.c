@@ -288,15 +288,16 @@ void rcp_array_write_json(rcp_type_ref type,
 		rcp_data_ref data, rcp_string_ref out)
 {
 	rcp_array_ref array = (rcp_array_ref)data;
-	rcp_type_ref ary_type = rcp_array_type_data_type(type);
+	rcp_type_ref array_type = type;
+	rcp_type_ref elem_type = rcp_array_type_data_type(type);
 
 	rcp_array_iterater_ref itr = rcp_array_begin(array);
 	rcp_string_put(out, '[');
 	while (itr){
-		rcp_write_json(ary_type, 
+		rcp_write_json(elem_type, 
 				rcp_array_iterater_data(itr), out);
 
-		itr = rcp_array_iterater_next(ary_type, array, itr);
+		itr = rcp_array_iterater_next(array_type, array, itr);
 		if (itr)
 			rcp_string_put(out, ',');
 	}

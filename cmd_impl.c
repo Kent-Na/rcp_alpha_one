@@ -367,8 +367,7 @@ void cmd_impl_set_value(
 		return;
 	}
 
-	if ((!(cmd_st->path)) || 
-			rcp_record_type(cmd_st->path) == rcp_null_type ){
+	if (rcp_record_is_null(cmd_st->path)){
 		rcp_record_release(ctx->top_level_record);
 		ctx->top_level_record = 
 			rcp_record_retain(cmd_st->value);
@@ -377,20 +376,25 @@ void cmd_impl_set_value(
 	}
 
 	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
+	if (!tlo_rec)
+		rcp_context_send_error(con, cmd_rec, "Root object is NULL.");
 
-	if (rcp_record_type(tlo_rec) == rcp_ref_array){
+	if (rcp_record_type(cmd_st->path) == rcp_ref_array){
+		rcp_error("tttttteeest");
 		rcp_type_ref type = rcp_record_type(tlo_rec);
 		rcp_data_ref data = rcp_record_data(tlo_rec);
-		rcp_data_at(&type, &data, 
-				(rcp_array_ref)rcp_record_data(cmd_st->path));
+		rcp_array_ref path =(rcp_array_ref)rcp_record_data(cmd_st->path);
+		rcp_data_at_minus_one(&type, &data, path);
 		if (!data){
 			rcp_context_send_error(con, cmd_rec, "path err.");
 			return;
 		}
 
-		rcp_set(rcp_record_type(tlo_rec), rcp_record_data(tlo_rec),
-				rcp_ref_type, (rcp_data_ref)&cmd_st->path,
+		rcp_set(type, data,
+				rcp_ref_type, rcp_array_last(rcp_ref_array, path),
 				rcp_ref_type, (rcp_data_ref)&cmd_st->value);
+		rcp_info("correct path");
+		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 		return;
 	}
 

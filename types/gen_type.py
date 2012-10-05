@@ -10,7 +10,7 @@ typeTable = [
 	 False, False, False, False],
 	[1,		'ref',		'rcp_record_ref',	'sizeof(rcp_record_ref*)',
 	  True,  True,  True, False,  True, False,
-	 False, False, False,  True],
+	  True, False, False,  True],
 #	[2,		used in internal],
 
 #16-24 container

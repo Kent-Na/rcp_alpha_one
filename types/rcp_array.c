@@ -216,6 +216,14 @@ rcp_extern rcp_data_ref rcp_array_data_at(
 	return array->array +
 		rcp_array_type_data_type(array_type)->size*idx;
 }
+rcp_extern rcp_data_ref rcp_array_last(
+		rcp_type_ref array_type, rcp_array_ref array)
+{
+	if (!array->data_count)
+		return NULL;
+	return array->array +
+		rcp_array_type_data_type(array_type)->size*(array->data_count-1);
+}
 rcp_array_iterater_ref rcp_array_begin(rcp_array_ref array)
 {
 	if (array->data_count)

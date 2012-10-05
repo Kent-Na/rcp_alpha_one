@@ -59,6 +59,9 @@ rcp_extern rcp_data_ref rcp_array_data_at(
 		rcp_type_ref array_type, rcp_array_ref array,
 		uint64_t idx);
 
+rcp_extern rcp_data_ref rcp_array_last(
+		rcp_type_ref array_type, rcp_array_ref array);
+
 rcp_extern void rcp_array_append_data(
 		rcp_type_ref array_type, rcp_array_ref array,
 		rcp_data_ref data);

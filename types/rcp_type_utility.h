@@ -29,5 +29,9 @@ rcp_extern uint64_t rcp_uint_as_uint(rcp_type_ref type, rcp_data_ref data);
 
 rcp_extern int rcp_record_is_null(rcp_record_ref rec);
 
-rcp_extern void rcp_data_at(rcp_type_ref *io_type, rcp_data_ref *io_data, 
+rcp_extern void rcp_data_at(
+		rcp_type_ref *io_type, rcp_data_ref *io_data, 
+		rcp_array_ref path);
+rcp_extern void rcp_data_at_minus_one(
+		rcp_type_ref *io_type, rcp_data_ref *io_data, 
 		rcp_array_ref path);

@@ -38,7 +38,7 @@ struct rcp_type_core rcp_ref_type_def = {
 	NULL,
 	rcp_ref_write_json,
 	NULL,
-	NULL,
+	rcp_ref_set,
 	NULL,
 	NULL,
 	rcp_ref_at,
