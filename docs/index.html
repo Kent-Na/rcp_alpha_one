@@ -155,8 +155,29 @@ There are a 4 kind of permissions.
 <dd>The "permission" permission makes user can give and rob another user's 
 permissions.</dd>
 
-setPermission
-unsetPermission
+The default value of "default permission" is allow all of above.
+Send "setPermission" command without specify "username" parameter 
+change default permission.
+
+<code>
+{"command":"setPermission","mode":["context","login","write","permission"]}
+</code>
+
+And bellow command will remove all permission from the user.
+<code>
+{"command":"setPermission","username":"(username here)",
+	"mode":[]}
+</code>
+
+Be careful. There is no super user. 
+It's mean if you remove login permission from all users, 
+then no one can fix it. It's so painful.
+
+<code>
+{"command":"unsetPermission","username":"(username here)"}
+</code>
+
+After sending this command, default permission will apply to the user.
 
 <h3>Command list</h3>
 Command list is <a href="command.html">here</a>
