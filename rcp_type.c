@@ -2,6 +2,7 @@
 #include "rcp_utility.h"
 #include "rcp_defines.h"
 #include "types/rcp_string.h"
+#include "rcp_send_as_command.h"
 
 #define RCP_INTERNAL_STRUCTURE
 
@@ -93,7 +94,10 @@ rcp_extern void rcp_write_json(rcp_type_ref type,
 rcp_extern void rcp_send_as_command(rcp_type_ref type, rcp_data_ref data,
 			rcp_connection_ref con)
 {
-	type->send_as_command(type, data, con);
+	if (type->send_as_command)
+		type->send_as_command(type, data, con);
+	else
+		rcp_std_send_as_command(type, data, con);
 }
 rcp_extern void rcp_set(rcp_type_ref type, rcp_data_ref dst,
 		rcp_type_ref key_type, rcp_data_ref key_data,
