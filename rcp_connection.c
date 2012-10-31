@@ -26,7 +26,7 @@ struct rcp_connection_core{
 
 	//status
 	rcp_record_ref username;
-	uint32_t login_id;
+	uint16_t login_id;
 	rcp_context_ref ctx;//weak ref
 
 	rcp_permission_t permission;
@@ -173,6 +173,20 @@ void rcp_connection_close(rcp_connection_ref con)
 	if (!rcp_connection_alive(con))
 		return;
 	rcp_io_close(con->io);
+}
+
+rcp_extern void 
+rcp_connection_set_login_id(
+		rcp_connection_ref con, rcp_login_id_t login_id)
+{
+	con->login_id = login_id;
+}
+
+rcp_extern rcp_login_id_t 
+rcp_connection_login_id(
+		rcp_connection_ref con)
+{
+	return con->login_id;
 }
 
 rcp_extern

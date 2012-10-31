@@ -12,6 +12,7 @@
 
 #include "def/rcp_permission.h"
 
+typedef uint16_t rcp_login_id_t;
 //rcp_connections
 
 rcp_extern
@@ -24,29 +25,29 @@ void rcp_connection_release(rcp_connection_ref con);
 
 ///
 //io set
-rcp_extern
-void rcp_connection_set_io(
+rcp_extern void 
+rcp_connection_set_io(
 		rcp_connection_ref con, rcp_io_ref io);
-rcp_extern
-void rcp_connection_set_sender(
+rcp_extern void 
+rcp_connection_set_sender(
 		rcp_connection_ref con, rcp_sender_l1_ref sender);
-rcp_extern
-void rcp_connection_set_receiver(
+rcp_extern void 
+rcp_connection_set_receiver(
 		rcp_connection_ref con, rcp_receiver_ref receiver);
 
 ///
 //io operation
-rcp_extern
-void rcp_connection_send(rcp_connection_ref con);
-rcp_extern
-void rcp_connection_send_data(rcp_connection_ref con,
+rcp_extern void 
+rcp_connection_send(rcp_connection_ref con);
+rcp_extern void 
+rcp_connection_send_data(rcp_connection_ref con,
 		rcp_type_ref type, rcp_data_ref data);
-rcp_extern
-void rcp_connection_on_receive(rcp_connection_ref con);
-rcp_extern
-int rcp_connection_alive(rcp_connection_ref con);
-rcp_extern
-void rcp_connection_on_close(rcp_connection_ref con);
+rcp_extern void 
+rcp_connection_on_receive(rcp_connection_ref con);
+rcp_extern int 
+rcp_connection_alive(rcp_connection_ref con);
+rcp_extern void 
+rcp_connection_on_close(rcp_connection_ref con);
 
 rcp_extern 
 void rcp_connection_close(rcp_connection_ref con);
@@ -64,6 +65,13 @@ rcp_permission_t rcp_connection_permission(rcp_connection_ref con);
 rcp_extern
 void rcp_connection_set_permission(
 		rcp_connection_ref con, rcp_permission_t pms);
+
+rcp_extern void 
+rcp_connection_set_login_id(
+		rcp_connection_ref con, rcp_login_id_t login_id);
+rcp_extern rcp_login_id_t 
+rcp_connection_login_id(
+		rcp_connection_ref con);
 
 rcp_extern
 rcp_context_ref rcp_connection_context(

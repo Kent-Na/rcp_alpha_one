@@ -58,19 +58,21 @@ void cmd_util_move_context(
 				"not enough permission");
 		return;
 	}
+
 	rcp_connection_retain(con);
-	rcp_context_remove_connection(old_ctx, con);
+	{
+		rcp_context_remove_connection(old_ctx, con);
+		rcp_connection_set_permission(con, pms);
+		rcp_context_add_connection(new_ctx, con);
 
-	rcp_connection_set_permission(con, pms);
-	rcp_context_send_info(con, cmd_rec, "Login/Logout succeed.");
-	
-	rcp_context_send_all_con(new_ctx, con);
-	rcp_context_send_all_data(new_ctx, con);	
-	rcp_context_send_all_sub_ctx(new_ctx, con);	
+		rcp_context_send_info(con, cmd_rec, "Login/Logout succeed.");
+		
+		rcp_context_send_all_con(new_ctx, con);
+		rcp_context_send_all_data(new_ctx, con);	
+		rcp_context_send_all_sub_ctx(new_ctx, con);	
 
-	//rcp_context_send_info(con, cmd_rec, "Context was initialized.");
-
-	rcp_context_add_connection(new_ctx, con);
+		//rcp_context_send_info(con, cmd_rec, "Context was initialized.");
+	}
 	rcp_connection_release(con);
 }
 

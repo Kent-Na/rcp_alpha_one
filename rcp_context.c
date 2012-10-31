@@ -56,6 +56,7 @@ void rcp_context_init(rcp_context_ref ctx)
 {
 	ctx->top_level_record = NULL;
 	ctx->connections = rcp_tree_new((void*)rcp_pointer_compare,NULL);
+	ctx->login_ids = rcp_tree_new((void*)rcp_uint16_compare,NULL);
 	ctx->dead = rcp_old_array_new(rcp_pointer_type);
 	ctx->permissions = rcp_dict_new(rcp_str_uint64_dict);
 	ctx->base_permission = RCP_PMS_LOGIN | RCP_PMS_READ | RCP_PMS_WRITE
@@ -70,6 +71,7 @@ void rcp_context_uninit(rcp_context_ref ctx)
 {
 	rcp_record_release(ctx->top_level_record);
 	rcp_tree_delete(ctx->connections);
+	rcp_tree_delete(ctx->login_ids);
 	rcp_old_array_delete(ctx->dead);
 	rcp_dict_delete(rcp_str_uint64_dict, ctx->permissions);
 	rcp_dict_delete(rcp_str_ptr_dict, ctx->sub_context);
@@ -118,6 +120,15 @@ rcp_extern
 void rcp_connection_unset_context(
 		rcp_connection_ref con);
 
+uint16_t rcp_context_new_login_id(rcp_context_ref ctx)
+{
+	uint16_t id;
+	RAND_bytes((void*)&id, sizeof id);
+	while (rcp_tree_find(ctx->login_ids, &id))
+		RAND_bytes((void*)&id, sizeof id);
+	return id;
+}
+
 void rcp_context_add_connection(rcp_context_ref ctx, 
 		rcp_connection_ref con)
 {
@@ -125,9 +136,20 @@ void rcp_context_add_connection(rcp_context_ref ctx,
 	rcp_connection_set_context(con, ctx);
 
 	//add connection to context
-	rcp_tree_node_ref node= rcp_tree_node_new(sizeof con);
-	*(rcp_connection_ref*)rcp_tree_node_data(node) = con;
-	rcp_tree_add(ctx->connections, node);
+	{
+		rcp_tree_node_ref node= rcp_tree_node_new(sizeof con);
+		*(rcp_connection_ref*)rcp_tree_node_data(node) = con;
+		rcp_tree_add(ctx->connections, node);
+	}
+
+	//set login ID to connection
+	{
+		uint16_t id = rcp_context_new_login_id(ctx);
+		rcp_tree_node_ref node= rcp_tree_node_new(sizeof id);
+		*(uint16_t*)rcp_tree_node_data(node) = id;
+		rcp_tree_add(ctx->login_ids, node);
+		rcp_connection_set_login_id(con, id);
+	}
 
 	//send add user command to context
 	struct cmd_add_user cmd;
@@ -156,13 +178,22 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 		rcp_connection_ref con = 0;
 		rcp_old_array_pop(ctx->dead, &con);
 		rcp_tree_node_ref node = rcp_tree_find(ctx->connections, &con);
+		rcp_tree_verify(ctx->connections);
+		rcp_tree_remove(ctx->connections, node);
+		rcp_tree_node_delete(node);
 		if (!node){
 			rcp_error("con to rm from ctx is missing");
 			return;
 		}
-		rcp_tree_verify(ctx->connections);
-		rcp_tree_remove(ctx->connections, node);
+
+		uint16_t login_id = rcp_connection_login_id(con);
+		node = rcp_tree_find(ctx->login_ids, &login_id);
+		rcp_tree_remove(ctx->login_ids, node);
 		rcp_tree_node_delete(node);
+		if (!node){
+			rcp_error("login id to rm from ctx is missing");
+			return;
+		}
 
 		rcp_connection_unset_context(con);
 		rcp_connection_release(con);

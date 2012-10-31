@@ -22,7 +22,10 @@ struct rcp_context_core{
 	rcp_context_ref parent_context;
 
 	rcp_record_ref top_level_record;
+	//ptr
 	rcp_tree_ref connections;
+	//uint16
+	rcp_tree_ref login_ids;
 
 	//string - uint64
 	rcp_dict_ref permissions;
@@ -33,6 +36,7 @@ struct rcp_context_core{
 	rcp_dict_ref types;
 
 	//connections that closed but not send "removeUser" command. 
+	//ptr
 	rcp_old_array_ref dead;
 
 	//string - ptr
