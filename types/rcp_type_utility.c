@@ -293,22 +293,3 @@ void rcp_data_at(rcp_type_ref *io_type, rcp_data_ref *io_data,
 		itr = rcp_array_iterater_next(path_type, path, itr);
 	}
 }
-
-void rcp_data_at_minus_one(rcp_type_ref *io_type, rcp_data_ref *io_data, 
-		rcp_array_ref path)
-{
-	rcp_type_ref path_type = rcp_ref_array;
-	rcp_array_iterater_ref itr = rcp_array_begin(path);
-	if (!itr)
-		return;
-	rcp_array_iterater_ref next = 
-		rcp_array_iterater_next(path_type, path, itr);
-	while (next){
-		rcp_record_ref path_seg = 
-			*(rcp_record_ref*)rcp_array_iterater_data(itr);
-		rcp_at(io_type, io_data, 
-				rcp_record_type(path_seg), rcp_record_data(path_seg));
-		itr = next;
-		next = rcp_array_iterater_next(path_type, path, next);
-	}
-}

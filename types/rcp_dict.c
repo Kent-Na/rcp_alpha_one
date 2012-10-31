@@ -107,20 +107,13 @@ void rcp_dict_at(
 	*io_type = NULL;
 	*io_data = NULL;
 
-	if (key_type == rcp_ref_type){
-		rcp_record_ref key_rec = *(rcp_record_ref*)key_data;
-		key_type = rcp_record_type(key_rec);
-		key_data = rcp_record_data(key_rec);
-	}
-
 	rcp_assert(key_type == rcp_dict_type_key_type(dict_type),
 			"bad key type");
 
 	rcp_dict_node_ref node;
 	node = rcp_dict_find(dict, key_data);
 
-	if (!node)
-		return;
+	rcp_assert(node, "key is missing");
 
 	*io_type = rcp_dict_type_data_type(dict_type);
 	*io_data = rcp_dict_node_data(dict_type, node);

@@ -189,6 +189,16 @@ command = {
 
 commandList.append(command)
 
+command = {
+	"name":"resetContext",
+	"shortDescription":"relogin to current context.",
+	"longDescription":"",
+	}
+
+addParameter(command, "string", "name")
+#This command doesn't require "login" permission at current context.
+commandList.append(command)
+
 #Value
 command = {
 	"name":"sendValue",

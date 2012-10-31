@@ -89,6 +89,11 @@ struct cmd_logout_context{
 	rcp_record_ref command;
 };
 
+struct cmd_reset_context{
+	rcp_record_ref name;
+	rcp_record_ref command;
+};
+
 struct cmd_send_value{
 	rcp_record_ref value;
 	rcp_record_ref type;

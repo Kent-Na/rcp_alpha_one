@@ -89,8 +89,8 @@ void cmd_impl_login_context(
 		return;
 	}
 
-	rcp_dict_node_ref node;
-	node = rcp_dict_find(ctx->sub_context, 
+	rcp_dict_node_ref node = rcp_dict_find(
+			ctx->sub_context, 
 			rcp_record_data(cmd_recv->name));
 
 	if (!node){
@@ -124,6 +124,22 @@ void cmd_impl_logout_context(
 	cmd_util_move_context(ctx, new_ctx, con, cmd_rec);
 }
 
+void cmd_impl_reset_context(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd)
+{
+
+	if (!ctx->parent_context){
+		rcp_context_send_error(con, cmd_rec, 
+				"You are in root context");
+		return;
+	}
+
+	cmd_util_move_context(ctx, ctx, con, cmd_rec);
+}
 void cmd_impl_add_context(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
@@ -350,6 +366,31 @@ int rcp_record_cast(
 	return 0;
 }
 
+void cmd_value_at_path(rcp_context_ref ctx, rcp_record_ref path, 
+		rcp_type_ref *o_type, rcp_data_ref *o_data)
+{
+
+	*o_type = rcp_ref_type;
+	*o_data = (rcp_data_ref)&ctx->top_level_record;
+	if (rcp_record_is_null(path)){
+		return;
+	}
+
+	if (rcp_record_type(path) == rcp_ref_array){
+		*o_type = rcp_ref_type;
+		*o_data = (rcp_data_ref)&ctx->top_level_record;
+		rcp_array_ref path_array =(rcp_array_ref)rcp_record_data(path);
+		rcp_data_at(o_type, o_data, path_array);
+		return;
+	}
+
+	{
+		rcp_at(o_type, o_data, 
+				rcp_record_type(path), rcp_record_data(path));
+		return;
+	}
+}
+
 void cmd_impl_set_value(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
@@ -359,50 +400,28 @@ void cmd_impl_set_value(
 {
 	struct cmd_set_value *cmd_st = cmd;
 
-	if (! cmd_st->value)
-		return;
+	rcp_assert(cmd_st->value,"null value");
 
 	if (rcp_record_cast(ctx, cmd_st->type, cmd_st->value)){
 		rcp_context_send_error(con, cmd_rec, "type err.");
 		return;
 	}
 
-	if (rcp_record_is_null(cmd_st->path)){
-		rcp_record_release(ctx->top_level_record);
-		ctx->top_level_record = 
-			rcp_record_retain(cmd_st->value);
+	rcp_type_ref o_type;
+	rcp_data_ref o_data;
+
+	cmd_value_at_path(ctx, cmd_st->path, &o_type, &o_data);
+
+	if (o_data){
+		//value already existed
+		rcp_assert(o_type == rcp_ref_type, "can not copy");
+
+		rcp_copy(rcp_ref_type, (rcp_data_ref)&cmd_st->value, o_data);
 		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 		return;
 	}
 
-	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
-	if (!tlo_rec)
-		rcp_context_send_error(con, cmd_rec, "Root object is NULL.");
-
-	if (rcp_record_type(cmd_st->path) == rcp_ref_array){
-		rcp_error("tttttteeest");
-		rcp_type_ref type = rcp_record_type(tlo_rec);
-		rcp_data_ref data = rcp_record_data(tlo_rec);
-		rcp_array_ref path =(rcp_array_ref)rcp_record_data(cmd_st->path);
-		rcp_data_at_minus_one(&type, &data, path);
-		if (!data){
-			rcp_context_send_error(con, cmd_rec, "path err.");
-			return;
-		}
-
-		rcp_set(type, data,
-				rcp_ref_type, rcp_array_last(rcp_ref_array, path),
-				rcp_ref_type, (rcp_data_ref)&cmd_st->value);
-		rcp_info("correct path");
-		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
-		return;
-	}
-
-	rcp_set(rcp_record_type(tlo_rec), rcp_record_data(tlo_rec),
-			rcp_ref_type, (rcp_data_ref)&cmd_st->path,
-			rcp_ref_type, (rcp_data_ref)&cmd_st->value);
-
-	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
+	rcp_context_send_error(con, cmd_rec, "path err.");
 }
 
 void cmd_impl_unset_value(
@@ -425,18 +444,28 @@ void cmd_impl_append_value(
 {
 	struct cmd_append_value *cmd_st = cmd;
 
-	if (! cmd_st->value)
+	rcp_assert(cmd_st->value,"null value");
+
+	if (rcp_record_cast(ctx, cmd_st->type, cmd_st->value)){
+		rcp_context_send_error(con, cmd_rec, "type err.");
 		return;
+	}
 
-	rcp_record_ref tlo_rec = rcp_context_top_level_record(ctx);
+	rcp_type_ref o_type;
+	rcp_data_ref o_data;
 
-	if (! tlo_rec)
+	cmd_value_at_path(ctx, cmd_st->path, &o_type, &o_data);
+
+	if (o_data){
+		//value already existed
+		rcp_assert(o_type == rcp_ref_type, "can not copy");
+		rcp_append(o_type, o_data,
+				rcp_ref_type, (rcp_data_ref)&cmd_st->value);
+		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 		return;
+	}
 
-	rcp_append(rcp_record_type(tlo_rec), rcp_record_data(tlo_rec),
-			rcp_ref_type, (rcp_data_ref)&cmd_st->value);
-
-	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
+	rcp_context_send_error(con, cmd_rec, "path err.");
 }
 
 void cmd_impl_add_type(

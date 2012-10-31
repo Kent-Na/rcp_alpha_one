@@ -18,6 +18,7 @@ rcp_type_ref cmd_add_context_type();
 rcp_type_ref cmd_remove_context_type();
 rcp_type_ref cmd_login_context_type();
 rcp_type_ref cmd_logout_context_type();
+rcp_type_ref cmd_reset_context_type();
 rcp_type_ref cmd_send_value_type();
 rcp_type_ref cmd_set_value_type();
 rcp_type_ref cmd_unset_value_type();

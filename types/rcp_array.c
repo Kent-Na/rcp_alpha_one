@@ -126,23 +126,7 @@ void rcp_array_at(
 	rcp_assert(array_type, "null_type");
 	rcp_assert(array, "null_data");
 
-	if (key_type == rcp_ref_type){
-		rcp_record_ref key_rec = *(rcp_record_ref*)key_data;
-		key_type = rcp_record_type(key_rec);
-		key_data = rcp_record_data(key_rec);
-	}
-
-	if (rcp_type_is_int(key_type)){
-		int64_t idx = rcp_int_as_int(key_type, key_data);
-		rcp_assert(idx<0, "idx error");
-
-		*io_data = rcp_array_data_at(array_type, array, idx);
-		*io_type = rcp_array_type_data_type(array_type);
-
-		return;
-	}
-
-	else if (rcp_type_is_uint(key_type)){
+	if (rcp_type_is_uint(key_type)){
 		uint64_t idx = rcp_uint_as_uint(key_type, key_data);
 
 		*io_data = rcp_array_data_at(array_type, array, idx);

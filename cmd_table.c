@@ -5,7 +5,7 @@
 #include "cmd_list.h"
 #include "cmd_types_func.h"
 #include "rcp_command.h"
-struct rcp_command_core rcp_command_table[29];
+struct rcp_command_core rcp_command_table[30];
 
 void rcp_command_table_init(){
 
@@ -206,6 +206,17 @@ void rcp_command_table_init(){
 		cmd_logout_context_type();
 	rcp_command_table[CMD_LOGOUT_CONTEXT].cmd_impl= 
 		cmd_impl_logout_context;
+
+	rcp_command_table[CMD_RESET_CONTEXT].cmd = 
+		CMD_RESET_CONTEXT;
+	rcp_command_table[CMD_RESET_CONTEXT].cmd_str = 
+		"resetContext";
+	rcp_command_table[CMD_RESET_CONTEXT].cmd_pms = 
+		0;
+	rcp_command_table[CMD_RESET_CONTEXT].cmd_type= 
+		cmd_reset_context_type();
+	rcp_command_table[CMD_RESET_CONTEXT].cmd_impl= 
+		cmd_impl_reset_context;
 
 	rcp_command_table[CMD_SEND_VALUE].cmd = 
 		CMD_SEND_VALUE;

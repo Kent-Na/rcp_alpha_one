@@ -613,6 +613,40 @@ rcp_type_ref cmd_logout_context_type(){
 	return s_type;
 }
 
+rcp_type_ref cmd_reset_context_type(){
+	
+	rcp_type_ref s_type = rcp_struct_type_new(2);
+	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
+	t_core->size = sizeof (struct cmd_reset_context);
+	t_core->type_id = 0x100;
+	t_core->type_name = NULL;
+	t_core->init = rcp_struct_init;
+	t_core->deinit = rcp_struct_deinit;
+	t_core->copy = NULL;
+	t_core->compare = NULL;
+	t_core->write_json = rcp_struct_write_json;
+
+	struct rcp_type_struct_ext* s_core = 
+		(struct rcp_type_struct_ext*)(t_core+1);
+	s_core->name = rcp_string_new("ttt");
+	s_core->param_count = 2;
+
+	struct rcp_struct_param_core *param = 
+		(struct rcp_struct_param_core*)(s_core+1);
+
+	param->name = rcp_string_new("command");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_reset_context, command);
+	param ++;
+
+	param->name = rcp_string_new("name");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_reset_context, name);
+	param ++;
+
+	return s_type;
+}
+
 rcp_type_ref cmd_send_value_type(){
 	
 	rcp_type_ref s_type = rcp_struct_type_new(3);
