@@ -16,6 +16,8 @@ outPutExtHeader = open(extHeaderFileName+'.h','w')
 ####
 structTemplte = """
 struct {c_struct_name}{{
+	rcp_record_ref command;
+	uint16_t loginID;
 {c_fields}\
 }};
 """
@@ -66,17 +68,14 @@ genFuncParamTemplate = """
 outPutCHeader.write('#include "def/rcp_type.h"\n')
 outPutCHeader.write('#include "def/rcp_record.h"\n')
 
-for info in commandList:
-	addParameter(info, "string", "command")
 
 for info in commandList:
-	if not 'parameters' in info:
-		continue
 	fragment = "";
-	for param in info['parameters']:
-		fragment += fieldTemplate.format(
-				c_type = typeDict[param['type']]['cTypeName'],
-				c_field_name = param['name']) 
+	if 'parameters' in info:
+		for param in info['parameters']:
+			fragment += fieldTemplate.format(
+					c_type = typeDict[param['type']]['cTypeName'],
+					c_field_name = param['name']) 
 	c_struct_name = re.findall(r'[A-Z]*[a-z]+',info['name'])
 	c_struct_name = 'cmd_' + '_'.join(c_struct_name).lower()
 	fragment = structTemplte.format(
@@ -102,8 +101,9 @@ outPutCFile.write('#include "cmd_list.h"\n')
 outPutCFile.write('#include "cmd_types.h"\n')
 
 for info in commandList:
-	if not 'parameters' in info:
-		continue
+	addParameter(info, "string", "command")
+	addParameter(info, "uint16", "loginID")
+
 	fragment = ""
 	c_struct_name = re.findall(r'[A-Z]*[a-z]+',info['name'])
 	c_struct_name = 'cmd_' + '_'.join(c_struct_name).lower()
@@ -130,9 +130,5 @@ template = "rcp_type_ref cmd_{command_name}_type();\n"
 for info in commandList:
 	command_name= re.findall(r'[A-Z]*[a-z]+',info['name'])
 	command_name= '_'.join(command_name).lower()
-	fragment = genFuncCoreTemplate.format(
-			param_count = len(info['parameters']),
-			c_struct_name = c_struct_name,
-			revert_domain_name = "ttt")
 	outPutExtHeader.write(template.format(
 				command_name = command_name));
