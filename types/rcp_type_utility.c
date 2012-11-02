@@ -117,10 +117,8 @@ void rcp_struct_to_map(rcp_type_ref in_type,
 					rcp_map_node_value(out, node));
 		}
 		else{
-			rcp_record_ref rec = rcp_record_new(type);
-			rcp_copy(type,
-					rcp_struct_data(in, param),
-					rcp_record_data(rec));
+			rcp_record_ref rec = rcp_record_new_with(
+					type, rcp_struct_data(in, param));
 			rcp_copy(rcp_ref_type,
 					(rcp_data_ref)&rec,
 					rcp_map_node_value(out, node));

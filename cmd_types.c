@@ -43,7 +43,7 @@ rcp_type_ref cmd_open_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_open, loginID);
 	param ++;
 
@@ -82,7 +82,7 @@ rcp_type_ref cmd_kill_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_kill, loginID);
 	param ++;
 
@@ -116,7 +116,7 @@ rcp_type_ref cmd_dump_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_dump, loginID);
 	param ++;
 
@@ -150,7 +150,7 @@ rcp_type_ref cmd_load_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_load, loginID);
 	param ++;
 
@@ -184,7 +184,7 @@ rcp_type_ref cmd_close_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_close, loginID);
 	param ++;
 
@@ -218,7 +218,7 @@ rcp_type_ref cmd_ping_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_ping, loginID);
 	param ++;
 
@@ -252,7 +252,7 @@ rcp_type_ref cmd_pong_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_pong, loginID);
 	param ++;
 
@@ -286,7 +286,7 @@ rcp_type_ref cmd_create_user_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_create_user, loginID);
 	param ++;
 
@@ -330,7 +330,7 @@ rcp_type_ref cmd_delete_user_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_delete_user, loginID);
 	param ++;
 
@@ -374,7 +374,7 @@ rcp_type_ref cmd_login_user_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_login_user, loginID);
 	param ++;
 
@@ -418,7 +418,7 @@ rcp_type_ref cmd_add_user_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_add_user, loginID);
 	param ++;
 
@@ -457,7 +457,7 @@ rcp_type_ref cmd_remove_user_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_remove_user, loginID);
 	param ++;
 
@@ -496,7 +496,7 @@ rcp_type_ref cmd_set_permission_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_set_permission, loginID);
 	param ++;
 
@@ -540,7 +540,7 @@ rcp_type_ref cmd_unset_permission_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_unset_permission, loginID);
 	param ++;
 
@@ -579,7 +579,7 @@ rcp_type_ref cmd_add_context_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_add_context, loginID);
 	param ++;
 
@@ -618,7 +618,7 @@ rcp_type_ref cmd_remove_context_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_remove_context, loginID);
 	param ++;
 
@@ -657,7 +657,7 @@ rcp_type_ref cmd_login_context_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_login_context, loginID);
 	param ++;
 
@@ -696,7 +696,7 @@ rcp_type_ref cmd_logout_context_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_logout_context, loginID);
 	param ++;
 
@@ -730,7 +730,7 @@ rcp_type_ref cmd_reset_context_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_reset_context, loginID);
 	param ++;
 
@@ -769,7 +769,7 @@ rcp_type_ref cmd_send_value_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_send_value, loginID);
 	param ++;
 
@@ -813,7 +813,7 @@ rcp_type_ref cmd_set_value_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_set_value, loginID);
 	param ++;
 
@@ -862,7 +862,7 @@ rcp_type_ref cmd_unset_value_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_unset_value, loginID);
 	param ++;
 
@@ -901,7 +901,7 @@ rcp_type_ref cmd_append_value_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_append_value, loginID);
 	param ++;
 
@@ -950,7 +950,7 @@ rcp_type_ref cmd_create_struct_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_create_struct, loginID);
 	param ++;
 
@@ -984,7 +984,7 @@ rcp_type_ref cmd_add_struct_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_add_struct, loginID);
 	param ++;
 
@@ -1018,7 +1018,7 @@ rcp_type_ref cmd_add_type_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_add_type, loginID);
 	param ++;
 
@@ -1067,7 +1067,7 @@ rcp_type_ref cmd_fatal_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_fatal, loginID);
 	param ++;
 
@@ -1111,7 +1111,7 @@ rcp_type_ref cmd_error_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_error, loginID);
 	param ++;
 
@@ -1155,7 +1155,7 @@ rcp_type_ref cmd_caution_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_caution, loginID);
 	param ++;
 
@@ -1199,7 +1199,7 @@ rcp_type_ref cmd_info_type(){
 	param ++;
 
 	param->name = rcp_string_new("loginID");
-	param->type = rcp_ref_type;
+	param->type = rcp_uint16_type;
 	param->offset = offsetof(struct cmd_info, loginID);
 	param ++;
 

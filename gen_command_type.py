@@ -56,7 +56,7 @@ genFuncCoreTemplate = """
 
 genFuncParamTemplate = """
 	param->name = rcp_string_new("{c_field_name}");
-	param->type = rcp_ref_type;
+	param->type = {rcp_type_name};
 	param->offset = offsetof(struct {c_struct_name}, {c_field_name});
 	param ++;
 """
@@ -115,8 +115,13 @@ for info in commandList:
 			c_struct_name = c_struct_name,
 			revert_domain_name = "ttt")
 	for param in sorted(info['parameters'], key = lambda i:i['name']):
+		if param['type'] != 'uint16':
+			rcp_type_name = 'rcp_ref_type'
+		else:
+			rcp_type_name = 'rcp_uint16_type'
 		fragment += genFuncParamTemplate.format(
 				c_field_name = param['name'],
+				rcp_type_name = rcp_type_name,
 				c_struct_name = c_struct_name)
 	fragment = genFuncTemplate.format(
 			command_name = command_name,

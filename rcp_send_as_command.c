@@ -25,6 +25,7 @@ void rcp_std_send_as_command(
 	rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd_ini);
 	cmd_ini.command = rcp_string_new_rec(CMD_STR_SET_VALUE);
+	cmd_ini.loginID = 0;
 	cmd_ini.value = rcp_record_new_with(type, data);
 	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd_ini);
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd_ini);
@@ -38,6 +39,7 @@ void rcp_old_array_send_as_command(
 		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
 		rcp_init(cmd_type, (rcp_data_ref)&cmd_ini);
 		cmd_ini.command = rcp_string_new_rec(CMD_STR_SET_VALUE);
+		cmd_ini.loginID = 0;
 		cmd_ini.value = rcp_record_new(type);
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd_ini);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_ini);
@@ -50,6 +52,7 @@ void rcp_old_array_send_as_command(
 	rcp_type_ref cmd_type=rcp_command_type(CMD_APPEND_VALUE);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
 	cmd.command = rcp_string_new_rec(CMD_STR_APPEND_VALUE);
+	cmd.loginID = 0;
 
 	while (node){
 		cmd.value = *(rcp_record_ref*)rcp_old_array_iterater_data(array, node);
@@ -70,6 +73,7 @@ void rcp_array_send_as_command(
 		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
 		rcp_init(cmd_type, (rcp_data_ref)&cmd_ini);
 		cmd_ini.command = rcp_string_new_rec(CMD_STR_SET_VALUE);
+		cmd_ini.loginID = 0;
 		cmd_ini.value = rcp_record_new(type);
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd_ini);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_ini);
@@ -82,6 +86,7 @@ void rcp_array_send_as_command(
 	rcp_type_ref cmd_type=rcp_command_type(CMD_APPEND_VALUE);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
 	cmd.command = rcp_string_new_rec(CMD_STR_APPEND_VALUE);
+	cmd.loginID = 0;
 
 	while (node){
 		cmd.value = *(rcp_record_ref*)rcp_array_iterater_data(node);
@@ -101,6 +106,7 @@ void rcp_dict_send_as_command(
 		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 		cmd.command = rcp_string_new_rec(CMD_STR_SET_VALUE);
+		cmd.loginID = 0;
 		cmd.value = rcp_record_new(type);
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
@@ -115,6 +121,7 @@ void rcp_dict_send_as_command(
 		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 		cmd.command = rcp_string_new_rec(CMD_STR_SET_VALUE);
+		cmd.loginID = 0;
 
 		if (key_type == rcp_ref_type){
 			rcp_copy(rcp_dict_type_key_type(type), 

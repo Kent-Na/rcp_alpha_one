@@ -63,7 +63,6 @@ void cmd_util_move_context(
 	{
 		rcp_context_remove_connection(old_ctx, con);
 		rcp_connection_set_permission(con, pms);
-		rcp_context_add_connection(new_ctx, con);
 
 		rcp_context_send_info(con, cmd_rec, "Login/Logout succeed.");
 		
@@ -71,6 +70,7 @@ void cmd_util_move_context(
 		rcp_context_send_all_data(new_ctx, con);	
 		rcp_context_send_all_sub_ctx(new_ctx, con);	
 
+		rcp_context_add_connection(new_ctx, con);
 		//rcp_context_send_info(con, cmd_rec, "Context was initialized.");
 	}
 	rcp_connection_release(con);
@@ -253,6 +253,7 @@ void cmd_impl_login_user(
 		rcp_type_ref type_cmd = rcp_command_type(CMD_REMOVE_USER);
 		rcp_init(type_cmd, (rcp_data_ref)&cmd);
 		cmd.command = rcp_string_new_rec(CMD_STR_REMOVE_USER);
+		cmd.loginID = rcp_connection_login_id(con);
 		rcp_context_send_data(ctx,
 				type_cmd, (rcp_data_ref)&cmd);
 		rcp_deinit(type_cmd, (rcp_data_ref)&cmd);
@@ -262,6 +263,7 @@ void cmd_impl_login_user(
 		rcp_type_ref type_cmd = rcp_command_type(CMD_ADD_USER);
 		rcp_init(type_cmd, (rcp_data_ref)&cmd);
 		cmd.command = rcp_string_new_rec(CMD_STR_ADD_USER);
+		cmd.loginID = rcp_connection_login_id(con);
 		cmd.username = rcp_record_retain(cmd_recv->username);
 		rcp_context_send_data(ctx,
 				type_cmd, (rcp_data_ref)&cmd);

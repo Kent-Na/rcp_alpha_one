@@ -124,7 +124,7 @@ uint16_t rcp_context_new_login_id(rcp_context_ref ctx)
 {
 	uint16_t id;
 	RAND_bytes((void*)&id, sizeof id);
-	while (rcp_tree_find(ctx->login_ids, &id))
+	while (id == 0 || rcp_tree_find(ctx->login_ids, &id))
 		RAND_bytes((void*)&id, sizeof id);
 	return id;
 }
@@ -156,6 +156,7 @@ void rcp_context_add_connection(rcp_context_ref ctx,
 	rcp_type_ref type_cmd= rcp_command_type(CMD_ADD_USER);
 	rcp_init(type_cmd, (rcp_data_ref)&cmd);
 	cmd.command = rcp_string_new_rec(CMD_STR_ADD_USER);
+	cmd.loginID = rcp_connection_login_id(con);
 	cmd.username = rcp_connection_username(con);
 	rcp_record_retain(cmd.username);
 	rcp_context_send_data(ctx,
@@ -201,9 +202,10 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 		struct cmd_remove_user cmd;
 		rcp_type_ref type_cmd = rcp_command_type(CMD_REMOVE_USER);
 		rcp_init(type_cmd, (rcp_data_ref)&cmd);
+		cmd.command = rcp_string_new_rec(CMD_STR_REMOVE_USER);
 		cmd.username = rcp_connection_username(con);
 		rcp_record_retain(cmd.username);
-		cmd.command = rcp_string_new_rec(CMD_STR_REMOVE_USER);
+		cmd.loginID = rcp_connection_login_id(con);
 
 		rcp_context_send_data(ctx,
 				type_cmd, (rcp_data_ref)&cmd);
@@ -219,6 +221,7 @@ void rcp_context_disconnect_all(
 	rcp_type_ref cmd_type=rcp_command_type(CMD_ERROR);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
 	cmd.command = rcp_string_new_rec(CMD_STR_ERROR);
+	cmd.loginID = 0;
 	cmd.description = rcp_string_new_rec(reason);
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)&cmd);
 
@@ -333,6 +336,7 @@ void rcp_context_send_all_con(rcp_context_ref ctx, rcp_connection_ref con)
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 
 		cmd.command = rcp_string_new_rec(CMD_STR_ADD_USER);
+		cmd.loginID = rcp_connection_login_id(con_t);
 		cmd.username = rcp_connection_username(con_t);
 		rcp_record_retain(cmd.username);
 
@@ -352,6 +356,7 @@ void rcp_context_send_all_sub_ctx(rcp_context_ref ctx,
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 
 		cmd.command = rcp_string_new_rec(CMD_STR_ADD_CONTEXT);
+		cmd.loginID = 0;
 		cmd.name = rcp_record_new_with(
 				rcp_string_type,
 				rcp_dict_node_key(rcp_str_ptr_dict, node));
@@ -373,6 +378,7 @@ void rcp_context_send_all_permission(rcp_context_ref ctx,
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 
 		cmd.command = rcp_string_new_rec(CMD_STR_SET_PERMISSION);
+		cmd.loginID = 0;
 		rcp_permission_t pms = ctx->base_permission;
 		cmd.mode = rcp_permission_to_array(pms); 
 
@@ -386,6 +392,7 @@ void rcp_context_send_all_permission(rcp_context_ref ctx,
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
 
 		cmd.command = rcp_string_new_rec(CMD_STR_SET_PERMISSION);
+		cmd.loginID = 0;
 		cmd.username = rcp_record_new_with(
 				rcp_string_type,
 				rcp_dict_node_key(rcp_str_uint64_dict, node));
@@ -417,6 +424,7 @@ void rcp_context_send_fatal(rcp_connection_ref con,
 	rcp_type_ref cmd_type=rcp_command_type(CMD_FATAL);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
 	cmd.command = rcp_string_new_rec(CMD_STR_FATAL);
+	cmd.loginID = rcp_connection_login_id(con);
 
 	cmd.cause = rcp_record_retain(cause);
 	cmd.description= rcp_string_new_rec(reason);
@@ -433,6 +441,7 @@ void rcp_context_send_error(rcp_connection_ref con,
 	rcp_type_ref cmd_type=rcp_command_type(CMD_ERROR);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
 	cmd.command = rcp_string_new_rec(CMD_STR_ERROR);
+	cmd.loginID = rcp_connection_login_id(con);
 
 	cmd.cause = rcp_record_retain(cause);
 	cmd.description= rcp_string_new_rec(reason);
@@ -447,6 +456,7 @@ void rcp_context_send_caution(rcp_connection_ref con,
 	rcp_type_ref cmd_type=rcp_command_type(CMD_CAUTION);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
 	cmd.command = rcp_string_new_rec(CMD_STR_CAUTION);
+	cmd.loginID = rcp_connection_login_id(con);
 
 	cmd.cause = rcp_record_retain(cause);
 	cmd.description = rcp_string_new_rec(reason);
@@ -462,6 +472,7 @@ void rcp_context_send_info(rcp_connection_ref con,
 	rcp_type_ref cmd_type=rcp_command_type(CMD_INFO);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
 	cmd.command = rcp_string_new_rec(CMD_STR_INFO);
+	cmd.loginID = rcp_connection_login_id(con);
 
 	cmd.cause = rcp_record_retain(cause);
 	cmd.description = rcp_string_new_rec(info);
@@ -566,6 +577,20 @@ rcp_extern void rcp_context_execute_command_rec(
 	}
 
 	rcp_dict_ref cmd = (rcp_dict_ref)rcp_record_data(cmd_rec);
+
+	rcp_string_ref key_str = rcp_string_new("loginID");
+	uint16_t login_id = rcp_connection_login_id(con); 
+	rcp_record_ref login_id_rec = rcp_record_new_with(
+			rcp_uint16_type, (rcp_data_ref)&login_id);
+
+	rcp_dict_node_ref node = rcp_dict_node_new_with(rcp_str_ref_dict, 
+			(rcp_data_ref)key_str, (rcp_data_ref)&login_id_rec);
+	node = rcp_dict_set_node(cmd, node);
+
+	if (node) rcp_dict_node_delete(rcp_str_ref_dict, node);
+	rcp_string_delete(key_str);
+	rcp_record_release(login_id_rec);
+
 
 	rcp_record_ref cmd_name_rec = rcp_dict_find_c_str(
 			rcp_str_ref_dict, cmd, "command", rcp_string_type);
