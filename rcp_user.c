@@ -4,7 +4,8 @@
 #include "rcp_record.h"
 #include "types/rcp_type_list.h"
 #include "types/rcp_string.h"
-#include "types/rcp_old_array.h"
+#include "types/rcp_array.h"
+#include "types/rcp_array_list.h"
 
 #include "rcp_user.h"
 
@@ -181,18 +182,15 @@ static const struct{
 };
 
 rcp_permission_t rcp_permission_from_array(rcp_record_ref rec){
-	if (rcp_record_type(rec) != rcp_old_array_type)
+	if (rcp_record_type(rec) != rcp_ref_array)
 		return 0;
-	rcp_old_array_ref array = (rcp_old_array_ref)rcp_record_data(rec);
-	if (rcp_old_array_data_type(array) != rcp_ref_type)
-		return 0;
-		
+	rcp_array_ref array = (rcp_array_ref)rcp_record_data(rec);
 
 	rcp_permission_t pms = 0;
 
-	rcp_old_array_iterater_ref itr = rcp_old_array_begin(array);
+	rcp_array_iterater_ref itr = rcp_array_begin(array);
 	while (itr){
-		rcp_data_ref dat = rcp_old_array_iterater_data(array,itr);
+		rcp_data_ref dat = rcp_array_iterater_data(itr);
 		rcp_record_ref rec = *(rcp_record_ref*)dat;
 		if (rcp_record_type(rec) != rcp_string_type)
 			continue;
@@ -215,7 +213,7 @@ rcp_permission_t rcp_permission_from_array(rcp_record_ref rec){
 		}
 
 		//incliment itr
-		itr = rcp_old_array_iterater_next(array, itr);
+		itr = rcp_array_iterater_next(rcp_ref_array, array, itr);
 	}
 	return pms;
 }
@@ -224,13 +222,14 @@ rcp_extern
 rcp_record_ref rcp_permission_to_array(rcp_permission_t pms)
 {
 	int i;
-	rcp_record_ref rec = rcp_old_array_new_rec(rcp_ref_type);
-	rcp_old_array_ref array = (rcp_old_array_ref)rcp_record_data(rec);
+	rcp_record_ref rec = rcp_record_new(rcp_ref_array);
+	rcp_array_ref array = (rcp_array_ref)rcp_record_data(rec);
 	for (i = 0; i<5; i++){
 		if (rcp_permission_table[i].pms & pms){
 			rcp_record_ref p_name = 
 				rcp_string_new_rec(rcp_permission_table[i].name);
-			rcp_old_array_append_data(array,(rcp_data_ref)&p_name);
+			rcp_array_append_data(
+				rcp_ref_array, array,(rcp_data_ref)&p_name);
 		}
 	}
 	return rec;
