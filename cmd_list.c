@@ -32,4 +32,5 @@ const char* rcp_command_str_table[]={
 	CMD_STR_SET_VALUE,
 	CMD_STR_UNSET_PERMISSION,
 	CMD_STR_UNSET_VALUE,
+	CMD_STR_UPDATE_CONTEXT,
 };

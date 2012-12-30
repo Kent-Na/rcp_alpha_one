@@ -1,5 +1,6 @@
 #include "rcp_pch.h"
 #include "rcp_utility.h"
+#include "rcp_time.h"
 
 #include "rcp_server.h"
 
@@ -45,6 +46,7 @@ void rcp_context_send_data(rcp_context_ref ctx,
 		rcp_type_ref type, rcp_data_ref cmd);
 
 void rcp_context_clean_dead(rcp_context_ref ctx);
+void rcp_context_update_if_possible(rcp_context_ref ctx);
 
 rcp_extern rcp_context_ref rcp_context_new()
 {
@@ -66,6 +68,9 @@ void rcp_context_init(rcp_context_ref ctx)
 	ctx->sub_context = rcp_dict_new(rcp_str_ptr_dict);
 	ctx->state = 0;
 	ctx->id = 0;
+	ctx->timestamp = rcp_time_current();
+	ctx->last_nortification_time = ctx->timestamp;
+	ctx->name = NULL;
 }
 void rcp_context_uninit(rcp_context_ref ctx)
 {
@@ -129,6 +134,18 @@ uint16_t rcp_context_new_login_id(rcp_context_ref ctx)
 	return id;
 }
 
+uint16_t rcp_context_connection_count(rcp_context_ref ctx){
+	uint16_t count = 0;	
+
+	rcp_tree_node_ref node = rcp_tree_begin(ctx->connections);
+	while (node){
+		count ++;
+		node = rcp_tree_node_next(node);
+	}
+
+	return count;	
+}
+
 void rcp_context_add_connection(rcp_context_ref ctx, 
 		rcp_connection_ref con)
 {
@@ -162,7 +179,9 @@ void rcp_context_add_connection(rcp_context_ref ctx,
 	rcp_context_send_data(ctx,
 			type_cmd, (rcp_data_ref)&cmd);
 	rcp_deinit(type_cmd, (rcp_data_ref)&cmd);
-	rcp_info("ctx:add connection");
+
+	//send update context command to parent context 
+	rcp_context_update_if_possible(ctx);
 }
 
 void rcp_context_remove_connection(rcp_context_ref ctx,
@@ -175,7 +194,10 @@ void rcp_context_remove_connection(rcp_context_ref ctx,
 
 void rcp_context_clean_dead(rcp_context_ref ctx)
 {
+	int8_t has_dead_connection = 0;
 	while (rcp_old_array_count(ctx->dead)){
+		has_dead_connection = 1;
+
 		rcp_connection_ref con = 0;
 		rcp_old_array_pop(ctx->dead, &con);
 		rcp_tree_node_ref node = rcp_tree_find(ctx->connections, &con);
@@ -211,6 +233,8 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 				type_cmd, (rcp_data_ref)&cmd);
 		rcp_deinit(type_cmd, (rcp_data_ref)&cmd);
 	}
+	if (has_dead_connection)
+		rcp_context_update_if_possible(ctx);
 }
 
 void rcp_context_disconnect_all(
@@ -351,6 +375,9 @@ void rcp_context_send_all_sub_ctx(rcp_context_ref ctx,
 {
 	rcp_dict_node_ref node = rcp_dict_begin(ctx->sub_context);
 	while (node){
+		rcp_context_ref sub_ctx = *(rcp_context_ref*)rcp_dict_node_data(
+			rcp_str_ptr_dict, node);
+
 		struct cmd_add_context cmd;
 		rcp_type_ref cmd_type=rcp_command_type(CMD_ADD_CONTEXT);
 		rcp_init(cmd_type, (rcp_data_ref)&cmd);
@@ -360,6 +387,14 @@ void rcp_context_send_all_sub_ctx(rcp_context_ref ctx,
 		cmd.name = rcp_record_new_with(
 				rcp_string_type,
 				rcp_dict_node_key(rcp_str_ptr_dict, node));
+
+		rcp_string_ref time_str = rcp_time_to_string(sub_ctx->timestamp);
+		cmd.timestamp = rcp_record_new_with(
+			rcp_string_type,
+			(rcp_data_ref)time_str);	
+		rcp_string_delete(time_str);
+
+		cmd.connectionCount = rcp_context_connection_count(sub_ctx);
 
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
@@ -481,6 +516,47 @@ void rcp_context_send_info(rcp_connection_ref con,
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
 }
 
+void rcp_context_update_timestamp(rcp_context_ref ctx){
+	ctx->timestamp = rcp_time_current();
+	if (! ctx->parent_context)
+		return;
+	rcp_context_update_if_possible(ctx);
+}
+
+void rcp_context_update_if_possible(rcp_context_ref ctx){
+	//!!thread_unsafe
+	if (! ctx->parent_context)
+		return;
+	
+	//time_test
+	//if ()
+	//	return;
+
+	ctx->last_nortification_time = ctx->timestamp;
+	
+	struct cmd_update_context cmd;
+	rcp_type_ref cmd_type=rcp_command_type(CMD_UPDATE_CONTEXT);
+	rcp_init(cmd_type, (rcp_data_ref)&cmd);
+
+	cmd.command = rcp_string_new_rec(CMD_STR_UPDATE_CONTEXT);
+	cmd.loginID = 0;
+	cmd.name = rcp_record_new_with(
+			rcp_string_type,
+			(rcp_data_ref)ctx->name);
+
+	rcp_string_ref time_str = rcp_time_to_string(ctx->timestamp);
+	cmd.timestamp = rcp_record_new_with(
+		rcp_string_type,
+		(rcp_data_ref)time_str);	
+	rcp_string_delete(time_str);
+
+	cmd.connectionCount = rcp_context_connection_count(ctx);
+
+	rcp_context_send_data(ctx->parent_context, 
+		cmd_type, (rcp_data_ref)&cmd);
+	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
+}
+
 int64_t rcp_context_permission(rcp_context_ref ctx, rcp_string_ref username)
 {
 	if (!username){
@@ -565,6 +641,8 @@ void rcp_context_add_context(rcp_context_ref ctx,
 			(rcp_data_ref)name,
 			(rcp_data_ref)&new_ctx);
 	node = rcp_dict_set_node(ctx->sub_context, node);
+	new_ctx->name = (rcp_string_ref)rcp_dict_node_key(
+		rcp_str_ptr_dict, node);
 }
 
 rcp_extern void rcp_context_execute_command_rec(
@@ -644,4 +722,8 @@ rcp_extern void rcp_context_execute_command_rec(
 	cmd_info->cmd_impl(ctx, con, cmd_rec, cmd_type, cmd_recv);
 
 	rcp_delete(cmd_type, cmd_recv);
+
+	if (cmd_info->cmd_pms & RCP_PMS_WRITE){
+		rcp_context_update_timestamp(ctx);
+	}
 }

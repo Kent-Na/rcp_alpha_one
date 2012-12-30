@@ -61,5 +61,7 @@ extern const char* rcp_command_str_table[];
 #define CMD_STR_UNSET_PERMISSION	("unsetPermission")
 #define CMD_UNSET_VALUE	((rcp_command_type_t)29)
 #define CMD_STR_UNSET_VALUE	("unsetValue")
-#define CMD_INVALID 30
-#define CMD_COUNT 30
+#define CMD_UPDATE_CONTEXT	((rcp_command_type_t)30)
+#define CMD_STR_UPDATE_CONTEXT	("updateContext")
+#define CMD_INVALID 31
+#define CMD_COUNT 31

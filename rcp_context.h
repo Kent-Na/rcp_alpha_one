@@ -7,6 +7,7 @@
 #include "def/rcp_old_array.h"
 #include "def/rcp_data.h"
 #include "def/rcp_type.h"
+#include "def/rcp_time.h"
 
 typedef uint64_t rcp_context_id_t;
 typedef uint64_t rcp_context_state_t;
@@ -20,6 +21,11 @@ struct rcp_context_core{
 	rcp_context_state_t state;
 	rcp_context_id_t id;
 	rcp_context_ref parent_context;
+	//name parameter is managed by parent context
+	rcp_string_ref name;
+
+	rcp_time_t last_nortification_time;
+	rcp_time_t timestamp;
 
 	rcp_record_ref top_level_record;
 	//ptr

@@ -88,6 +88,16 @@ struct cmd_add_context{
 	rcp_record_ref command;
 	uint16_t loginID;
 	rcp_record_ref name;
+	rcp_record_ref timestamp;
+	uint16_t connectionCount;
+};
+
+struct cmd_update_context{
+	rcp_record_ref command;
+	uint16_t loginID;
+	rcp_record_ref name;
+	rcp_record_ref timestamp;
+	uint16_t connectionCount;
 };
 
 struct cmd_remove_context{

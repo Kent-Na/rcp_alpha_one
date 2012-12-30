@@ -150,7 +150,6 @@ commandList.append(command)
 #Context
 ##
 
-##createContext
 command = {
 	"name":"addContext",
 	"shortDescription":"Add new sub context to current context.",
@@ -158,7 +157,21 @@ command = {
 	}
 
 addParameter(command, "string", "name")
+addParameter(command, "string", "timestamp")
+addParameter(command, "uint16", "connectionCount")
 requirePermission(command, "context")
+commandList.append(command)
+
+command = {
+	"name":"updateContext",
+	"shortDescription":"Add new sub context to current context.",
+	"longDescription":"",
+	}
+
+addParameter(command, "string", "name")
+addParameter(command, "string", "timestamp")
+addParameter(command, "uint16", "connectionCount")
+requirePermission(command, "server")
 commandList.append(command)
 
 command = {

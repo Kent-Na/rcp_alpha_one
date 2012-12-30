@@ -64,6 +64,7 @@ mainFiles = [
 	'rcp_user.c',
 	'rcp_utility.c',
 	'rcp_user_pgsql.c',
+	'rcp_time.c',
 ]
 
 mainFiles.extend(types)
