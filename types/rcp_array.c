@@ -113,6 +113,7 @@ rcp_extern void rcp_array_append(
 	rcp_array_append_data(array_type, (rcp_array_ref)array, data);
 }
 
+
 void rcp_array_at(
 		rcp_type_ref *io_type, rcp_data_ref *io_data,
 		rcp_type_ref key_type, rcp_data_ref key_data)
@@ -150,6 +151,99 @@ void* rcp_array_raw_data(rcp_array_ref array)
 size_t rcp_array_len(rcp_array_ref array){
 	rcp_array_ref core = array;
 	return core->data_count;
+}
+
+rcp_extern int8_t rcp_array_replace(
+	rcp_type_ref array_type, rcp_data_ref target_array_data,
+	int32_t range_begin, int32_t range_end,
+	rcp_data_ref input_array_data)
+{
+	rcp_array_ref target_array = (rcp_array_ref)target_array_data;
+	rcp_array_ref input_array = (rcp_array_ref)input_array_data;
+	rcp_type_ref data_type = rcp_array_type_data_type(array_type);
+	int i;
+
+	if (!rcp_array_owning_data(target_array)){
+		rcp_error("array append");
+		return -1;
+	}
+
+	if (range_begin < 0)
+		range_begin = target_array->data_count+1+range_begin;
+	if (range_end < 0)
+		range_end = target_array->data_count+1+range_end;
+
+	if (range_begin>range_end)
+			return -1;
+	if (range_end>target_array->data_count)
+		return -1;
+
+	size_t total_data_count= target_array->data_count +
+		range_end-range_begin+input_array->data_count;
+	rcp_array_resize(array_type, target_array, total_data_count);
+
+	//move back part
+	size_t move_dst_idx = range_begin+input_array->data_count;
+	int32_t move_count = target_array->data_count - range_end;
+	memmove(target_array->array+move_dst_idx*data_type->size,
+			target_array->array+range_end*data_type->size,
+			move_count*data_type->size);
+
+	//insert input
+	if (input_array->data_count){
+		/*
+		memcpy(target_array->array+range_begin*data_type->size,
+				input_array->array,
+				input_array->data_count*data_type->size);
+		for (int i = 0; i<target_array->data_count; i++){
+			rcp_copied(data_type, 
+				target_array->array+(range_begin+i)*data_type->size)
+		}
+		*/
+		for (i = 0; i<input_array->data_count; i++){
+			rcp_copy(data_type, 
+				input_array->array+i*data_type->size,
+				target_array->array+(range_begin+i)*data_type->size);
+		}
+	}
+
+	target_array->data_count = total_data_count;
+	return 0;
+}
+
+void rcp_array_resize(
+	rcp_type_ref array_type, rcp_array_ref array, size_t new_size)
+{
+	rcp_type_ref data_type = rcp_array_type_data_type(array_type);
+	const size_t initial_capacity = 16;
+	const size_t block_size = 4096;
+
+	if (array->capacity >= new_size)
+		return;
+
+	//data count
+	size_t new_capacity = array->capacity;
+	if (new_capacity< initial_capacity)
+		new_capacity= initial_capacity;
+
+	while (new_capacity < new_size){
+		if (new_capacity*2 > block_size)
+			break;
+		new_capacity *= 2;
+	}
+
+	if (new_capacity < new_size)
+		new_capacity = new_size;
+
+	//bytes
+	size_t new_data_size = new_capacity*data_type->size;
+	if (new_data_size > block_size){
+		new_data_size = (new_data_size/block_size+1)*block_size;
+		new_capacity = new_data_size/data_type->size;
+	}
+
+	array->array = realloc(array->array, new_data_size);
+	array->capacity = new_capacity;
 }
 
 rcp_extern void rcp_array_append_data(

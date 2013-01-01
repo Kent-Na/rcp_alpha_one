@@ -66,6 +66,13 @@ rcp_extern void rcp_array_append_data(
 		rcp_type_ref array_type, rcp_array_ref array,
 		rcp_data_ref data);
 
+rcp_extern int8_t rcp_array_replace(
+	rcp_type_ref array_type, rcp_data_ref target_array_data,
+	int32_t range_begin, int32_t range_end,
+	rcp_data_ref input_array_data);
+
+void rcp_array_resize(
+	rcp_type_ref array_type, rcp_array_ref array, size_t new_size);
 rcp_extern void rcp_array_clear_data(
 		rcp_type_ref array_type, rcp_array_ref array);
 
