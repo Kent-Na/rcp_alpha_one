@@ -32,6 +32,12 @@ typeTable = [
 #	[21,	'binaly',	None],
 #	 False,	False,	False, False, True],
 
+#this is dummy record because of type parameter
+	[22,	'array',
+		'rcp_record_ref',	'0',
+	 False,	False, False, False, False, False,
+	 False, False, False, False],
+
 #25-31 bool
 	[25,	'bool8',	'uint8_t',	'1',
 	 False,	False,	True, False, True, False,

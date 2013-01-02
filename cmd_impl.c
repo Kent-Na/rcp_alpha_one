@@ -472,6 +472,39 @@ void cmd_impl_append_value(
 	rcp_context_send_error(con, cmd_rec, "path err.");
 }
 
+void cmd_impl_replace_value(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd)
+{
+	struct cmd_replace_value *cmd_st = cmd;
+
+	rcp_assert(cmd_st->value,"null value");
+
+	rcp_type_ref o_type;
+	rcp_data_ref o_data;
+
+	cmd_value_at_path(ctx, cmd_st->path, &o_type, &o_data);
+	if (o_type == rcp_ref_type){
+		o_type = rcp_record_type(*(rcp_record_ref*)o_data);
+		o_data = rcp_record_data(*(rcp_record_ref*)o_data);
+	}
+
+	if (o_data){
+		if (rcp_record_type(cmd_st->value) != o_type)
+			return;
+		rcp_array_replace(o_type, o_data, 
+			cmd_st->begin, cmd_st->end, rcp_record_data(cmd_st->value));
+		//rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
+		return;
+	}
+
+	rcp_context_send_error(con, cmd_rec, "path err.");
+}
+
+
 void cmd_impl_add_type(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,

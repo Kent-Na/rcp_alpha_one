@@ -1,0 +1,54 @@
+
+
+--array
+
+replaceValue (begin,end,values[])
+
+ex.
+	before = [0,1,2,3,4,5,6,7]
+	replaceValue(2,4,[10,11,12])
+	after = [0,1,10,11,12,4,5,6,7]
+	
+	before = [0,1,2,3,4,5,6,7]
+	replaceValue(-4,-2,[10,11,12])
+	after = [0,1,2,3,4,10,11,12,7]
+
+insertValue(index,value) = replaceValue(index,index,[value]);
+
+ex.
+	before = [0,1,2,3,4,5,6,7]
+	insertValue(3,10) = replaceValue(3,3,[10])
+	after = [0,1,2,10,3,4,5,6,7]
+
+appendValue(value) = relaceValue(-1,-1,[value])
+
+ex.
+	before = [0,1,2,3,4,5,6,7]
+	appendValue(10) = replaceValue(-1,-1,[10])
+	after = [0,1,2,3,4,5,6,7,10]
+
+prependValue(value) = relaceValue(0,0,[value])
+
+ex.
+	before = [0,1,2,3,4,5,6,7]
+	appendValue(10) = replaceValue(0,0,[10])
+	after = [10,0,1,2,3,4,5,6,7]
+	
+setValue(index,value) = replaceValue(index,index+1,[value])
+	before = [0,1,2,3,4,5,6,7]
+	setValue(4,10) = replaceValue(4,5,[10])
+	after = [0,1,2,3,10,5,6,7]
+
+removeValue(index) = replaceValue(index,index+1,[])
+	before = [0,1,2,3,4,5,6,7]
+	removeValue(4) = replaceValue(4,5,[])
+	after = [0,1,2,3,5,6,7]
+
+--dictionaly
+
+set
+unset
+
+--struct
+
+set

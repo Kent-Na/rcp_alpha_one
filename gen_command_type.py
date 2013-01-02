@@ -115,10 +115,12 @@ for info in commandList:
 			c_struct_name = c_struct_name,
 			revert_domain_name = "ttt")
 	for param in sorted(info['parameters'], key = lambda i:i['name']):
-		if param['type'] != 'uint16':
-			rcp_type_name = 'rcp_ref_type'
-		else:
+		if param['type'] == 'int64':
+			rcp_type_name = 'rcp_int64_type'
+		elif param['type'] == 'uint16':
 			rcp_type_name = 'rcp_uint16_type'
+		else:
+			rcp_type_name = 'rcp_ref_type'
 		fragment += genFuncParamTemplate.format(
 				c_field_name = param['name'],
 				rcp_type_name = rcp_type_name,

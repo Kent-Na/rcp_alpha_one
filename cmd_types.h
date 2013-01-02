@@ -152,6 +152,15 @@ struct cmd_append_value{
 	rcp_record_ref type;
 };
 
+struct cmd_replace_value{
+	rcp_record_ref command;
+	uint16_t loginID;
+	rcp_record_ref path;
+	int64_t begin;
+	int64_t end;
+	rcp_record_ref value;
+};
+
 struct cmd_create_struct{
 	rcp_record_ref command;
 	uint16_t loginID;

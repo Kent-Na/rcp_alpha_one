@@ -22,8 +22,8 @@ rcp_extern void rcp_dict_to_struct(
 
 
 rcp_extern int rcp_type_is_int(rcp_type_ref type);
-
 rcp_extern int rcp_type_is_uint(rcp_type_ref type);
+
 rcp_extern int64_t rcp_int_as_int(rcp_type_ref type, rcp_data_ref data);
 rcp_extern uint64_t rcp_uint_as_uint(rcp_type_ref type, rcp_data_ref data);
 

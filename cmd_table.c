@@ -5,7 +5,7 @@
 #include "cmd_list.h"
 #include "cmd_types_func.h"
 #include "rcp_command.h"
-struct rcp_command_core rcp_command_table[31];
+struct rcp_command_core rcp_command_table[32];
 
 void rcp_command_table_init(){
 
@@ -272,6 +272,17 @@ void rcp_command_table_init(){
 		cmd_append_value_type();
 	rcp_command_table[CMD_APPEND_VALUE].cmd_impl= 
 		cmd_impl_append_value;
+
+	rcp_command_table[CMD_REPLACE_VALUE].cmd = 
+		CMD_REPLACE_VALUE;
+	rcp_command_table[CMD_REPLACE_VALUE].cmd_str = 
+		"replaceValue";
+	rcp_command_table[CMD_REPLACE_VALUE].cmd_pms = 
+		4;
+	rcp_command_table[CMD_REPLACE_VALUE].cmd_type= 
+		cmd_replace_value_type();
+	rcp_command_table[CMD_REPLACE_VALUE].cmd_impl= 
+		cmd_impl_replace_value;
 
 	rcp_command_table[CMD_CREATE_STRUCT].cmd = 
 		CMD_CREATE_STRUCT;

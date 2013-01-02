@@ -256,6 +256,19 @@ addParameter(command, "string", "type")
 requirePermission(command, "write")
 commandList.append(command)
 
+command = {
+	"name":"replaceValue",
+	"shortDescription":"Add value into container like an array or a map",
+	"longDescription":"",
+	}
+
+addParameter(command, "ref", "path")
+addParameter(command, "int64", "begin")
+addParameter(command, "int64", "end")
+addParameter(command, "array", "value")
+requirePermission(command, "write")
+commandList.append(command)
+
 #Type
 commandList.append({
 	"name":"createStruct",

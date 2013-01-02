@@ -13,7 +13,7 @@ def printAsText(commandInfo):
 {name}
 	{shortDescription}\
 """
-	print(baseText.format(**commandInfo))
+	#print(baseText.format(**commandInfo))
 
 def printAsLongText(commandInfo):
 	params = ""
@@ -26,7 +26,7 @@ def printAsLongText(commandInfo):
 {name} [{params}]
 	{shortDescription}\
 """
-	print(baseText.format(params=params,**commandInfo))
+	#print(baseText.format(params=params,**commandInfo))
 
 sCommandList = sorted(commandList, key = lambda info : info['name'])
 for info in commandList:

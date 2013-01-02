@@ -178,8 +178,8 @@ rcp_extern int8_t rcp_array_replace(
 	if (range_end>target_array->data_count)
 		return -1;
 
-	size_t total_data_count= target_array->data_count +
-		range_end-range_begin+input_array->data_count;
+	size_t total_data_count= target_array->data_count -
+		(range_end-range_begin)+input_array->data_count;
 	rcp_array_resize(array_type, target_array, total_data_count);
 
 	//move back part
