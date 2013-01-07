@@ -54,7 +54,7 @@ rcp_err con_null_terminate_next_command(
 		*command_begin = buffer_begin;
 		*command_end = p; 
 		rcp_buffer_consumed_at(&st->buffer, p+1);
-		rcp_info(*command_begin);
+		//rcp_info(*command_begin);
 		return 0;
 	}
 	return -1;

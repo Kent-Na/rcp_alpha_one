@@ -495,9 +495,10 @@ void cmd_impl_replace_value(
 	if (o_data){
 		if (rcp_record_type(cmd_st->value) != o_type)
 			return;
-		rcp_array_replace(o_type, o_data, 
+		uint8_t err = rcp_array_replace(o_type, o_data, 
 			cmd_st->begin, cmd_st->end, rcp_record_data(cmd_st->value));
-		//rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
+		if (!err)
+			rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 		return;
 	}
 
