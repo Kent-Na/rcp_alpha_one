@@ -47,13 +47,6 @@ static struct rcp_listener_class lis_ws_json_class = {
 	&con_ws_json_class
 };
 
-static struct rcp_listener_class lis_wss_json_class = {
-	&con_ssl_class,
-	con_ssl_set_fd,
-	rcp_sender_cluster_json_ws,
-	&con_ws_json_class
-};
-
 struct rcp_listener{
 	struct rcp_listener_class *klass;
 	int fd;
@@ -103,12 +96,6 @@ rcp_event_action_ref rcp_listener_ws_json_new(int epfd)
 {
 	return rcp_listener_new(
 			&lis_ws_json_class, RCP_WS_JSON_PORT_NUMBER, epfd);	
-}
-
-rcp_event_action_ref rcp_listener_wss_json_new(int epfd)
-{
-	return rcp_listener_new(
-			&lis_wss_json_class, RCP_WSS_JSON_PORT_NUMBER, epfd);	
 }
 
 rcp_connection_ref rcp_listener_connection_new(

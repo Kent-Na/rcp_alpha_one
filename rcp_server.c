@@ -36,7 +36,6 @@ rcp_context_ref rcp_root_context()
 //
 rcp_event_action_ref plain_json = NULL;
 rcp_event_action_ref plain_ws_json = NULL;
-rcp_event_action_ref plain_wss_json = NULL;
 void rcp_listen_start(int epfd)
 {
 	if (plain_json)
@@ -48,11 +47,6 @@ void rcp_listen_start(int epfd)
 		rcp_error("already listening");
 	else
 		plain_ws_json = rcp_listener_ws_json_new(epfd);
-
-	if (plain_wss_json)
-		rcp_error("already listening");
-	else
-		plain_wss_json = rcp_listener_wss_json_new(epfd);
 }
 
 void rcp_listen_end()
@@ -66,11 +60,6 @@ void rcp_listen_end()
 		rcp_error("not yet listening");
 	else
 		rcp_listener_delete(plain_ws_json);
-
-	if (!plain_wss_json)
-		rcp_error("not yet listening");
-	else
-		rcp_listener_delete(plain_wss_json);
 }
 
 rcp_open_timeout_ref open_timeout = NULL;

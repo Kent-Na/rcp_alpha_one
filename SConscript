@@ -20,7 +20,6 @@ types = [
 connections = [
 	'connections/con_file.c',
 	'connections/con_null_terminate.c',
-	'connections/con_ssl.c',
 	'connections/con_json.c',
 	'connections/con_plain.c',
 	'connections/con_web_socket.c',
