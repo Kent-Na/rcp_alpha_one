@@ -38,9 +38,6 @@ struct rcp_context_core{
 
 	rcp_permission_t base_permission;
 
-	//string - ptr
-	rcp_dict_ref types;
-
 	//connections that closed but not send "removeUser" command. 
 	//ptr
 	rcp_old_array_ref dead;

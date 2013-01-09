@@ -5,7 +5,7 @@
 #include "cmd_list.h"
 #include "cmd_types_func.h"
 #include "rcp_command.h"
-struct rcp_command_core rcp_command_table[32];
+struct rcp_command_core rcp_command_table[28];
 
 void rcp_command_table_init(){
 
@@ -262,17 +262,6 @@ void rcp_command_table_init(){
 	rcp_command_table[CMD_UNSET_VALUE].cmd_impl= 
 		cmd_impl_unset_value;
 
-	rcp_command_table[CMD_APPEND_VALUE].cmd = 
-		CMD_APPEND_VALUE;
-	rcp_command_table[CMD_APPEND_VALUE].cmd_str = 
-		"appendValue";
-	rcp_command_table[CMD_APPEND_VALUE].cmd_pms = 
-		4;
-	rcp_command_table[CMD_APPEND_VALUE].cmd_type= 
-		cmd_append_value_type();
-	rcp_command_table[CMD_APPEND_VALUE].cmd_impl= 
-		cmd_impl_append_value;
-
 	rcp_command_table[CMD_REPLACE_VALUE].cmd = 
 		CMD_REPLACE_VALUE;
 	rcp_command_table[CMD_REPLACE_VALUE].cmd_str = 
@@ -283,39 +272,6 @@ void rcp_command_table_init(){
 		cmd_replace_value_type();
 	rcp_command_table[CMD_REPLACE_VALUE].cmd_impl= 
 		cmd_impl_replace_value;
-
-	rcp_command_table[CMD_CREATE_STRUCT].cmd = 
-		CMD_CREATE_STRUCT;
-	rcp_command_table[CMD_CREATE_STRUCT].cmd_str = 
-		"createStruct";
-	rcp_command_table[CMD_CREATE_STRUCT].cmd_pms = 
-		0;
-	rcp_command_table[CMD_CREATE_STRUCT].cmd_type= 
-		cmd_create_struct_type();
-	rcp_command_table[CMD_CREATE_STRUCT].cmd_impl= 
-		cmd_impl_create_struct;
-
-	rcp_command_table[CMD_ADD_STRUCT].cmd = 
-		CMD_ADD_STRUCT;
-	rcp_command_table[CMD_ADD_STRUCT].cmd_str = 
-		"addStruct";
-	rcp_command_table[CMD_ADD_STRUCT].cmd_pms = 
-		0;
-	rcp_command_table[CMD_ADD_STRUCT].cmd_type= 
-		cmd_add_struct_type();
-	rcp_command_table[CMD_ADD_STRUCT].cmd_impl= 
-		cmd_impl_add_struct;
-
-	rcp_command_table[CMD_ADD_TYPE].cmd = 
-		CMD_ADD_TYPE;
-	rcp_command_table[CMD_ADD_TYPE].cmd_str = 
-		"addType";
-	rcp_command_table[CMD_ADD_TYPE].cmd_pms = 
-		0;
-	rcp_command_table[CMD_ADD_TYPE].cmd_type= 
-		cmd_add_type_type();
-	rcp_command_table[CMD_ADD_TYPE].cmd_impl= 
-		cmd_impl_add_type;
 
 	rcp_command_table[CMD_FATAL].cmd = 
 		CMD_FATAL;

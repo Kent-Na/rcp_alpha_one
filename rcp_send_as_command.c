@@ -34,6 +34,8 @@ void rcp_old_array_send_as_command(
 		rcp_type_ref type, rcp_data_ref data,
 		rcp_connection_ref con)
 {
+	rcp_error("deplecated function call");
+
 	{
 		struct cmd_set_value cmd_ini;
 		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
@@ -48,10 +50,12 @@ void rcp_old_array_send_as_command(
 	rcp_old_array_ref array = (rcp_old_array_ref)data;
 	rcp_old_array_iterater_ref node = rcp_old_array_begin(array);
 	
-	struct cmd_append_value cmd;
-	rcp_type_ref cmd_type=rcp_command_type(CMD_APPEND_VALUE);
+	struct cmd_replace_value cmd;
+	rcp_type_ref cmd_type=rcp_command_type(CMD_REPLACE_VALUE);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
-	cmd.command = rcp_string_new_rec(CMD_STR_APPEND_VALUE);
+	cmd.command = rcp_string_new_rec(CMD_STR_REPLACE_VALUE);
+	cmd.begin = -1;
+	cmd.end = -1;
 	cmd.loginID = 0;
 
 	while (node){
@@ -68,6 +72,11 @@ void rcp_array_send_as_command(
 		rcp_type_ref type, rcp_data_ref data,
 		rcp_connection_ref con)
 {
+	if (rcp_array_type_data_type(type) != rcp_ref_type){
+		rcp_error("Unsupported array type.");
+		return;
+	}
+
 	{
 		struct cmd_set_value cmd_ini;
 		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
@@ -79,22 +88,35 @@ void rcp_array_send_as_command(
 		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_ini);
 	}
 
+	rcp_record_ref tmp_record = rcp_record_new(type);
+	rcp_array_ref tmp_array = (rcp_array_ref)rcp_record_data(tmp_record);
+	rcp_record_ref *tmp_val;
+
+	{
+		rcp_record_ref null_rec = NULL;
+		rcp_array_append_data(type, tmp_array, (rcp_data_ref)&null_rec);
+		tmp_val = rcp_array_raw_data(tmp_array);
+	}
+
 	rcp_array_ref array = (rcp_array_ref)data;
 	rcp_array_iterater_ref node = rcp_array_begin(array);
 	
-	struct cmd_append_value cmd;
-	rcp_type_ref cmd_type=rcp_command_type(CMD_APPEND_VALUE);
+	struct cmd_replace_value cmd;
+	rcp_type_ref cmd_type=rcp_command_type(CMD_REPLACE_VALUE);
 	rcp_init(cmd_type, (rcp_data_ref)&cmd);
-	cmd.command = rcp_string_new_rec(CMD_STR_APPEND_VALUE);
+	cmd.command = rcp_string_new_rec(CMD_STR_REPLACE_VALUE);
+	cmd.begin = -1;
+	cmd.end = -1;
 	cmd.loginID = 0;
+	cmd.value = tmp_record;
 
 	while (node){
-		cmd.value = *(rcp_record_ref*)rcp_array_iterater_data(node);
+		*tmp_val = *(rcp_record_ref*)rcp_array_iterater_data(node);
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
 		node = rcp_array_iterater_next(type, array, node);
 	}
-
-	cmd.value = NULL;
+	
+	tmp_val = NULL;
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
 }
 void rcp_dict_send_as_command(
@@ -141,13 +163,6 @@ void rcp_dict_send_as_command(
 		else{
 			cmd.value = rcp_record_new_with(data_type,
 					rcp_dict_node_data(type, node));
-		}
-
-		if (data_type == rcp_ref_type){
-			cmd.type = rcp_record_new_with(rcp_string_type,(rcp_data_ref)
-					rcp_type_name(
-						rcp_record_type(*(rcp_record_ref*)
-							rcp_dict_node_data(type, node))));
 		}
 
 		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);

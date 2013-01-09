@@ -165,35 +165,7 @@ void cmd_impl_unset_value(
 		rcp_type_ref cmd_type,
 		void* cmd);
 
-void cmd_impl_append_value(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd);
-
 void cmd_impl_replace_value(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd);
-
-void cmd_impl_create_struct(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd);
-
-void cmd_impl_add_struct(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd);
-
-void cmd_impl_add_type(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,
 		rcp_record_ref cmd_rec,

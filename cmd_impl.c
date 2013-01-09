@@ -339,36 +339,6 @@ void cmd_impl_send_value(
 	struct cmd_send_value *cmd_st = cmd;
 	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 }
-int rcp_record_cast(
-		rcp_context_ref ctx,
-		rcp_record_ref type_rec,
-		rcp_record_ref target_rec)
-{
-	if (! type_rec)
-		return 0;
-
-	if (rcp_record_type(type_rec) == rcp_null_type)
-		return 0;
-
-	if (rcp_record_type(type_rec) != rcp_string_type)
-		return -1;
-
-	rcp_dict_node_ref node = rcp_dict_find(ctx->types,
-			rcp_record_data(type_rec));
-
-	if (!node)
-		return -1;
-
-	rcp_type_ref dst_type = *(rcp_type_ref*)
-		rcp_dict_node_data(rcp_str_ptr_dict, node);
-	
-	rcp_record_change_type(target_rec, dst_type);
-
-	if (rcp_record_type(target_rec) != dst_type)
-		return -1;
-
-	return 0;
-}
 
 void cmd_value_at_path(rcp_context_ref ctx, rcp_record_ref path, 
 		rcp_type_ref *o_type, rcp_data_ref *o_data)
@@ -406,11 +376,6 @@ void cmd_impl_set_value(
 
 	rcp_assert(cmd_st->value,"null value");
 
-	if (rcp_record_cast(ctx, cmd_st->type, cmd_st->value)){
-		rcp_context_send_error(con, cmd_rec, "type err.");
-		return;
-	}
-
 	rcp_type_ref o_type;
 	rcp_data_ref o_data;
 
@@ -439,38 +404,6 @@ void cmd_impl_unset_value(
 			"Not yet implemented.");
 }
 
-void cmd_impl_append_value(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd)
-{
-	struct cmd_append_value *cmd_st = cmd;
-
-	rcp_assert(cmd_st->value,"null value");
-
-	if (rcp_record_cast(ctx, cmd_st->type, cmd_st->value)){
-		rcp_context_send_error(con, cmd_rec, "type err.");
-		return;
-	}
-
-	rcp_type_ref o_type;
-	rcp_data_ref o_data;
-
-	cmd_value_at_path(ctx, cmd_st->path, &o_type, &o_data);
-
-	if (o_data){
-		//value already existed
-		rcp_assert(o_type == rcp_ref_type, "can not copy");
-		rcp_append(o_type, o_data,
-				rcp_ref_type, (rcp_data_ref)&cmd_st->value);
-		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
-		return;
-	}
-
-	rcp_context_send_error(con, cmd_rec, "path err.");
-}
 
 void cmd_impl_replace_value(
 		rcp_context_ref ctx,
@@ -488,8 +421,13 @@ void cmd_impl_replace_value(
 
 	cmd_value_at_path(ctx, cmd_st->path, &o_type, &o_data);
 	if (o_type == rcp_ref_type){
-		o_type = rcp_record_type(*(rcp_record_ref*)o_data);
-		o_data = rcp_record_data(*(rcp_record_ref*)o_data);
+		rcp_record_ref rec = *(rcp_record_ref*)o_data;
+		if (rcp_record_is_null(rec)){
+			rcp_context_send_error(con, cmd_rec, "path err");
+			return;
+		}
+		o_type = rcp_record_type(rec);
+		o_data = rcp_record_data(rec);
 	}
 
 	if (o_data){
@@ -505,35 +443,6 @@ void cmd_impl_replace_value(
 	rcp_context_send_error(con, cmd_rec, "path err.");
 }
 
-
-void cmd_impl_add_type(
-		rcp_context_ref ctx,
-		rcp_connection_ref con,
-		rcp_record_ref cmd_rec,
-		rcp_type_ref cmd_type,
-		void* cmd)
-{
-	struct cmd_add_type *cmd_st = cmd;
-
-	if (cmd_st->name && rcp_record_type(cmd_st->name) != rcp_string_type)
-		return;
-
-	rcp_type_ref new_type = rcp_alias_type_new(rcp_str_ref_dict);
-	rcp_dict_node_ref node = rcp_dict_node_new(rcp_str_ptr_dict);
-	rcp_copy(rcp_string_type,
-			rcp_record_data(cmd_st->name),
-			rcp_dict_node_key(rcp_str_ptr_dict, node));
-	rcp_copy(rcp_pointer_type,
-			(rcp_data_ref)&new_type,
-			rcp_dict_node_data(rcp_str_ptr_dict, node));
-	rcp_dict_set_node(ctx->types, node);
-
-	rcp_data_ref name = rcp_new(rcp_string_type);
-	rcp_copy(rcp_string_type,
-			rcp_record_data(cmd_st->name),
-			name);
-	rcp_type_set_name(new_type, (rcp_string_ref)name);
-}
 
 void cmd_impl_open(
 		rcp_context_ref ctx,

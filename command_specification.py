@@ -220,7 +220,6 @@ command = {
 	}
 
 addParameter(command, "ref", "value")
-addParameter(command, "string", "type")
 commandList.append(command)
 
 command = {
@@ -231,7 +230,6 @@ command = {
 
 addParameter(command, "ref", "path")
 addParameter(command, "ref", "value")
-addParameter(command, "string", "type")
 requirePermission(command, "write")
 commandList.append(command)
 
@@ -245,20 +243,8 @@ requirePermission(command, "write")
 commandList.append(command)
 
 command = {
-	"name":"appendValue",
-	"shortDescription":"Add value into container like an array or a map",
-	"longDescription":"",
-	}
-
-addParameter(command, "ref", "path")
-addParameter(command, "ref", "value")
-addParameter(command, "string", "type")
-requirePermission(command, "write")
-commandList.append(command)
-
-command = {
 	"name":"replaceValue",
-	"shortDescription":"Add value into container like an array or a map",
+	"shortDescription":"Replace values betwean range in the array.",
 	"longDescription":"",
 	}
 
@@ -267,28 +253,6 @@ addParameter(command, "int64", "begin")
 addParameter(command, "int64", "end")
 addParameter(command, "array", "value")
 requirePermission(command, "write")
-commandList.append(command)
-
-#Type
-commandList.append({
-	"name":"createStruct",
-	"shortDescription":"Not yet implemented.",
-	"longDescription":"",
-	})
-
-commandList.append({
-	"name":"addStruct",
-	"shortDescription":"Not yet implemented.",
-	"longDescription":"",
-	})
-
-command = {
-	"name":"addType",
-	"shortDescription":"create new type and add to current context",
-	"longDescription":"current implement only support dict(string,ref).",
-	}
-
-addParameter(command, "string", "name")
 commandList.append(command)
 
 #Error

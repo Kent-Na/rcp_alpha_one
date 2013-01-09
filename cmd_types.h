@@ -127,7 +127,6 @@ struct cmd_send_value{
 	rcp_record_ref command;
 	uint16_t loginID;
 	rcp_record_ref value;
-	rcp_record_ref type;
 };
 
 struct cmd_set_value{
@@ -135,21 +134,12 @@ struct cmd_set_value{
 	uint16_t loginID;
 	rcp_record_ref path;
 	rcp_record_ref value;
-	rcp_record_ref type;
 };
 
 struct cmd_unset_value{
 	rcp_record_ref command;
 	uint16_t loginID;
 	rcp_record_ref path;
-};
-
-struct cmd_append_value{
-	rcp_record_ref command;
-	uint16_t loginID;
-	rcp_record_ref path;
-	rcp_record_ref value;
-	rcp_record_ref type;
 };
 
 struct cmd_replace_value{
@@ -159,22 +149,6 @@ struct cmd_replace_value{
 	int64_t begin;
 	int64_t end;
 	rcp_record_ref value;
-};
-
-struct cmd_create_struct{
-	rcp_record_ref command;
-	uint16_t loginID;
-};
-
-struct cmd_add_struct{
-	rcp_record_ref command;
-	uint16_t loginID;
-};
-
-struct cmd_add_type{
-	rcp_record_ref command;
-	uint16_t loginID;
-	rcp_record_ref name;
 };
 
 struct cmd_fatal{
