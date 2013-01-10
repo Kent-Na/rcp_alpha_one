@@ -14,9 +14,9 @@ typeTable = [
 #	[2,		used in internal],
 
 #16-24 container
-	[16,	'map',		'rcp_record_ref',	'sizeof(struct rcp_map_core)',
-	  True,  True, False, False,  True, False,
-	 False, False, False, False],
+#	[16,	'map',		'rcp_record_ref',	'sizeof(struct rcp_map_core)',
+#	  True,  True, False, False,  True, False,
+#	 False, False, False, False],
 #	[17,	'set',		None],
 #	 False,	False,	False, False, True],
 #	[18,	'old_array',

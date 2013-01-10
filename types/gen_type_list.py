@@ -97,7 +97,6 @@ outListCFile.write('#include "../rcp_json_write.h"\n');
 outListCFile.write('#include "../rcp_send_as_command.h"\n');
 
 outListCFile.write('#include "rcp_number.h"\n');
-outListCFile.write('#include "rcp_map.h"\n');
 outListCFile.write('#include "rcp_string.h"\n');
 outListCFile.write('#include "rcp_type_etc.h"\n');
 

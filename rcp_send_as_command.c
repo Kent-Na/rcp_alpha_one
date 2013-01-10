@@ -2,6 +2,7 @@
 #include "rcp_utility.h"
 #include "rcp_defines.h"
 #include "rcp_type.h"
+#include "rcp_record.h"
 
 #include "rcp_connection.h"
 
@@ -10,7 +11,6 @@
 #include "cmd_types.h"
 
 #include "types/rcp_string.h"
-#include "types/rcp_map.h"
 #include "types/rcp_struct.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_type_list.h"

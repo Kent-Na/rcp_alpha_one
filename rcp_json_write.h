@@ -2,14 +2,12 @@
 #include "def/rcp_type.h"
 #include "def/rcp_record.h"
 #include "def/rcp_string.h"
-#include "def/rcp_map.h"
 
 //json <-
 //	rcp
 
 //object <-
 //	struct
-//	map
 //	dict
 
 //array <-
@@ -35,10 +33,6 @@ void rcp_ref_write_json(rcp_type_ref type,
 		rcp_data_ref data, rcp_string_ref out);
 
 void rcp_dict_write_json(rcp_type_ref type,
-		rcp_data_ref data, rcp_string_ref out);
-void rcp_map_write_json(rcp_type_ref type,
-		rcp_data_ref data, rcp_string_ref out);
-void rcp_old_array_write_json(rcp_type_ref type,
 		rcp_data_ref data, rcp_string_ref out);
 void rcp_array_write_json(rcp_type_ref type,
 		rcp_data_ref data, rcp_string_ref out);

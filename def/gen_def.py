@@ -23,9 +23,6 @@ typeList = [
 
 	'string',
 
-	'map',
-	'map_node',
-
 	'dict',
 	'dict_type',
 	'dict_node',

@@ -7,9 +7,6 @@ extern const rcp_type_ref rcp_null_type;
 #define RCP_TYPE_REF ((rcp_type_id_t)1)
 extern const rcp_type_ref rcp_ref_type;
 
-#define RCP_TYPE_MAP ((rcp_type_id_t)16)
-extern const rcp_type_ref rcp_map_type;
-
 #define RCP_TYPE_STRING ((rcp_type_id_t)20)
 extern const rcp_type_ref rcp_string_type;
 
@@ -59,8 +56,6 @@ extern const rcp_type_ref rcp_pointer_type;
 extern struct rcp_type_core rcp_null_type_def;
 
 extern struct rcp_type_core rcp_ref_type_def;
-
-extern struct rcp_type_core rcp_map_type_def;
 
 extern struct rcp_type_core rcp_string_type_def;
 

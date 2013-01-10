@@ -4,7 +4,6 @@ Import('env')
 types = [
 	'types/rcp_array.c',
 	'types/rcp_array_list.c',
-	'types/rcp_map.c',
 	'types/rcp_string.c',
 	'types/rcp_type_list.c',
 	'types/rcp_type_utility.c',
@@ -72,9 +71,7 @@ mainFiles.extend(commands)
 tests = [
 	'tests/test_json.cpp',
 	'tests/test_tree.cpp',
-	'tests/test_map.cpp',
 	'tests/test_array.cpp',
-	'tests/test_pm.cpp',
 	'tests/test_user.cpp',
 	'tests/test_at.cpp',
 ]

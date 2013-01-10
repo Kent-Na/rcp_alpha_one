@@ -7,7 +7,6 @@
 #include "../rcp_json_write.h"
 #include "../rcp_send_as_command.h"
 #include "rcp_number.h"
-#include "rcp_map.h"
 #include "rcp_string.h"
 #include "rcp_type_etc.h"
 
@@ -41,22 +40,6 @@ struct rcp_type_core rcp_ref_type_def = {
 	rcp_ref_append,
 	NULL,
 	rcp_ref_at,
-};
-
-struct rcp_type_core rcp_map_type_def = {
-	sizeof(struct rcp_map_core),
-	16,
-	NULL,
-	rcp_map_init,
-	rcp_map_deinit,
-	NULL,
-	NULL,
-	rcp_map_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
 };
 
 struct rcp_type_core rcp_string_type_def = {
@@ -302,8 +285,6 @@ struct rcp_type_core rcp_pointer_type_def = {
 const rcp_type_ref rcp_null_type = &rcp_null_type_def;
 
 const rcp_type_ref rcp_ref_type = &rcp_ref_type_def;
-
-const rcp_type_ref rcp_map_type = &rcp_map_type_def;
 
 const rcp_type_ref rcp_string_type = &rcp_string_type_def;
 

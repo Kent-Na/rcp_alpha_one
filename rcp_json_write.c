@@ -5,7 +5,6 @@
 #include "rcp_type.h"
 #include "rcp_record.h"
 #include "types/rcp_string.h"
-#include "types/rcp_map.h"
 #include "types/rcp_array.h"
 #include "types/rcp_struct.h"
 #include "types/rcp_dict.h"
@@ -226,38 +225,6 @@ void rcp_dict_write_json(rcp_type_ref type,
 				rcp_dict_node_data(type, node), out);
 		
 		node = rcp_dict_node_next(node);
-		if (node)
-			rcp_string_put(out, ',');
-	}
-	rcp_string_put(out, '}');
-}
-
-void rcp_map_write_json(rcp_type_ref type,
-		rcp_data_ref data, rcp_string_ref out)
-{
-	rcp_map_ref map = (rcp_map_ref)data;
-
-#ifdef RCP_SELF_TEST
-	if (rcp_map_key_type(map) != rcp_string_type){
-		rcp_error("json:map key type");
-		return;
-	}
-#endif
-
-	rcp_type_ref val_type = rcp_map_value_type(map);
-
-	rcp_map_node_ref node = rcp_map_begin(map);
-	rcp_string_put(out, '{');
-	while (node){
-		rcp_write_json(rcp_string_type,
-				rcp_map_node_key(map, node), out);
-
-		rcp_string_put(out, ':');
-
-		rcp_write_json(val_type, 
-				rcp_map_node_value(map, node), out);
-		
-		node = rcp_map_node_next(node);
 		if (node)
 			rcp_string_put(out, ',');
 	}

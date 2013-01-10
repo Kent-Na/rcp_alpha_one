@@ -150,6 +150,7 @@ uint16_t rcp_context_connection_count(rcp_context_ref ctx){
 void rcp_context_add_connection(rcp_context_ref ctx, 
 		rcp_connection_ref con)
 {
+	printf("+ctx:ctx%p, con%p\n",ctx,con);
 	rcp_connection_retain(con);
 	rcp_connection_set_context(con, ctx);
 
@@ -187,7 +188,7 @@ void rcp_context_add_connection(rcp_context_ref ctx,
 
 void rcp_context_remove_connection(rcp_context_ref ctx,
 		rcp_connection_ref con){
-	rcp_info("ctx:remove connection");
+	//rcp_info("ctx:remove connection");
 	if (con)
 		rcp_array_append_data(
 			rcp_pointer_array, ctx->dead, (rcp_data_ref)&con);
@@ -197,19 +198,20 @@ void rcp_context_remove_connection(rcp_context_ref ctx,
 void rcp_context_clean_dead(rcp_context_ref ctx)
 {
 	int8_t has_dead_connection = 0;
-	while (rcp_array_empty(ctx->dead)){
+	while ( ! rcp_array_empty(ctx->dead)){
 		has_dead_connection = 1;
 
 		rcp_connection_ref con = 0;
 		rcp_array_pop_data(
 			rcp_pointer_array, ctx->dead, (rcp_data_ref)&con);
+		printf("-ctx:ctx%p, con%p\n",ctx,con);
 		rcp_tree_node_ref node = rcp_tree_find(ctx->connections, &con);
 		rcp_tree_verify(ctx->connections);
 		rcp_tree_remove(ctx->connections, node);
 		rcp_tree_node_delete(node);
 		if (!node){
 			rcp_error("con to rm from ctx is missing");
-			return;
+			continue;
 		}
 
 		uint16_t login_id = rcp_connection_login_id(con);
@@ -218,7 +220,7 @@ void rcp_context_clean_dead(rcp_context_ref ctx)
 		rcp_tree_node_delete(node);
 		if (!node){
 			rcp_error("login id to rm from ctx is missing");
-			return;
+			continue;
 		}
 
 		rcp_connection_unset_context(con);
