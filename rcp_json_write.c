@@ -6,7 +6,6 @@
 #include "rcp_record.h"
 #include "types/rcp_string.h"
 #include "types/rcp_map.h"
-#include "types/rcp_old_array.h"
 #include "types/rcp_array.h"
 #include "types/rcp_struct.h"
 #include "types/rcp_dict.h"
@@ -263,25 +262,6 @@ void rcp_map_write_json(rcp_type_ref type,
 			rcp_string_put(out, ',');
 	}
 	rcp_string_put(out, '}');
-}
-
-void rcp_old_array_write_json(rcp_type_ref type,
-		rcp_data_ref data, rcp_string_ref out)
-{
-	rcp_old_array_ref array = (rcp_old_array_ref)data;
-	rcp_type_ref ary_type = rcp_old_array_data_type(array);
-
-	rcp_old_array_iterater_ref itr = rcp_old_array_begin(array);
-	rcp_string_put(out, '[');
-	while (itr){
-		rcp_write_json(ary_type, 
-				rcp_old_array_iterater_data(array, itr), out);
-
-		itr = rcp_old_array_iterater_next(array, itr);
-		if (itr)
-			rcp_string_put(out, ',');
-	}
-	rcp_string_put(out, ']');
 }
 
 void rcp_array_write_json(rcp_type_ref type,

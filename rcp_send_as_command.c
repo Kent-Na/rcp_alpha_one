@@ -11,7 +11,6 @@
 
 #include "types/rcp_string.h"
 #include "types/rcp_map.h"
-#include "types/rcp_old_array.h"
 #include "types/rcp_struct.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_type_list.h"
@@ -29,43 +28,6 @@ void rcp_std_send_as_command(
 	cmd_ini.value = rcp_record_new_with(type, data);
 	rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd_ini);
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd_ini);
-}
-void rcp_old_array_send_as_command(
-		rcp_type_ref type, rcp_data_ref data,
-		rcp_connection_ref con)
-{
-	rcp_error("deplecated function call");
-
-	{
-		struct cmd_set_value cmd_ini;
-		rcp_type_ref cmd_type=rcp_command_type(CMD_SET_VALUE);
-		rcp_init(cmd_type, (rcp_data_ref)&cmd_ini);
-		cmd_ini.command = rcp_string_new_rec(CMD_STR_SET_VALUE);
-		cmd_ini.loginID = 0;
-		cmd_ini.value = rcp_record_new(type);
-		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd_ini);
-		rcp_deinit(cmd_type, (rcp_data_ref)&cmd_ini);
-	}
-
-	rcp_old_array_ref array = (rcp_old_array_ref)data;
-	rcp_old_array_iterater_ref node = rcp_old_array_begin(array);
-	
-	struct cmd_replace_value cmd;
-	rcp_type_ref cmd_type=rcp_command_type(CMD_REPLACE_VALUE);
-	rcp_init(cmd_type, (rcp_data_ref)&cmd);
-	cmd.command = rcp_string_new_rec(CMD_STR_REPLACE_VALUE);
-	cmd.begin = -1;
-	cmd.end = -1;
-	cmd.loginID = 0;
-
-	while (node){
-		cmd.value = *(rcp_record_ref*)rcp_old_array_iterater_data(array, node);
-		rcp_connection_send_data(con, cmd_type, (rcp_data_ref)&cmd);
-		node = rcp_old_array_iterater_next(array, node);
-	}
-
-	cmd.value = NULL;
-	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
 }
 
 void rcp_array_send_as_command(

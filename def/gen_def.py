@@ -33,9 +33,6 @@ typeList = [
 	'array',
 	'array_iterater',
 
-	'old_array',
-	'old_array_iterater',
-
 	'struct',
 	'struct_param',
 ]

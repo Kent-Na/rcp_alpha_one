@@ -2,7 +2,6 @@ env = Environment()
 Import('env')
 
 types = [
-	'types/rcp_old_array.c',
 	'types/rcp_array.c',
 	'types/rcp_array_list.c',
 	'types/rcp_map.c',

@@ -3,7 +3,6 @@
 #include "def/rcp_record.h"
 #include "def/rcp_string.h"
 #include "def/rcp_map.h"
-#include "def/rcp_old_array.h"
 
 //json <-
 //	rcp

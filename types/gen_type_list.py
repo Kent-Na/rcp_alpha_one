@@ -98,7 +98,6 @@ outListCFile.write('#include "../rcp_send_as_command.h"\n');
 
 outListCFile.write('#include "rcp_number.h"\n');
 outListCFile.write('#include "rcp_map.h"\n');
-outListCFile.write('#include "rcp_old_array.h"\n');
 outListCFile.write('#include "rcp_string.h"\n');
 outListCFile.write('#include "rcp_type_etc.h"\n');
 

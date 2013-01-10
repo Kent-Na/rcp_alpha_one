@@ -8,7 +8,6 @@
 #include "../rcp_send_as_command.h"
 #include "rcp_number.h"
 #include "rcp_map.h"
-#include "rcp_old_array.h"
 #include "rcp_string.h"
 #include "rcp_type_etc.h"
 
@@ -60,22 +59,6 @@ struct rcp_type_core rcp_map_type_def = {
 	NULL,
 };
 
-struct rcp_type_core rcp_old_array_type_def = {
-	sizeof(struct rcp_old_array_core),
-	18,
-	NULL,
-	rcp_old_array_init,
-	rcp_old_array_deinit,
-	NULL,
-	NULL,
-	rcp_old_array_write_json,
-	rcp_old_array_send_as_command,
-	rcp_old_array_set,
-	rcp_old_array_append,
-	NULL,
-	rcp_old_array_at,
-};
-
 struct rcp_type_core rcp_string_type_def = {
 	sizeof(struct rcp_string_core),
 	20,
@@ -85,6 +68,22 @@ struct rcp_type_core rcp_string_type_def = {
 	rcp_string_copy,
 	rcp_string_compare,
 	rcp_string_write_json,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+};
+
+struct rcp_type_core rcp_array_type_def = {
+	0,
+	22,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
 	NULL,
 	NULL,
 	NULL,
@@ -306,9 +305,9 @@ const rcp_type_ref rcp_ref_type = &rcp_ref_type_def;
 
 const rcp_type_ref rcp_map_type = &rcp_map_type_def;
 
-const rcp_type_ref rcp_old_array_type = &rcp_old_array_type_def;
-
 const rcp_type_ref rcp_string_type = &rcp_string_type_def;
+
+const rcp_type_ref rcp_array_type = &rcp_array_type_def;
 
 const rcp_type_ref rcp_bool8_type = &rcp_bool8_type_def;
 

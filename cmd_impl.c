@@ -17,7 +17,6 @@
 #include "types/rcp_type_list.h"
 #include "types/rcp_type_utility.h"
 
-#include "types/rcp_old_array.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_dict_list.h"
 #include "types/rcp_array.h"

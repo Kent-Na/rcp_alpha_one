@@ -3,7 +3,6 @@
 #include "def/rcp_io.h"
 
 #include "types/rcp_string.h"
-#include "types/rcp_old_array.h"
 #include "types/rcp_type_list.h"
 #include "rcp_record.h"
 #include "rcp_receiver.h"

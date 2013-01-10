@@ -25,7 +25,8 @@
 #include "rcp_record.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_dict_list.h"
-#include "types/rcp_old_array.h"
+#include "types/rcp_array.h"
+#include "types/rcp_array_list.h"
 #include "types/rcp_struct.h"
 #include "types/rcp_string.h"
 #include "types/rcp_number.h"
@@ -59,7 +60,7 @@ void rcp_context_init(rcp_context_ref ctx)
 	ctx->top_level_record = NULL;
 	ctx->connections = rcp_tree_new((void*)rcp_pointer_compare,NULL);
 	ctx->login_ids = rcp_tree_new((void*)rcp_uint16_compare,NULL);
-	ctx->dead = rcp_old_array_new(rcp_pointer_type);
+	ctx->dead = rcp_array_new(rcp_pointer_array);
 	ctx->permissions = rcp_dict_new(rcp_str_uint64_dict);
 	ctx->base_permission = RCP_PMS_LOGIN | RCP_PMS_READ | RCP_PMS_WRITE
 		|RCP_PMS_PMS|RCP_PMS_CTX;
@@ -76,7 +77,7 @@ void rcp_context_uninit(rcp_context_ref ctx)
 	rcp_record_release(ctx->top_level_record);
 	rcp_tree_delete(ctx->connections);
 	rcp_tree_delete(ctx->login_ids);
-	rcp_old_array_delete(ctx->dead);
+	rcp_array_delete(rcp_pointer_array, ctx->dead);
 	rcp_dict_delete(rcp_str_uint64_dict, ctx->permissions);
 	rcp_dict_delete(rcp_str_ptr_dict, ctx->sub_context);
 }
@@ -92,7 +93,8 @@ void rcp_context_test_and_kill(
 	rcp_assert(ctx, "test and kill, null ctx");
 	if (!rcp_connection_alive(con)){
 		rcp_info("dead");
-		rcp_old_array_append_data(ctx->dead, (rcp_data_ref)&con);
+		rcp_array_append_data(
+			rcp_pointer_array, ctx->dead, (rcp_data_ref)&con);
 		rcp_context_clean_dead(ctx);
 	}
 }
@@ -187,18 +189,20 @@ void rcp_context_remove_connection(rcp_context_ref ctx,
 		rcp_connection_ref con){
 	rcp_info("ctx:remove connection");
 	if (con)
-		rcp_old_array_append_data(ctx->dead, (rcp_data_ref)&con);
+		rcp_array_append_data(
+			rcp_pointer_array, ctx->dead, (rcp_data_ref)&con);
 	rcp_context_clean_dead(ctx);
 }
 
 void rcp_context_clean_dead(rcp_context_ref ctx)
 {
 	int8_t has_dead_connection = 0;
-	while (rcp_old_array_count(ctx->dead)){
+	while (rcp_array_empty(ctx->dead)){
 		has_dead_connection = 1;
 
 		rcp_connection_ref con = 0;
-		rcp_old_array_pop(ctx->dead, &con);
+		rcp_array_pop_data(
+			rcp_pointer_array, ctx->dead, (rcp_data_ref)&con);
 		rcp_tree_node_ref node = rcp_tree_find(ctx->connections, &con);
 		rcp_tree_verify(ctx->connections);
 		rcp_tree_remove(ctx->connections, node);
@@ -255,7 +259,8 @@ void rcp_context_disconnect_all(
 		con = *(rcp_connection_ref*)rcp_tree_node_data(node);
 		rcp_connection_release(con);		
 		node = rcp_tree_node_next(node);
-		rcp_old_array_append_data(ctx->dead, (rcp_data_ref)&con);
+		rcp_array_append_data(
+			rcp_pointer_array, ctx->dead, (rcp_data_ref)&con);
 	}
 	rcp_context_clean_dead(ctx);
 }

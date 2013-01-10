@@ -8,22 +8,6 @@
 #include "rcp_type_list.h"
 #include "rcp_type_utility.h"
 #include "../rcp_record.h"
-
-struct rcp_type_core rcp_array_type_def = {
-	sizeof(struct rcp_array_core),
-	0, //type_id
-	NULL,//type_name
-	rcp_array_init,
-	rcp_array_deinit,
-	rcp_array_copy,
-	NULL,//compare
-	NULL,//rcp_array_write_json,
-	NULL,//rcp_array_send_as_command,
-	NULL,//rcp_array_set,
-	NULL,//rcp_array_append,
-	NULL,//rcp_dict_unset,
-	NULL,//at
-};
 	
 rcp_type_ref rcp_array_type_data_type(rcp_type_ref type)
 {
@@ -153,6 +137,12 @@ size_t rcp_array_len(rcp_array_ref array){
 	return core->data_count;
 }
 
+int8_t rcp_array_empty(rcp_array_ref array){
+	if (array->data_count)
+		return 0;
+	return 1;
+}
+
 rcp_extern int8_t rcp_array_replace(
 	rcp_type_ref array_type, rcp_data_ref target_array_data,
 	int32_t range_begin, int32_t range_end,
@@ -271,6 +261,22 @@ rcp_extern void rcp_array_append_data(
 	void* dst = array->array+array->data_count*data_type->size;
 	rcp_copy(data_type, data, dst);
 	array->data_count++;
+}
+
+
+void rcp_array_pop_data(
+		rcp_type_ref array_type, rcp_array_ref array,
+		rcp_data_ref out)
+{
+	if (rcp_array_empty(array))
+		return;
+
+	rcp_type_ref data_type = rcp_array_type_data_type(array_type);
+
+	array->data_count--;
+	rcp_data_ref back = array->array + data_type->size * array->data_count;
+	rcp_copy(data_type, back, out);
+	rcp_deinit(data_type, back);
 }
 
 rcp_extern void rcp_array_clear_data(

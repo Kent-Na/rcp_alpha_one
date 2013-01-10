@@ -54,6 +54,7 @@ rcp_extern int rcp_array_owning_data(rcp_array_ref array);
 
 rcp_extern void* rcp_array_raw_data(rcp_array_ref array);
 rcp_extern size_t rcp_array_len(rcp_array_ref array);
+rcp_extern int8_t rcp_array_empty(rcp_array_ref array);
 
 rcp_extern rcp_data_ref rcp_array_data_at(
 		rcp_type_ref array_type, rcp_array_ref array,
@@ -65,6 +66,10 @@ rcp_extern rcp_data_ref rcp_array_last(
 rcp_extern void rcp_array_append_data(
 		rcp_type_ref array_type, rcp_array_ref array,
 		rcp_data_ref data);
+
+rcp_extern void rcp_array_pop_data(
+		rcp_type_ref array_type, rcp_array_ref array,
+		rcp_data_ref out);
 
 rcp_extern int8_t rcp_array_replace(
 	rcp_type_ref array_type, rcp_data_ref target_array_data,
