@@ -430,18 +430,21 @@ void cmd_impl_replace_value(
 		o_data = rcp_record_data(rec);
 	}
 
-	if (o_data){
-		if (rcp_record_type(cmd_st->value) != o_type){
-			rcp_context_send_error(con, cmd_rec, "type err");
-			return;
-		}
-		uint8_t err = rcp_array_replace(o_type, o_data, 
-			cmd_st->begin, cmd_st->end, rcp_record_data(cmd_st->value));
-		if (!err)
-			rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
+	if (!o_data){
+		rcp_context_send_error(con, cmd_rec, "path err");
+		return;
 	}
-
-	rcp_context_send_error(con, cmd_rec, "path err.");
+	if (rcp_record_type(cmd_st->value) != o_type){
+		rcp_context_send_error(con, cmd_rec, "type err");
+		return;
+	}
+	uint8_t err = rcp_array_replace(o_type, o_data, 
+		cmd_st->begin, cmd_st->end, rcp_record_data(cmd_st->value));
+	if (err){
+		rcp_context_send_error(con, cmd_rec, "param err");
+		return;
+	}
+	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
 }
 
 
