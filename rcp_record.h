@@ -14,6 +14,7 @@ struct rcp_record_core{
 
 #define RCP_REC_FRAG_ACTIVE (1<<0)
 #define RCP_REC_FRAG_OWNED (1<<1)
+#define RCP_REC_FRAG_TAGED (1<<2)
 
 rcp_extern rcp_record_ref rcp_record_new(rcp_type_ref type);
 rcp_extern rcp_record_ref rcp_record_new_with(
@@ -24,4 +25,8 @@ rcp_extern void rcp_record_init(rcp_record_ref type);
 rcp_extern void rcp_record_deinit(rcp_record_ref type);
 rcp_extern rcp_type_ref rcp_record_type(rcp_record_ref rec);
 rcp_extern rcp_data_ref rcp_record_data(rcp_record_ref rec);
+
+//For memoly debug.
+rcp_extern uint32_t rcp_record_ref_count(rcp_record_ref rec);
+rcp_extern void rcp_record_tag(rcp_record_ref rec);
 

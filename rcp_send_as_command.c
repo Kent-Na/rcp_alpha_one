@@ -116,7 +116,7 @@ void rcp_array_send_as_command(
 		node = rcp_array_iterater_next(type, array, node);
 	}
 	
-	tmp_val = NULL;
+	*tmp_val = NULL;
 	rcp_deinit(cmd_type, (rcp_data_ref)&cmd);
 }
 void rcp_dict_send_as_command(

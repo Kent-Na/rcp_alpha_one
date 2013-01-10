@@ -16,6 +16,7 @@ rcp_record_ref rcp_record_new(rcp_type_ref type)
 	if (type->init)
 		type->init(type, rcp_record_data(rec));
 	rec->ref_count = 1;
+	rec->frags = 0;
 	return rec;
 }
 
@@ -28,6 +29,7 @@ rcp_extern rcp_record_ref rcp_record_new_with(
 	rec->type = type;
 	rcp_copy(type, data, rcp_record_data(rec));
 	rec->ref_count = 1;
+	rec->frags = 0;
 	return rec;
 }
 
@@ -43,6 +45,8 @@ void rcp_record_release(rcp_record_ref rec)
 {
 	if (!rec)
 		return;
+	if (rec->frags & RCP_REC_FRAG_TAGED)
+		rcp_error("releasing taged record");
 	rec->ref_count --;
 	if (!rec->ref_count)
 		rcp_record_delete(rec);
@@ -82,3 +86,12 @@ rcp_data_ref rcp_record_data(rcp_record_ref rec)
 	return (rcp_data_ref)(rec + 1);
 }
 
+uint32_t rcp_record_ref_count(rcp_record_ref rec)
+{
+	return rec->ref_count;
+}
+
+void rcp_record_tag(rcp_record_ref rec)
+{
+	rec->frags |= RCP_REC_FRAG_TAGED;
+}

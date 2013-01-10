@@ -654,12 +654,15 @@ rcp_extern void rcp_context_execute_command_rec(
 	}
 
 	rcp_dict_ref cmd = (rcp_dict_ref)rcp_record_data(cmd_rec);
-	rcp_string_ref cmd_str = rcp_string_new(NULL);
-	
+
 	//debug print
-	rcp_write_json(rcp_ref_type, (rcp_data_ref)&cmd_rec, cmd_str);
-	printf("cmd=> %s\n",rcp_string_c_str(cmd_str));
-	rcp_string_delete(cmd_str);
+	{
+		rcp_string_ref cmd_str = rcp_string_new(NULL);
+		rcp_write_json(rcp_ref_type, (rcp_data_ref)&cmd_rec, cmd_str);
+		rcp_string_put(cmd_str, 0);
+		printf("cmd=> %s\n",rcp_string_c_str(cmd_str));
+		rcp_string_delete(cmd_str);
+	}
 
 	rcp_string_ref key_str = rcp_string_new("loginID");
 	uint16_t login_id = rcp_connection_login_id(con); 

@@ -1,3 +1,6 @@
+Command record is not released.
+SSL is gone.
+
 Write test_json.cpp.
 Support json unicode escape.
 Json_write_number.
