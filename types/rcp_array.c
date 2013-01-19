@@ -172,6 +172,10 @@ rcp_extern int8_t rcp_array_replace(
 		(range_end-range_begin)+input_array->data_count;
 	rcp_array_resize(array_type, target_array, total_data_count);
 
+	for (i = range_begin; i<range_end; i++){
+		rcp_deinit(data_type, target_array->array+i*data_type->size);
+	}
+
 	//move back part
 	size_t move_dst_idx = range_begin+input_array->data_count;
 	int32_t move_count = target_array->data_count - range_end;

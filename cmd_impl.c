@@ -437,7 +437,7 @@ void cmd_impl_replace_value(
 		rcp_context_send_error(con, cmd_rec, "type err");
 		return;
 	}
-	uint8_t err = rcp_array_replace(o_type, o_data, 
+	uint8_t err = rcp_replace(o_type, o_data, 
 		cmd_st->begin, cmd_st->end, rcp_record_data(cmd_st->value));
 	if (err){
 		rcp_context_send_error(con, cmd_rec, "param err");
