@@ -137,6 +137,7 @@ void rcp_connection_on_receive(rcp_connection_ref con)
 	rcp_record_ref rec = rcp_receiver_next_command(con->receiver);
 	while (rec){
 		rcp_context_execute_command_rec(con->ctx, con, rec);
+		rcp_record_release(rec);
 		rec = rcp_receiver_next_command(con->receiver);
 	}
 	if (con->ctx)
