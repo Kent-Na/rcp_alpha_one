@@ -24,6 +24,8 @@
 		rcp_array_append,\
 		/*unset*/ 		NULL,\
 		rcp_array_at,\
+		/*copied*/			NULL,\
+		rcp_array_replace,\
 	}
 
 #define RCP_ARRAY_TEMPLATE_A(def_name, param_name) \
