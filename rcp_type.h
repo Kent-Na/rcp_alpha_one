@@ -42,9 +42,13 @@ struct rcp_type_core{
 			rcp_type_ref key_type, rcp_data_ref key_data);
 
 	void (*copied)(rcp_type_ref type, rcp_data_ref data);
+
 	//Array_replace
 	int8_t (*replace)(rcp_type_ref type, rcp_data_ref target,
 			int32_t begin, int32_t end, rcp_data_ref input);
+	//Dict_merge
+	int8_t (*merge)(rcp_type_ref type, rcp_data_ref target,
+			rcp_data_ref input);
 };
 #endif
 
@@ -99,3 +103,5 @@ rcp_extern void rcp_at(rcp_type_ref *io_type, rcp_data_ref *io_data,
 			rcp_type_ref key_type, rcp_data_ref key_data);
 rcp_extern int8_t rcp_replace(rcp_type_ref type, rcp_data_ref target,
 		int32_t begin, int32_t end, rcp_data_ref input);
+rcp_extern int8_t rcp_merge(rcp_type_ref type, rcp_data_ref target,
+		rcp_data_ref input);

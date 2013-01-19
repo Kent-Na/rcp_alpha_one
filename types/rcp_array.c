@@ -164,7 +164,7 @@ rcp_extern int8_t rcp_array_replace(
 		range_end = target_array->data_count+1+range_end;
 
 	if (range_begin>range_end)
-			return -1;
+		return -1;
 	if (range_end>target_array->data_count)
 		return -1;
 

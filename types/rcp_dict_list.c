@@ -30,6 +30,9 @@ struct rcp_dict_core{
 		NULL,\
 		rcp_dict_unset,\
 		rcp_dict_at,\
+		/*copied*/		NULL,\
+		/*replace*/		NULL,\
+		rcp_dict_merge,\
 	}
 
 #define RCP_DICT_TEMPLATEB(key,data) \

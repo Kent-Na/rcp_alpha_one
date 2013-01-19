@@ -170,6 +170,26 @@ void rcp_dict_unset(rcp_type_ref type, rcp_data_ref data,
 	if (node)
 		rcp_dict_unset_node(dict, node);
 }
+
+int8_t rcp_dict_merge(
+		rcp_type_ref type, rcp_data_ref target_data,
+		rcp_data_ref input_data)
+{
+	rcp_dict_ref target_dict = (rcp_dict_ref) target_data;
+	rcp_dict_ref input_dict = (rcp_dict_ref) input_data;
+
+	rcp_dict_node_ref input_node = rcp_dict_begin(input_dict);
+	
+	while (input_node){
+		rcp_dict_node_ref c_node = rcp_dict_node_clone(type, input_node);
+		rcp_dict_node_ref old_node = rcp_dict_set_node(target_dict, c_node);
+		rcp_dict_node_delete(type, old_node);
+		input_node = rcp_dict_node_next(input_node);
+	}
+	
+	return 0;
+}
+
 //type class end
 ///
 
@@ -256,9 +276,24 @@ rcp_dict_node_ref rcp_dict_node_new_with(rcp_type_ref type,
 	return node;
 }
 
+rcp_dict_node_ref rcp_dict_node_clone(
+	rcp_type_ref type, rcp_dict_node_ref master_node)
+{
+	rcp_dict_node_ref node = rcp_dict_node_alloc(type);
+	rcp_copy(rcp_dict_type_key_type(type),
+			rcp_dict_node_key(type, master_node),
+			rcp_dict_node_key(type, node));
+	rcp_copy(rcp_dict_type_data_type(type),
+			rcp_dict_node_data(type, master_node),
+			rcp_dict_node_data(type, node));
+	return node;
+}
+
 rcp_extern 
 void rcp_dict_node_delete(rcp_type_ref type, rcp_dict_node_ref node)
 {
+	if (!node)
+		return;
 	rcp_dict_node_deinit(type, node);
 	rcp_dict_node_dealloc(node);
 }

@@ -151,6 +151,13 @@ struct cmd_replace_value{
 	rcp_record_ref value;
 };
 
+struct cmd_merge_value{
+	rcp_record_ref command;
+	uint16_t loginID;
+	rcp_record_ref path;
+	rcp_record_ref value;
+};
+
 struct cmd_fatal{
 	rcp_record_ref command;
 	uint16_t loginID;

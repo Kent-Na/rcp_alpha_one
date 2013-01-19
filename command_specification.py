@@ -255,6 +255,18 @@ addParameter(command, "array", "value")
 requirePermission(command, "write")
 commandList.append(command)
 
+
+command = {
+	"name":"mergeValue",
+	"shortDescription":"Add/replace elements in specified value.",
+	"longDescription":"",
+	}
+
+addParameter(command, "ref", "path")
+addParameter(command, "array", "value")
+requirePermission(command, "write")
+commandList.append(command)
+
 #Error
 command = {
 	"name":"fatal",

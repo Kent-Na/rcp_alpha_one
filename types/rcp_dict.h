@@ -46,6 +46,10 @@ void rcp_dict_at(
 		rcp_type_ref *io_type, rcp_data_ref *io_data,
 		rcp_type_ref key_type, rcp_data_ref key_data);
 
+int8_t rcp_dict_merge(
+		rcp_type_ref dict_type, rcp_data_ref target_data,
+		rcp_data_ref input_data);
+
 rcp_extern 
 rcp_dict_node_ref rcp_dict_find(
 		rcp_dict_ref dict, rcp_data_ref key);
@@ -81,6 +85,10 @@ rcp_dict_node_ref rcp_dict_node_new_with(rcp_type_ref type,
 
 rcp_extern 
 void rcp_dict_node_delete(rcp_type_ref type, rcp_dict_node_ref node);
+
+rcp_extern
+rcp_dict_node_ref rcp_dict_node_clone(
+	rcp_type_ref type, rcp_dict_node_ref master_node);
 
 rcp_extern 
 rcp_data_ref rcp_dict_node_key(

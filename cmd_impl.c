@@ -447,6 +447,47 @@ void cmd_impl_replace_value(
 }
 
 
+void cmd_impl_merge_value(
+		rcp_context_ref ctx,
+		rcp_connection_ref con,
+		rcp_record_ref cmd_rec,
+		rcp_type_ref cmd_type,
+		void* cmd)
+{
+	struct cmd_merge_value *cmd_st = cmd;
+
+	rcp_assert(cmd_st->value,"null value");
+
+	rcp_type_ref o_type;
+	rcp_data_ref o_data;
+
+	cmd_value_at_path(ctx, cmd_st->path, &o_type, &o_data);
+	if (o_type == rcp_ref_type){
+		rcp_record_ref rec = *(rcp_record_ref*)o_data;
+		if (rcp_record_is_null(rec)){
+			rcp_context_send_error(con, cmd_rec, "path err");
+			return;
+		}
+		o_type = rcp_record_type(rec);
+		o_data = rcp_record_data(rec);
+	}
+
+	if (!o_data){
+		rcp_context_send_error(con, cmd_rec, "path err");
+		return;
+	}
+	if (rcp_record_type(cmd_st->value) != o_type){
+		rcp_context_send_error(con, cmd_rec, "type err");
+		return;
+	}
+	uint8_t err = rcp_merge(o_type, o_data, 
+		rcp_record_data(cmd_st->value));
+	if (err){
+		rcp_context_send_error(con, cmd_rec, "param err");
+		return;
+	}
+	rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
+}
 void cmd_impl_open(
 		rcp_context_ref ctx,
 		rcp_connection_ref con,

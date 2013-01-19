@@ -132,11 +132,17 @@ rcp_extern void rcp_at(rcp_type_ref *io_type, rcp_data_ref *io_data,
 		return;
 	(*io_type)->at(io_type, io_data, key_type, key_data);
 }
-
 rcp_extern int8_t rcp_replace(rcp_type_ref type, rcp_data_ref target,
 		int32_t begin, int32_t end, rcp_data_ref input)
 {
 	if ( ! type->replace)
 		return -1;
 	return type->replace(type, target, begin, end, input);
+}
+rcp_extern int8_t rcp_merge(rcp_type_ref type, rcp_data_ref target,
+		rcp_data_ref input)
+{
+	if ( ! type->merge)
+		return -1;
+	return type->merge(type, target, input);
 }

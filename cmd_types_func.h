@@ -24,6 +24,7 @@ rcp_type_ref cmd_send_value_type();
 rcp_type_ref cmd_set_value_type();
 rcp_type_ref cmd_unset_value_type();
 rcp_type_ref cmd_replace_value_type();
+rcp_type_ref cmd_merge_value_type();
 rcp_type_ref cmd_fatal_type();
 rcp_type_ref cmd_error_type();
 rcp_type_ref cmd_caution_type();
