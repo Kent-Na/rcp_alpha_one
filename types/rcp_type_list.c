@@ -38,7 +38,7 @@ struct rcp_type_core rcp_ref_type_def = {
 	NULL,
 	rcp_ref_set,
 	rcp_ref_append,
-	NULL,
+	rcp_ref_unset,
 	rcp_ref_at,
 };
 

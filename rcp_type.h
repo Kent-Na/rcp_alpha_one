@@ -28,10 +28,11 @@ struct rcp_type_core{
 			rcp_type_ref type, rcp_data_ref data, rcp_string_ref out);
 	void (*send_as_command)(rcp_type_ref type, rcp_data_ref data,
 			rcp_connection_ref con);
-
+	//unused
 	void (*set)(rcp_type_ref type, rcp_data_ref dst,
 			rcp_type_ref key_type, rcp_data_ref key_data,
 			rcp_type_ref data_type, rcp_data_ref data_data);
+	//unused
 	void (*append)(rcp_type_ref type, rcp_data_ref dst,
 			rcp_type_ref data_type, rcp_data_ref data_data);
 	void (*unset)(rcp_type_ref type, rcp_data_ref dst,

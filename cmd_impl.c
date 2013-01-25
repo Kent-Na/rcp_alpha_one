@@ -399,8 +399,49 @@ void cmd_impl_unset_value(
 		rcp_type_ref cmd_type,
 		void* cmd)
 {
-	rcp_context_send_caution(con, cmd_rec, 
-			"Not yet implemented.");
+	struct cmd_unset_value *cmd_st = cmd;
+
+
+	if (rcp_record_is_null(cmd_st->path)){
+		rcp_context_send_error(con, cmd_rec, "path err.");
+		return;
+	}
+
+	rcp_array_ref path_array = (rcp_array_ref)rcp_record_data(cmd_st->path);
+	rcp_type_ref path_type = rcp_record_type(cmd_st->path);
+
+	if (path_type != rcp_ref_array){
+		rcp_context_send_error(con, cmd_rec, "path err.");
+		return;
+	}
+
+	rcp_array_ref cloned_path_array=(rcp_array_ref)rcp_alloc(path_type);
+	rcp_copy(path_type, 
+		(rcp_data_ref)path_array, (rcp_data_ref)cloned_path_array);
+
+	rcp_record_ref last_elem = NULL;
+	rcp_array_pop_data(path_type, cloned_path_array, 
+		(rcp_data_ref)&last_elem);
+
+	rcp_type_ref o_type = rcp_ref_type;
+	rcp_data_ref o_data = (rcp_data_ref)&ctx->top_level_record;
+
+	rcp_data_at(&o_type, &o_data, cloned_path_array);
+
+	if (! o_data){
+		rcp_context_send_error(con, cmd_rec, "path err.");
+	}
+	else{
+		//value already existed
+		rcp_assert(o_type == rcp_ref_type, "can not copy");
+
+		rcp_unset(o_type, o_data, 
+				rcp_record_type(last_elem), rcp_record_data(last_elem));
+		rcp_context_send_data(ctx, cmd_type, (rcp_data_ref)cmd_st);
+	}
+
+	rcp_record_release(last_elem);
+	rcp_delete(path_type, (rcp_data_ref)cloned_path_array);
 }
 
 
