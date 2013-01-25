@@ -90,6 +90,7 @@ struct cmd_add_context{
 	rcp_record_ref name;
 	rcp_record_ref timestamp;
 	uint16_t connectionCount;
+	rcp_record_ref value;
 };
 
 struct cmd_update_context{

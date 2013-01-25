@@ -554,7 +554,7 @@ rcp_type_ref cmd_unset_permission_type(){
 
 rcp_type_ref cmd_add_context_type(){
 	
-	rcp_type_ref s_type = rcp_struct_type_new(5);
+	rcp_type_ref s_type = rcp_struct_type_new(6);
 	struct rcp_type_core* t_core = (struct rcp_type_core*)s_type; 
 	t_core->size = sizeof (struct cmd_add_context);
 	t_core->type_id = 0x100;
@@ -568,7 +568,7 @@ rcp_type_ref cmd_add_context_type(){
 	struct rcp_type_struct_ext* s_core = 
 		(struct rcp_type_struct_ext*)(t_core+1);
 	s_core->name = rcp_string_new("ttt");
-	s_core->param_count = 5;
+	s_core->param_count = 6;
 
 	struct rcp_struct_param_core *param = 
 		(struct rcp_struct_param_core*)(s_core+1);
@@ -596,6 +596,11 @@ rcp_type_ref cmd_add_context_type(){
 	param->name = rcp_string_new("timestamp");
 	param->type = rcp_ref_type;
 	param->offset = offsetof(struct cmd_add_context, timestamp);
+	param ++;
+
+	param->name = rcp_string_new("value");
+	param->type = rcp_ref_type;
+	param->offset = offsetof(struct cmd_add_context, value);
 	param ++;
 
 	return s_type;

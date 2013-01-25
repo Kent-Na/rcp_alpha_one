@@ -159,6 +159,7 @@ command = {
 addParameter(command, "string", "name")
 addParameter(command, "string", "timestamp")
 addParameter(command, "uint16", "connectionCount")
+addParameter(command, "ref", "value")
 requirePermission(command, "context")
 commandList.append(command)
 

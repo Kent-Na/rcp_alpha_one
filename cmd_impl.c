@@ -156,6 +156,8 @@ void cmd_impl_add_context(
 	}
 
 	rcp_context_ref new_ctx = rcp_context_new();
+	rcp_copy(rcp_ref_type, (rcp_data_ref)&cmd_recv->value, 
+		(rcp_data_ref)&new_ctx->top_level_record);
 	rcp_context_set_state_flag(new_ctx, RCP_CTX_PIRTIALY_LOADED);
 	rcp_context_set_state_flag(new_ctx, RCP_CTX_FULLY_LOADED);
 	rcp_context_add_context(ctx,
