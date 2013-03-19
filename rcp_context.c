@@ -646,9 +646,9 @@ void rcp_context_add_context(rcp_context_ref ctx,
 	node = rcp_dict_node_new_with(rcp_str_ptr_dict,
 			(rcp_data_ref)name,
 			(rcp_data_ref)&new_ctx);
-	node = rcp_dict_set_node(ctx->sub_context, node);
 	new_ctx->name = (rcp_string_ref)rcp_dict_node_key(
 		rcp_str_ptr_dict, node);
+	node = rcp_dict_set_node(ctx->sub_context, node);
 }
 
 rcp_extern void rcp_context_execute_command_rec(
