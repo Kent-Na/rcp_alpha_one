@@ -18,6 +18,7 @@ struct rcp_type_core{
 	//Don't release data itself.
 	void (*deinit)(rcp_type_ref type, rcp_data_ref data);
 
+	//Deplecated. Will be replaced with "copied".
 	//deap copy(may be... except ref type.)
 	//Before call it, src must be inited and dst must be deinited state.
 	void (*copy)(rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);
