@@ -1,4 +1,4 @@
-#include "def/rcp_tree.h"
+#include "../def/rcp_tree.h"
 
 typedef struct rcp_tree_node_core *rcp_tree_node_ref;
 

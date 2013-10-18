@@ -9,7 +9,6 @@
 #include "rcp_server.h"
 #include "rcp_timeout.h"
 
-#include "rcp_type.h"
 #include "types/rcp_type_list.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_dict_list.h"

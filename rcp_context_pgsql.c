@@ -4,7 +4,7 @@
 
 #include "types/rcp_string.h"
 #include "types/rcp_type_list.h"
-#include "rcp_record.h"
+#include "types/rcp_record.h"
 #include "rcp_receiver.h"
 #include "rcp_sender_classes.h"
 #include "rcp_receiver_classes.h"

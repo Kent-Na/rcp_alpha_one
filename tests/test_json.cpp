@@ -2,7 +2,7 @@
 #include "../rcp_utility.h"
 #include "../rcp_json.h"
 #include "../types/rcp_type_list.h"
-#include "../rcp_record.h"
+#include "../types/rcp_record.h"
 
 
 int test_json(){

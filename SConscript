@@ -2,6 +2,9 @@ env = Environment()
 Import('env')
 
 types = [
+	'types/rcp_tree.c',
+	'types/rcp_type.c',
+	'types/rcp_record.c',
 	'types/rcp_array.c',
 	'types/rcp_array_list.c',
 	'types/rcp_string.c',
@@ -54,10 +57,7 @@ mainFiles = [
 	'rcp_sender_classes.c',
 	'rcp_server.c',
 	'rcp_ssl.c',
-	'rcp_tree.c',
-	'rcp_record.c',
 	'rcp_caster.c',
-	'rcp_type.c',
 	'rcp_user.c',
 	'rcp_utility.c',
 	'rcp_user_pgsql.c',

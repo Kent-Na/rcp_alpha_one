@@ -4,7 +4,7 @@
 
 #define RCP_INTERNAL_STRUCTURE
 
-#include "../rcp_type.h"
+#include "rcp_type.h"
 
 struct rcp_alias_ext{
 	rcp_type_ref real_type;

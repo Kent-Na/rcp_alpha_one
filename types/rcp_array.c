@@ -2,12 +2,12 @@
 #include "../rcp_utility.h"
 
 #define RCP_INTERNAL_STRUCTURE
-#include "../rcp_type.h"
+#include "rcp_type.h"
 #include "rcp_array.h"
 
 #include "rcp_type_list.h"
 #include "rcp_type_utility.h"
-#include "../rcp_record.h"
+#include "rcp_record.h"
 	
 rcp_type_ref rcp_array_type_data_type(rcp_type_ref type)
 {

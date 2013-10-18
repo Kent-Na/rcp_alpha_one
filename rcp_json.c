@@ -2,8 +2,8 @@
 #include "rcp_utility.h"
 #include "rcp_defines.h"
 
-#include "rcp_record.h"
-#include "rcp_type.h"
+#include "types/rcp_record.h"
+#include "types/rcp_type.h"
 #include "types/rcp_string.h"
 #include "types/rcp_array.h"
 #include "types/rcp_array_list.h"

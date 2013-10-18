@@ -5,7 +5,7 @@
 #include "../types/rcp_array_list.h"
 #include "../types/rcp_string.h"
 #include "../types/rcp_type_list.h"
-#include "../rcp_record.h"
+#include "../types/rcp_record.h"
 #include "../rcp_user.h"
 
 

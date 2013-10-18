@@ -8,10 +8,10 @@
 
 #define RCP_INTERNAL_STRUCTURE
 
-#include "../rcp_type.h"
-#include "../rcp_record.h"
+#include "rcp_type.h"
+#include "rcp_record.h"
 #include "rcp_type_list.h"
-#include "../rcp_tree.h"
+#include "rcp_tree.h"
 #include "rcp_dict.h"
 
 ///

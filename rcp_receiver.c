@@ -1,8 +1,8 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
 #include "rcp_utility.h"
-#include "rcp_type.h"
-#include "rcp_record.h"
+#include "types/rcp_type.h"
+#include "types/rcp_record.h"
 #include "rcp_io.h"
 #include "rcp_receiver.h"
 

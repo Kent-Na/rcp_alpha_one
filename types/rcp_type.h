@@ -1,8 +1,8 @@
-#include "def/rcp_type.h"
-#include "def/rcp_data.h"
-#include "def/rcp_string.h"
-#include "def/rcp_record.h"
-#include "def/rcp_connection.h"
+#include "../def/rcp_type.h"
+#include "../def/rcp_data.h"
+#include "../def/rcp_string.h"
+#include "../def/rcp_record.h"
+#include "../def/rcp_connection.h"
 
 #ifdef RCP_INTERNAL_STRUCTURE
 struct rcp_type_core{

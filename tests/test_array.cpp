@@ -5,7 +5,7 @@
 #include "../types/rcp_array_list.h"
 
 #define RCP_INTERNAL_STRUCTURE
-#include "../rcp_type.h"
+#include "../types/rcp_type.h"
 #include "../types/rcp_array.h"
 #include <random>
 

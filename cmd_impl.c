@@ -8,8 +8,8 @@
 #include "rcp_server.h"
 
 #include "rcp_connection.h"
-#include "rcp_type.h"
-#include "rcp_record.h"
+#include "types/rcp_type.h"
+#include "types/rcp_record.h"
 #include "rcp_caster.h"
 
 #include "rcp_user.h"

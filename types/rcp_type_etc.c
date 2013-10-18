@@ -3,8 +3,8 @@
 
 #define RCP_INTERNAL_STRUCTURE
 
-#include "../rcp_type.h"
-#include "../rcp_record.h"
+#include "rcp_type.h"
+#include "rcp_record.h"
 #include "rcp_type_list.h"
 
 

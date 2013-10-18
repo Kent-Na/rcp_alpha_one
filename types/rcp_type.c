@@ -1,8 +1,8 @@
-#include "rcp_pch.h"
-#include "rcp_utility.h"
-#include "rcp_defines.h"
-#include "types/rcp_string.h"
-#include "rcp_send_as_command.h"
+#include "../rcp_pch.h"
+#include "../rcp_utility.h"
+#include "../rcp_defines.h"
+#include "rcp_string.h"
+#include "../rcp_send_as_command.h"
 
 #define RCP_INTERNAL_STRUCTURE
 

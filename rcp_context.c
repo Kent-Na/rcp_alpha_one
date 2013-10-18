@@ -16,13 +16,13 @@
 #include "rcp_sender_classes.h"
 #include "rcp_receiver_classes.h"
 
-#include "rcp_tree.h"
 
 #include "rcp_user.h"
 
-#include "rcp_type.h"
+#include "types/rcp_tree.h"
+#include "types/rcp_type.h"
 #include "types/rcp_type_utility.h"
-#include "rcp_record.h"
+#include "types/rcp_record.h"
 #include "types/rcp_dict.h"
 #include "types/rcp_dict_list.h"
 #include "types/rcp_array.h"

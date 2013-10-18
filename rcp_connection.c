@@ -11,7 +11,7 @@
 #include "rcp_server.h"
 #include "rcp_sender_classes.h"
 
-#include "rcp_record.h"
+#include "types/rcp_record.h"
 
 struct rcp_connection_core{
 	int ref_count;

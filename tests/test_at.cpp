@@ -9,7 +9,7 @@
 #include "../types/rcp_dict.h"
 #include "../types/rcp_string.h"
 
-#include "../rcp_record.h"
+#include "../types/rcp_record.h"
 
 #include <random>
 

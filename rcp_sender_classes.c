@@ -1,8 +1,6 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
 #include "rcp_utility.h"
-#include "rcp_type.h"
-#include "rcp_record.h"
 #include "rcp_sender.h"
 #include "rcp_sender_classes.h"
 

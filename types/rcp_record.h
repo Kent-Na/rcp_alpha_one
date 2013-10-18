@@ -1,6 +1,6 @@
-#include "def/rcp_type.h"
-#include "def/rcp_data.h"
-#include "def/rcp_record.h"
+#include "../def/rcp_type.h"
+#include "../def/rcp_data.h"
+#include "../def/rcp_record.h"
 
 #ifdef RCP_INTERNAL_STRUCTURE
 struct rcp_record_core{

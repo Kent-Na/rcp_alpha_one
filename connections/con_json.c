@@ -6,7 +6,7 @@
 #include "../rcp_sender.h"
 #include "../rcp_receiver.h"
 
-#include "../rcp_type.h"
+#include "../types/rcp_type.h"
 #include "../rcp_json.h"
 
 #include "../types/rcp_string.h"
