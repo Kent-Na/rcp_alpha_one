@@ -3,8 +3,7 @@
 #include "../rcp_defines.h"
 #include "../rcp_caster.h"
 
-#include "../rcp_json_write.h"
-#include "../rcp_send_as_command.h"
+#include "rcp_json_write.h"
 
 #define RCP_INTERNAL_STRUCTURE
 
@@ -17,41 +16,6 @@
 ///
 //type dict
 //
-
-//unused
-struct rcp_type_core rcp_dict_type_def = {
-	sizeof(struct rcp_tree_core),
-	0,
-	NULL,
-	rcp_dict_init,//init
-	rcp_dict_deinit,//free
-	NULL,//copy
-	NULL,//comp
-	rcp_dict_write_json,
-	rcp_dict_send_as_command,
-	rcp_dict_set,
-	NULL,
-	rcp_dict_unset
-};
-
-rcp_type_ref rcp_dict_type_new(
-		rcp_type_ref key_type, rcp_type_ref data_type)
-{
-	rcp_type_ref type = malloc(sizeof *type +
-			sizeof (struct rcp_type_dict_ext));
-	struct rcp_type_dict_ext* ext = 
-		(struct rcp_type_dict_ext*)(type + 1);
-	memcpy((void*)type, &rcp_dict_type_def, sizeof *type);
-	ext->key_type = key_type;
-	ext->data_type = data_type;
-	return type;
-}
-
-void rcp_dict_type_delete(
-		rcp_type_ref type)
-{
-	free((void*)type);
-}
 
 rcp_type_ref rcp_dict_type_key_type(rcp_type_ref type)
 {
@@ -79,7 +43,6 @@ void rcp_dict_delete(rcp_type_ref type, rcp_dict_ref data)
 	rcp_delete(type,(rcp_data_ref)data);
 }
 
-
 ///
 // type class
 void rcp_dict_init(rcp_type_ref type, rcp_data_ref data)
@@ -97,6 +60,13 @@ void rcp_dict_deinit(rcp_type_ref type, rcp_data_ref data)
 	}
 	rcp_tree_deinit((rcp_tree_ref)data);
 }
+
+void rcp_dict_copied(rcp_type_ref type, rcp_data_ref data)
+{
+    rcp_error("Can not copy rcp_dict.");
+    rcp_dict_init(type, data);
+}
+
 void rcp_dict_at(
 		rcp_type_ref *io_type, rcp_data_ref *io_data,
 		rcp_type_ref key_type, rcp_data_ref key_data)

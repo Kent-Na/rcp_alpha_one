@@ -41,21 +41,15 @@ void rcp_struct_deinit(rcp_type_ref type, rcp_data_ref data){
 	}
 }
 
-void rcp_struct_copy(rcp_type_ref type, 
-		rcp_data_ref src, rcp_data_ref dst){
+void rcp_struct_copied(rcp_type_ref type, rcp_data_ref data){
 	struct rcp_type_struct_ext *ext = (void*)(type + 1);
 	rcp_struct_param_ref params = (void*)(ext + 1);
 
 	int i;
-
 	for (i = 0; i<ext->param_count; i++){
 		rcp_struct_param_ref param = params+i;
-		rcp_type_ref type = param->type;
-		if (type->copy)
-			type->copy(type, 
-					(void*)src+param->offset, (void*)dst+param->offset);
-		else if (type->init)
-			type->init(type, (void*)dst+param->offset);
+		rcp_type_ref p_type = param->type;
+        rcp_copied(p_type, (void*)data+param->offset);
 	}
 }
 

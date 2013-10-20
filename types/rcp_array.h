@@ -16,6 +16,7 @@ struct rcp_array_type{
 
 struct rcp_array_core{
 	void* array;
+    //How many valid data in the array.
 	size_t data_count;
 
 	//Allocated memory size.
@@ -37,6 +38,8 @@ rcp_extern void rcp_array_delete(
 rcp_extern void rcp_array_init(
 		rcp_type_ref type, rcp_data_ref data);
 rcp_extern void rcp_array_deinit(
+		rcp_type_ref type, rcp_data_ref data);
+rcp_extern void rcp_array_copied(
 		rcp_type_ref type, rcp_data_ref data);
 rcp_extern void rcp_array_copy(
 		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);

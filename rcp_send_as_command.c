@@ -16,6 +16,22 @@
 #include "types/rcp_dict.h"
 #include "types/rcp_type_list.h"
 #include "types/rcp_array.h"
+#include "types/rcp_array_list.h"
+#include "types/rcp_dict_list.h"
+
+#include "rcp_send_as_command.h"
+
+void rcp_send_as_command(
+		rcp_type_ref type, rcp_data_ref data,
+		rcp_connection_ref con)
+{
+    if (type == rcp_ref_array)
+        rcp_array_send_as_command(type, data, con);
+    else if (type == rcp_str_ref_dict)
+        rcp_dict_send_as_command(type, data, con);
+    else
+        rcp_std_send_as_command(type, data, con);
+}
 
 void rcp_std_send_as_command(
 		rcp_type_ref type, rcp_data_ref data,

@@ -16,6 +16,8 @@ types = [
 	'types/rcp_struct.c',
 	'types/rcp_type_etc.c',
 	'types/rcp_alias.c',
+	'types/rcp_json.c',
+	'types/rcp_json_write.c',
 	]
 
 connections = [
@@ -46,8 +48,6 @@ mainFiles = [
 	'rcp_logger_pgsql.c',
 	'rcp_event_epoll.c',
 	'rcp_event_kqueue.c',
-	'rcp_json.c',
-	'rcp_json_write.c',
 	'rcp_send_as_command.c',
 	'rcp_listener.c',
 	'rcp_timeout.c',

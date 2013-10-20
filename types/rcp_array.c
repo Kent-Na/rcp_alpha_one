@@ -60,6 +60,25 @@ void rcp_array_copy(
 		rcp_copy(data_type, src_data, dst_data);
 	}
 }
+void rcp_array_copied(rcp_type_ref type, rcp_data_ref data)
+{
+	rcp_type_ref data_type = rcp_array_type_data_type(type);
+	rcp_array_ref core = (rcp_array_ref)data;
+	if (!rcp_array_owning_data(core))
+		return;
+    
+    const void *old_data = core->array;
+    const size_t old_data_count = core->data_count;
+    
+    rcp_init(type, data);
+    rcp_array_resize(type, core, old_data_count);
+    core->data_count = old_data_count;
+    memcpy(core->array, old_data, old_data_count*data_type->size);
+    int i;
+    for (i = 0; i<old_data_count; i++){
+        rcp_copied(data_type, core->array+i*data_type->size);
+    }
+}
 
 void rcp_array_set(rcp_type_ref type, rcp_data_ref data,
 		rcp_type_ref key_type, rcp_data_ref key_data,
@@ -185,18 +204,12 @@ rcp_extern int8_t rcp_array_replace(
 
 	//insert input
 	if (input_array->data_count){
-		/*
 		memcpy(target_array->array+range_begin*data_type->size,
 				input_array->array,
 				input_array->data_count*data_type->size);
-		for (int i = 0; i<target_array->data_count; i++){
+        int i;
+		for (i = 0; i<target_array->data_count; i++){
 			rcp_copied(data_type, 
-				target_array->array+(range_begin+i)*data_type->size)
-		}
-		*/
-		for (i = 0; i<input_array->data_count; i++){
-			rcp_copy(data_type, 
-				input_array->array+i*data_type->size,
 				target_array->array+(range_begin+i)*data_type->size);
 		}
 	}
@@ -215,27 +228,26 @@ void rcp_array_resize(
 	if (array->capacity >= new_size)
 		return;
 
-	//data count
-	size_t new_capacity = array->capacity;
-	if (new_capacity< initial_capacity)
-		new_capacity= initial_capacity;
-
-	while (new_capacity < new_size){
-		if (new_capacity*2 > block_size)
-			break;
-		new_capacity *= 2;
-	}
-
-	if (new_capacity < new_size)
-		new_capacity = new_size;
-
-	//bytes
-	size_t new_data_size = new_capacity*data_type->size;
-	if (new_data_size > block_size){
-		new_data_size = (new_data_size/block_size+1)*block_size;
+	size_t min_capacity_bytes = new_size*data_type->size;
+    size_t new_data_size;
+	size_t new_capacity = initial_capacity;
+    if (min_capacity_bytes <= block_size){
+        // Fit in a block.
+        while (new_capacity < new_size){
+            new_capacity *= 2;
+        }
+        new_data_size = new_capacity*data_type->size;
+        if (new_data_size > block_size){
+            new_data_size = block_size;
+            new_capacity = new_data_size/data_type->size;
+        }
+    }
+    else{
+        // Require 2 or more blocks.
+		new_data_size = (min_capacity_bytes/block_size+1)*block_size;
 		new_capacity = new_data_size/data_type->size;
-	}
-
+    }
+    
 	array->array = realloc(array->array, new_data_size);
 	array->capacity = new_capacity;
 }
@@ -249,19 +261,7 @@ rcp_extern void rcp_array_append_data(
 		rcp_error("array append");
 		return;
 	}
-	if (array->capacity == array->data_count){
-		size_t storage_size = array->capacity;
-		size_t block_size = (1<<8);//256 data/block
-		if (!storage_size)
-			storage_size = 32;
-		else if (storage_size <= block_size)
-			storage_size *= 2;
-		else
-			storage_size = (array->capacity+block_size)&(~block_size);
-
-		array->array = realloc(array->array, storage_size*data_type->size);
-		array->capacity = storage_size;
-	}
+	rcp_array_resize(array_type, array, array->data_count+1);
 	void* dst = array->array+array->data_count*data_type->size;
 	rcp_copy(data_type, data, dst);
 	array->data_count++;

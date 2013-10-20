@@ -1,7 +1,7 @@
-#include "def/rcp_data.h"
-#include "def/rcp_type.h"
-#include "def/rcp_record.h"
-#include "def/rcp_string.h"
+#include "../def/rcp_data.h"
+#include "../def/rcp_type.h"
+#include "../def/rcp_record.h"
+#include "../def/rcp_string.h"
 
 //json <-
 //	rcp

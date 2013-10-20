@@ -1,6 +1,6 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
-#include "../rcp_json.h"
+#include "../types/rcp_json.h"
 #include "../types/rcp_array.h"
 #include "../types/rcp_array_list.h"
 #include "../types/rcp_string.h"

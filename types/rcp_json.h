@@ -1,5 +1,5 @@
-#include "def/rcp_record.h"
-#include "def/rcp_string.h"
+#include "../def/rcp_record.h"
+#include "../def/rcp_string.h"
 
 //type table
 //json		<->		rcp

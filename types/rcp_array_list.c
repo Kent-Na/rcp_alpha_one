@@ -1,7 +1,6 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
-#include "../rcp_json_write.h"
-#include "../rcp_send_as_command.h"
+#include "rcp_json_write.h"
 
 #define RCP_INTERNAL_STRUCTURE
 #include "rcp_type.h"
@@ -16,16 +15,13 @@
 		NULL,\
 		rcp_array_init,\
 		rcp_array_deinit,\
-		rcp_array_copy,\
-		/*compare*/		NULL,\
+		rcp_array_copied,\
+		rcp_default_compare,\
 		rcp_array_write_json,\
-		rcp_array_send_as_command,\
-		rcp_array_set,\
-		rcp_array_append,\
-		/*unset*/ 		NULL,\
 		rcp_array_at,\
-		/*copied*/			NULL,\
 		rcp_array_replace,\
+		rcp_default_merge,\
+		rcp_default_unset,\
 	}
 
 #define RCP_ARRAY_TEMPLATE_A(def_name, param_name) \

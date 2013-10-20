@@ -1,7 +1,6 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
-#include "../rcp_json_write.h"
-#include "../rcp_send_as_command.h"
+#include "rcp_json_write.h"
 
 #define RCP_INTERNAL_STRUCTURE
 #include "rcp_type.h"
@@ -22,17 +21,13 @@ struct rcp_dict_core{
 		NULL,\
 		rcp_dict_init,\
 		rcp_dict_deinit,\
-		NULL,\
-		NULL,\
+		rcp_dict_copied,\
+		rcp_default_compare,\
 		rcp_dict_write_json,\
-		rcp_dict_send_as_command,\
-		rcp_dict_set,\
-		NULL,\
-		rcp_dict_unset,\
 		rcp_dict_at,\
-		/*copied*/		NULL,\
-		/*replace*/		NULL,\
+		rcp_default_replace,\
 		rcp_dict_merge,\
+		rcp_dict_unset,\
 	}
 
 #define RCP_DICT_TEMPLATEB(key,data) \

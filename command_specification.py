@@ -252,7 +252,7 @@ command = {
 addParameter(command, "ref", "path")
 addParameter(command, "int64", "begin")
 addParameter(command, "int64", "end")
-addParameter(command, "array", "value")
+addParameter(command, "ref", "value") # must be array
 requirePermission(command, "write")
 commandList.append(command)
 
@@ -264,7 +264,7 @@ command = {
 	}
 
 addParameter(command, "ref", "path")
-addParameter(command, "array", "value")
+addParameter(command, "ref", "value") # must be dict
 requirePermission(command, "write")
 commandList.append(command)
 

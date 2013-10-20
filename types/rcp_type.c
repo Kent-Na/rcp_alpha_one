@@ -1,8 +1,6 @@
 #include "../rcp_pch.h"
 #include "../rcp_utility.h"
-#include "../rcp_defines.h"
 #include "rcp_string.h"
-#include "../rcp_send_as_command.h"
 
 #define RCP_INTERNAL_STRUCTURE
 
@@ -44,19 +42,36 @@ rcp_extern void rcp_dealloc(rcp_data_ref data)
 {
 	free(data);
 }
-rcp_extern void rcp_init(rcp_type_ref type,
-		rcp_data_ref data)
-{
-	if (type->init)
-		type->init(type, data);
-}
 
-rcp_extern void rcp_deinit(rcp_type_ref type,
-		rcp_data_ref data)
-{
-	if (type->deinit)
-		type->deinit(type, data);
+void rcp_default_init(rcp_type_ref type, rcp_data_ref data){ }
+void rcp_default_deinit(rcp_type_ref type, rcp_data_ref data){ }
+void rcp_default_copied(rcp_type_ref type, rcp_data_ref data){ }
+int  rcp_default_compare(
+        rcp_type_ref type, rcp_data_ref l, rcp_data_ref r){ 
+    rcp_error("missing implementation of \"compare\".");
+    return 0;
 }
+void rcp_default_write_json(
+        rcp_type_ref type, rcp_data_ref data, rcp_string_ref out){ }
+void rcp_default_at(rcp_type_ref *io_type, rcp_data_ref *io_data,
+        rcp_type_ref key_type, rcp_data_ref key_data)
+{
+    *io_type = NULL;
+    *io_data = NULL;
+}
+int8_t rcp_default_replace(rcp_type_ref type, rcp_data_ref target,
+        int32_t begin, int32_t end, rcp_data_ref input)
+{
+    return -1;
+}
+int8_t rcp_default_merge(rcp_type_ref type, rcp_data_ref target,
+        rcp_data_ref input)
+{ 
+    return -1;
+}
+void rcp_default_unset(rcp_type_ref type, rcp_data_ref dst,
+        rcp_type_ref key_type, rcp_data_ref key_data){ }
+
 void rcp_move(rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst)
 {
 	rcp_deinit(type, dst);
@@ -65,20 +80,29 @@ void rcp_move(rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst)
 
 void rcp_copy(rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst)
 {
-	if (! type->copy){
-		rcp_error("can not copy that type");
+    memcpy(dst, src, type->size);
+	if (! type->copied)
 		return;
-	}
-	type->copy(type, src, dst);
+	type->copied(type, dst);
 }
 
-void rcp_swap(rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst)
+rcp_extern void rcp_init(rcp_type_ref type,
+		rcp_data_ref data)
 {
-	void *tmp = malloc(type->size);
-	memcpy(tmp, src, type->size);
-	memcpy(src, dst, type->size);
-	memcpy(dst, tmp, type->size);
-	free(tmp);
+    type->init(type, data);
+}
+
+rcp_extern void rcp_deinit(rcp_type_ref type,
+		rcp_data_ref data)
+{
+    type->deinit(type, data);
+}
+
+
+rcp_extern void rcp_copied(rcp_type_ref type,
+		rcp_data_ref data)
+{
+    type->copied(type, data);
 }
 
 rcp_extern int rcp_compare(rcp_type_ref type, 
@@ -91,58 +115,23 @@ rcp_extern void rcp_write_json(rcp_type_ref type,
 {
 	type->write_json(type, data, str);	
 }
-rcp_extern void rcp_send_as_command(rcp_type_ref type, rcp_data_ref data,
-			rcp_connection_ref con)
-{
-	if (type->send_as_command)
-		type->send_as_command(type, data, con);
-	else
-		rcp_std_send_as_command(type, data, con);
-}
-rcp_extern void rcp_set(rcp_type_ref type, rcp_data_ref dst,
-		rcp_type_ref key_type, rcp_data_ref key_data,
-		rcp_type_ref data_type, rcp_data_ref data_data)
-{
-	if (! type->set)
-		return;
-	type->set(type, dst, key_type, key_data, data_type, data_data);
-}
-rcp_extern void rcp_append(rcp_type_ref type, rcp_data_ref dst,
-		rcp_type_ref data_type, rcp_data_ref data_data)
-{
-	if (! type->append)
-		return;
-	type->append(type, dst, data_type, data_data);
-}
 rcp_extern void rcp_unset(rcp_type_ref type, rcp_data_ref dst,
 		rcp_type_ref key_type, rcp_data_ref key_data)
 {
-	if (! type->unset)
-		return;
 	type->unset(type, dst, key_type, key_data);
 }
 rcp_extern void rcp_at(rcp_type_ref *io_type, rcp_data_ref *io_data,
 			rcp_type_ref key_type, rcp_data_ref key_data)
 {
-	if (! *io_type)
-		return;
-	if (! *(*io_type)->at)
-		return;
-	if (! *io_data)
-		return;
 	(*io_type)->at(io_type, io_data, key_type, key_data);
 }
 rcp_extern int8_t rcp_replace(rcp_type_ref type, rcp_data_ref target,
 		int32_t begin, int32_t end, rcp_data_ref input)
 {
-	if ( ! type->replace)
-		return -1;
 	return type->replace(type, target, begin, end, input);
 }
 rcp_extern int8_t rcp_merge(rcp_type_ref type, rcp_data_ref target,
 		rcp_data_ref input)
 {
-	if ( ! type->merge)
-		return -1;
 	return type->merge(type, target, input);
 }

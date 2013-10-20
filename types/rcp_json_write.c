@@ -1,14 +1,14 @@
-#include "rcp_pch.h"
-#include "rcp_utility.h"
-#include "rcp_defines.h"
+#include "../rcp_pch.h"
+#include "../rcp_utility.h"
+#include "../rcp_defines.h"
 
-#include "types/rcp_type.h"
-#include "types/rcp_record.h"
-#include "types/rcp_string.h"
-#include "types/rcp_array.h"
-#include "types/rcp_struct.h"
-#include "types/rcp_dict.h"
-#include "types/rcp_type_list.h"
+#include "rcp_type.h"
+#include "rcp_record.h"
+#include "rcp_string.h"
+#include "rcp_array.h"
+#include "rcp_struct.h"
+#include "rcp_dict.h"
+#include "rcp_type_list.h"
 
 void rcp_null_write_json(rcp_type_ref type, 
 		rcp_data_ref data, rcp_string_ref out)

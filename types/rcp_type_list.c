@@ -4,7 +4,7 @@
 #define RCP_INTERNAL_STRUCTURE
 #include "rcp_tree.h"
 #include "rcp_type.h"
-#include "../rcp_json_write.h"
+#include "rcp_json_write.h"
 #include "../rcp_send_as_command.h"
 #include "rcp_number.h"
 #include "rcp_string.h"
@@ -14,16 +14,14 @@ struct rcp_type_core rcp_null_type_def = {
 	0,
 	0,
 	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
+	rcp_default_compare,
 	rcp_null_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_ref_type_def = {
@@ -32,14 +30,26 @@ struct rcp_type_core rcp_ref_type_def = {
 	NULL,
 	rcp_ref_init,
 	rcp_ref_deinit,
-	rcp_ref_copy,
-	NULL,
+	rcp_ref_copied,
+	rcp_default_compare,
 	rcp_ref_write_json,
-	NULL,
-	rcp_ref_set,
-	rcp_ref_append,
-	rcp_ref_unset,
 	rcp_ref_at,
+	rcp_default_replace,
+	rcp_default_merge,
+};
+
+struct rcp_type_core rcp_pointer_type_def = {
+	sizeof(void*),
+	2,
+	NULL,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
+	rcp_pointer_compare,
+	rcp_default_write_json,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_string_type_def = {
@@ -48,247 +58,189 @@ struct rcp_type_core rcp_string_type_def = {
 	NULL,
 	rcp_string_init,
 	rcp_string_deinit,
-	rcp_string_copy,
+	rcp_string_copied,
 	rcp_string_compare,
 	rcp_string_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-};
-
-struct rcp_type_core rcp_array_type_def = {
-	0,
-	22,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_bool8_type_def = {
 	1,
 	25,
 	NULL,
-	NULL,
-	NULL,
-	rcp_bool8_copy,
-	NULL,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
+	rcp_default_compare,
 	rcp_bool8_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_bool32_type_def = {
 	4,
 	26,
 	NULL,
-	NULL,
-	NULL,
-	rcp_bool32_copy,
-	NULL,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
+	rcp_default_compare,
 	rcp_bool32_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_uint8_type_def = {
 	1,
 	32,
 	NULL,
-	NULL,
-	NULL,
-	rcp_uint8_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_uint8_compare,
 	rcp_uint8_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_uint16_type_def = {
 	2,
 	33,
 	NULL,
-	NULL,
-	NULL,
-	rcp_uint16_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_uint16_compare,
 	rcp_uint16_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_uint32_type_def = {
 	4,
 	34,
 	NULL,
-	NULL,
-	NULL,
-	rcp_uint32_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_uint32_compare,
 	rcp_uint32_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_uint64_type_def = {
 	8,
 	35,
 	NULL,
-	NULL,
-	NULL,
-	rcp_uint64_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_uint64_compare,
 	rcp_uint64_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_int8_type_def = {
 	1,
 	40,
 	NULL,
-	NULL,
-	NULL,
-	rcp_int8_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_int8_compare,
 	rcp_int8_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_int16_type_def = {
 	2,
 	41,
 	NULL,
-	NULL,
-	NULL,
-	rcp_int16_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_int16_compare,
 	rcp_int16_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_int32_type_def = {
 	4,
 	42,
 	NULL,
-	NULL,
-	NULL,
-	rcp_int32_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_int32_compare,
 	rcp_int32_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_int64_type_def = {
 	8,
 	43,
 	NULL,
-	NULL,
-	NULL,
-	rcp_int64_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_int64_compare,
 	rcp_int64_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_float_type_def = {
 	4,
 	49,
 	NULL,
-	NULL,
-	NULL,
-	rcp_float_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_float_compare,
 	rcp_float_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 struct rcp_type_core rcp_double_type_def = {
 	8,
 	50,
 	NULL,
-	NULL,
-	NULL,
-	rcp_double_copy,
+	rcp_default_init,
+	rcp_default_deinit,
+	rcp_default_copied,
 	rcp_double_compare,
 	rcp_double_write_json,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-};
-
-struct rcp_type_core rcp_pointer_type_def = {
-	sizeof(void*),
-	2,
-	NULL,
-	NULL,
-	NULL,
-	rcp_pointer_copy,
-	rcp_pointer_compare,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
+	rcp_default_at,
+	rcp_default_replace,
+	rcp_default_merge,
 };
 
 const rcp_type_ref rcp_null_type = &rcp_null_type_def;
 
 const rcp_type_ref rcp_ref_type = &rcp_ref_type_def;
 
-const rcp_type_ref rcp_string_type = &rcp_string_type_def;
+const rcp_type_ref rcp_pointer_type = &rcp_pointer_type_def;
 
-const rcp_type_ref rcp_array_type = &rcp_array_type_def;
+const rcp_type_ref rcp_string_type = &rcp_string_type_def;
 
 const rcp_type_ref rcp_bool8_type = &rcp_bool8_type_def;
 
@@ -313,5 +265,3 @@ const rcp_type_ref rcp_int64_type = &rcp_int64_type_def;
 const rcp_type_ref rcp_float_type = &rcp_float_type_def;
 
 const rcp_type_ref rcp_double_type = &rcp_double_type_def;
-
-const rcp_type_ref rcp_pointer_type = &rcp_pointer_type_def;

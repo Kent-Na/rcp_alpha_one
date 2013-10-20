@@ -18,6 +18,7 @@ rcp_extern void rcp_string_delete(rcp_string_ref str);
 
 void rcp_string_init(rcp_type_ref type, rcp_data_ref data);
 void rcp_string_deinit(rcp_type_ref type, rcp_data_ref data);
+void rcp_string_copied(rcp_type_ref type, rcp_data_ref data);
 void rcp_string_copy(
 		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);
 int rcp_string_compare(

@@ -2,6 +2,11 @@
 #include "../def/rcp_type.h"
 #include "../def/rcp_data.h"
 
+rcp_extern void rcp_pointer_copy(
+		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);
+rcp_extern int rcp_pointer_compare(
+		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r);
+
 rcp_extern void rcp_uint8_copy(
 		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);
 rcp_extern int rcp_uint8_compare(
@@ -50,9 +55,4 @@ rcp_extern int rcp_float_compare(
 rcp_extern void rcp_double_copy(
 		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);
 rcp_extern int rcp_double_compare(
-		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r);
-
-rcp_extern void rcp_pointer_copy(
-		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst);
-rcp_extern int rcp_pointer_compare(
 		rcp_type_ref ex, rcp_data_ref l, rcp_data_ref r);

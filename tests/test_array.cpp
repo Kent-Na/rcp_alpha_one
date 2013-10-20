@@ -15,31 +15,7 @@ int test_array(void){
 	std::uniform_int_distribution<int> dist(0,500);
 
 	{
-		struct {
-			struct rcp_type_core core;
-			struct rcp_type_array_ext ext;
-		} array_type_val = {
-			{
-				1024,
-				0,
-				NULL,
-				rcp_array_init,
-				rcp_array_deinit,
-				rcp_array_copy,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-			},
-			{
-				rcp_uint32_type
-			}
-		};
-
-		auto array_type = &array_type_val.core;
+		auto array_type = rcp_uint32_array;
 
 		rcp_array_ref array = rcp_array_new(array_type);
 

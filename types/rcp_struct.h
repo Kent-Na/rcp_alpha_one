@@ -25,8 +25,7 @@ struct rcp_struct_param_core{
 
 rcp_extern void rcp_struct_init(rcp_type_ref type, rcp_data_ref data);
 rcp_extern void rcp_struct_deinit(rcp_type_ref type, rcp_data_ref data);
-rcp_extern void rcp_struct_copy(rcp_type_ref type, 
-		rcp_data_ref l, rcp_data_ref r);
+rcp_extern void rcp_struct_copied(rcp_type_ref type, rcp_data_ref data);
 
 rcp_extern rcp_type_ref rcp_struct_type_new(uint16_t param_count);
 

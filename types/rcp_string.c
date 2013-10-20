@@ -42,6 +42,12 @@ void rcp_string_deinit(rcp_type_ref type, rcp_data_ref data)
 	rcp_string_ref core = (rcp_string_ref)data;
 	free(core->str);
 }
+void rcp_string_copied(rcp_type_ref type, rcp_data_ref data)
+{
+	rcp_string_ref core = (rcp_string_ref)data;
+	rcp_string_init_with_c_str(core, core->str);
+}
+
 void rcp_string_copy(
 		rcp_type_ref type, rcp_data_ref src, rcp_data_ref dst)
 {
