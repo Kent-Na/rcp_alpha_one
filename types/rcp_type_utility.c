@@ -177,3 +177,15 @@ void rcp_data_at(rcp_type_ref *io_type, rcp_data_ref *io_data,
 		itr = rcp_array_iterater_next(path_type, path, itr);
 	}
 }
+
+rcp_data_ref rcp_cast_l1(rcp_type_ref src_type, rcp_data_ref src_data,
+		rcp_type_ref dst_type)
+{
+	if (src_type == rcp_ref_type){
+		rcp_record_ref rec = *(rcp_record_ref*)src_data;
+		if (rcp_record_type(rec) == dst_type)
+			return rcp_record_data(rec);
+		return NULL;
+	}
+	return NULL;
+}	

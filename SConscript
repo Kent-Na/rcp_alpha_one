@@ -57,7 +57,6 @@ mainFiles = [
 	'rcp_sender_classes.c',
 	'rcp_server.c',
 	'rcp_ssl.c',
-	'rcp_caster.c',
 	'rcp_user.c',
 	'rcp_utility.c',
 	'rcp_user_pgsql.c',

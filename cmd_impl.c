@@ -10,7 +10,6 @@
 #include "rcp_connection.h"
 #include "types/rcp_type.h"
 #include "types/rcp_record.h"
-#include "rcp_caster.h"
 
 #include "rcp_user.h"
 

@@ -33,7 +33,6 @@
 #include "types/rcp_type_list.h"
 #include "types/rcp_alias.h"
 
-#include "rcp_caster.h"
 #include "rcp_send_as_command.h"
 
 #define RCP_INTERNAL_STRUCTURE

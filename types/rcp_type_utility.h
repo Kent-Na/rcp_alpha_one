@@ -24,3 +24,6 @@ rcp_extern int rcp_record_is_null(rcp_record_ref rec);
 rcp_extern void rcp_data_at(
 		rcp_type_ref *io_type, rcp_data_ref *io_data, 
 		rcp_array_ref path);
+
+rcp_data_ref rcp_cast_l1(rcp_type_ref src_type, rcp_data_ref src_data,
+		rcp_type_ref dst_type);
