@@ -1,6 +1,5 @@
-#include "../rcp_pch.h"
+#include "rcp_type_pch.h"
 #include "../rcp_utility.h"
-#include "../rcp_defines.h"
 
 #include "rcp_type.h"
 #include "rcp_record.h"
@@ -206,12 +205,10 @@ void rcp_dict_write_json(rcp_type_ref type,
 	const rcp_type_ref key_type = rcp_dict_type_key_type(type);
 	const rcp_type_ref data_type = rcp_dict_type_data_type(type);
 
-#ifdef RCP_SELF_TEST
 	if (key_type != rcp_string_type){
 		rcp_error("json:dict key type");
 		return;
 	}
-#endif
 
 	rcp_dict_node_ref node = rcp_dict_begin(dict);
 	rcp_string_put(out, '{');

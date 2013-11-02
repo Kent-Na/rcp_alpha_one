@@ -1,4 +1,4 @@
-#include "../rcp_pch.h"
+#include "rcp_type_pch.h"
 #include "../rcp_utility.h"
 
 #define RCP_INTERNAL_STRUCTURE
