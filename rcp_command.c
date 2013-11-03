@@ -1,5 +1,4 @@
 #include "rcp_pch.h"
-#include "rcp_utility.h"
 #include "rcp_command.h"
 #include "cmd_list.h"
 

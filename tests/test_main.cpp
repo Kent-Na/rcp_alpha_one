@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include "../rcp_pch.h"
-#include "../rcp_utility.h"
 
 int test_json(void);
 int test_tree(void);

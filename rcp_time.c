@@ -1,7 +1,5 @@
 #include "rcp_pch.h"
-#include "rcp_utility.h"
 #include "rcp_time.h"
-#include "types/rcp_string.h"
 
 rcp_time_t rcp_time_current(){
 	return time(NULL);

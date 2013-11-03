@@ -1,5 +1,5 @@
 from command_specification import * 
-from types.gen_type import * 
+from rcp_core.gen_type import * 
 
 ####
 #files

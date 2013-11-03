@@ -1,5 +1,3 @@
-#include "def/rcp_type.h"
-#include "def/rcp_record.h"
 
 struct cmd_open{
 	rcp_record_ref command;

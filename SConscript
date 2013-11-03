@@ -2,22 +2,23 @@ env = Environment()
 Import('env')
 
 types = [
-	'types/rcp_tree.c',
-	'types/rcp_type.c',
-	'types/rcp_record.c',
-	'types/rcp_array.c',
-	'types/rcp_array_list.c',
-	'types/rcp_string.c',
-	'types/rcp_type_list.c',
-	'types/rcp_type_utility.c',
-	'types/rcp_dict.c',
-	'types/rcp_dict_list.c',
-	'types/rcp_number.c',
-	'types/rcp_struct.c',
-	'types/rcp_type_etc.c',
-	'types/rcp_alias.c',
-	'types/rcp_json.c',
-	'types/rcp_json_write.c',
+	'rcp_core/rcp_utility.c',
+	'rcp_core/rcp_tree.c',
+	'rcp_core/rcp_type.c',
+	'rcp_core/rcp_record.c',
+	'rcp_core/rcp_array.c',
+	'rcp_core/rcp_array_list.c',
+	'rcp_core/rcp_string.c',
+	'rcp_core/rcp_type_list.c',
+	'rcp_core/rcp_type_utility.c',
+	'rcp_core/rcp_dict.c',
+	'rcp_core/rcp_dict_list.c',
+	'rcp_core/rcp_number.c',
+	'rcp_core/rcp_struct.c',
+	'rcp_core/rcp_type_etc.c',
+	'rcp_core/rcp_alias.c',
+	'rcp_core/rcp_json.c',
+	'rcp_core/rcp_json_write.c',
 	]
 
 connections = [
@@ -58,7 +59,6 @@ mainFiles = [
 	'rcp_server.c',
 	'rcp_ssl.c',
 	'rcp_user.c',
-	'rcp_utility.c',
 	'rcp_user_pgsql.c',
 	'rcp_time.c',
 ]

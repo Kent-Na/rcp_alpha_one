@@ -1,5 +1,3 @@
-#include "def/rcp_data.h"
-#include "def/rcp_type.h"
 #include "def/rcp_sender_l0.h"
 #include "def/rcp_sender_l1.h"
 

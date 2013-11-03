@@ -1,6 +1,8 @@
 //file io module.
 //write on read io and converse that will do nothing.
 
+#include "../def/rcp_io.h"
+
 void con_file_init(rcp_io_ref io);
 void con_file_release(rcp_io_ref io);
 size_t con_file_send(

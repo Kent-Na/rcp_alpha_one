@@ -1,12 +1,8 @@
 #include "../rcp_pch.h"
-#include "../rcp_utility.h"
 
-#include "../types/rcp_type_list.h"
-#include "../types/rcp_array_list.h"
-
-#define RCP_INTERNAL_STRUCTURE
-#include "../types/rcp_type.h"
-#include "../types/rcp_array.h"
+//#define RCP_INTERNAL_STRUCTURE
+//#include "../rcp_core/rcp_type.h"
+//#include "../rcp_core/rcp_array.h"
 #include <random>
 
 int test_array(void){

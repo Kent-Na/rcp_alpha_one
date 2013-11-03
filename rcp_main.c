@@ -1,7 +1,6 @@
 #include <stdio.h>
 
 #include "rcp_pch.h"
-#include "rcp_utility.h"
 
 #include "rcp_ssl.h"
 

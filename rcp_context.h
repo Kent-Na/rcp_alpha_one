@@ -1,13 +1,7 @@
 #include "def/rcp_context.h"
 #include "def/rcp_connection.h"
-#include "def/rcp_record.h"
-#include "def/rcp_string.h"
-#include "def/rcp_tree.h"
-#include "def/rcp_dict.h"
-#include "def/rcp_array.h"
-#include "def/rcp_data.h"
-#include "def/rcp_type.h"
 #include "def/rcp_time.h"
+#include "def/rcp_io.h"
 
 typedef uint64_t rcp_context_id_t;
 typedef uint64_t rcp_context_state_t;

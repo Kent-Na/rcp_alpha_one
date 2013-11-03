@@ -14,24 +14,6 @@ typeList = [
 	'event_action',
 
 	'command',
-
-	'type',
-	'data',
-	'record',
-	
-	'tree',
-
-	'string',
-
-	'dict',
-	'dict_type',
-	'dict_node',
-
-	'array',
-	'array_iterater',
-
-	'struct',
-	'struct_param',
 ]
 
 template = """

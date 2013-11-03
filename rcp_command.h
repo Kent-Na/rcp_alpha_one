@@ -1,7 +1,5 @@
-#include "def/rcp_type.h"
 #include "def/rcp_context.h"
 #include "def/rcp_connection.h"
-#include "def/rcp_record.h"
 #include "def/rcp_command.h"
 #include "def/rcp_permission.h"
 

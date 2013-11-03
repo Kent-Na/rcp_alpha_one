@@ -1,5 +1,4 @@
 #include "rcp_pch.h"
-#include "rcp_utility.h"
 #include "rcp_defines.h"
 
 #include "rcp_connection.h"
@@ -8,11 +7,6 @@
 #include "rcp_sender_classes.h"
 #include "rcp_server.h"
 #include "rcp_timeout.h"
-
-#include "types/rcp_type_list.h"
-#include "types/rcp_dict.h"
-#include "types/rcp_dict_list.h"
-#include "types/rcp_number.h"
 
 ///
 //context

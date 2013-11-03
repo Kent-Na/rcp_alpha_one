@@ -1,6 +1,5 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
-#include "rcp_utility.h"
 
 #include "rcp_connection.h"
 #include "rcp_io.h"
@@ -10,8 +9,6 @@
 
 #include "rcp_server.h"
 #include "rcp_sender_classes.h"
-
-#include "types/rcp_record.h"
 
 struct rcp_connection_core{
 	int ref_count;

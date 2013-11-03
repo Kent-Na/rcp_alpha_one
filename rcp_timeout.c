@@ -1,12 +1,8 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
-#include "rcp_utility.h"
 
 #include "rcp_connection.h"
 #include "rcp_event.h"
-
-#include "types/rcp_array.h"
-#include "types/rcp_array_list.h"
 
 #include "rcp_timeout.h"
 

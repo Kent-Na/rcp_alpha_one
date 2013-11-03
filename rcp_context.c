@@ -1,5 +1,4 @@
 #include "rcp_pch.h"
-#include "rcp_utility.h"
 #include "rcp_time.h"
 
 #include "rcp_server.h"
@@ -16,22 +15,7 @@
 #include "rcp_sender_classes.h"
 #include "rcp_receiver_classes.h"
 
-
 #include "rcp_user.h"
-
-#include "types/rcp_tree.h"
-#include "types/rcp_type.h"
-#include "types/rcp_type_utility.h"
-#include "types/rcp_record.h"
-#include "types/rcp_dict.h"
-#include "types/rcp_dict_list.h"
-#include "types/rcp_array.h"
-#include "types/rcp_array_list.h"
-#include "types/rcp_struct.h"
-#include "types/rcp_string.h"
-#include "types/rcp_number.h"
-#include "types/rcp_type_list.h"
-#include "types/rcp_alias.h"
 
 #include "rcp_send_as_command.h"
 

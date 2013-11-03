@@ -1,7 +1,5 @@
 #include "rcp_pch.h"
 #include "rcp_defines.h"
-#include "rcp_utility.h"
-#include "types/rcp_string.h"
 #include "rcp_user.h"
 #include "rcp_server.h"
 

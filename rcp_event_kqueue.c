@@ -1,7 +1,6 @@
 #ifndef __linux__
 
 #include "rcp_pch.h"
-#include "rcp_utility.h"
 #include "rcp_event.h"
 
 int rcp_event_new()

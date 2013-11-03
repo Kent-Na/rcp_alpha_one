@@ -1,23 +1,11 @@
 #include "rcp_pch.h"
-#include "rcp_utility.h"
 #include "rcp_defines.h"
-
-#include "types/rcp_type.h"
-#include "types/rcp_record.h"
 
 #include "rcp_connection.h"
 
 #include "rcp_command.h"
 #include "cmd_list.h"
 #include "cmd_types.h"
-
-#include "types/rcp_string.h"
-#include "types/rcp_struct.h"
-#include "types/rcp_dict.h"
-#include "types/rcp_type_list.h"
-#include "types/rcp_array.h"
-#include "types/rcp_array_list.h"
-#include "types/rcp_dict_list.h"
 
 #include "rcp_send_as_command.h"
 

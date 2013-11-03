@@ -1,6 +1,5 @@
 #include "../rcp_pch.h"
 #include "../rcp_defines.h"
-#include "../rcp_utility.h"
 #include "../rcp_buffer.h"
 
 #include "../rcp_io.h"

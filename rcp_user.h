@@ -1,4 +1,3 @@
-#include "def/rcp_string.h"
 #include "def/rcp_permission.h"
 
 struct rcp_user_record{

@@ -1,5 +1,3 @@
-#include "def/rcp_type.h"
-#include "def/rcp_data.h"
 #include "def/rcp_connection.h"
 
 void rcp_send_as_command(

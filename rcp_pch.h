@@ -35,3 +35,6 @@
 //postgresql
 #include <libpq-fe.h>
 #include <libpq/libpq-fs.h>
+
+//core
+#include "rcp_core/rcp_core.h"

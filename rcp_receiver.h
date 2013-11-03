@@ -1,6 +1,5 @@
 #include "def/rcp_receiver.h"
-#include "def/rcp_record.h"
-
+#include "def/rcp_io.h"
 
 //Layer 1
 //plain socket or ssl socket

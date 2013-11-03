@@ -1,7 +1,5 @@
 #include "def/rcp_sender_cluster.h"
 #include "def/rcp_sender_l1.h"
-#include "def/rcp_type.h"
-#include "def/rcp_data.h"
 
 rcp_sender_cluster_ref rcp_sender_cluster_new();
 rcp_sender_l1_ref rcp_sender_cluster_json_nt(
