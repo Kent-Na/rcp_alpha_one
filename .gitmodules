@@ -1,0 +1,3 @@
+[submodule "rcp_core"]
+	path = rcp_core
+	url = git@github.com:Kent-Na/rcp_core.git
